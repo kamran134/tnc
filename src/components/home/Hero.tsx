@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export default function Hero() {
   return (
-    <section className="bg-gradient-to-r from-primary-600 to-primary-700 text-white section-padding">
+    <section className="bg-gradient-to-r from-sky-400 to-sky-700 text-white section-padding">
       <div className="container-max">
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
