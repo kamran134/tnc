@@ -13,7 +13,7 @@ curl -o docker-compose.prod.yml https://raw.githubusercontent.com/kamran134/tnc/
 docker login ghcr.io -u kamran134
 
 # Запуск приложения (образ загружается из GHCR)
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml up -d
 ```
 
 ## 💻 Локальная разработка
@@ -47,13 +47,13 @@ npm run docker:clean
 
 ```bash
 # Загрузка нового образа
-docker-compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml pull
 
 # Перезапуск с новым образом
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml up -d
 
 # Проверка логов
-docker-compose -f docker-compose.prod.yml logs -f
+docker compose -f docker-compose.prod.yml logs -f
 ```
 
 ## Полезные команды

@@ -97,19 +97,19 @@ jobs:
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           
           # Остановка текущих контейнеров
-          docker-compose -f docker-compose.prod.yml down
+          docker compose -f docker-compose.prod.yml down
           
           # Загрузка нового образа из GHCR
-          docker-compose -f docker-compose.prod.yml pull
+          docker compose -f docker-compose.prod.yml pull
           
           # Запуск новых контейнеров с обновленным образом
-          docker-compose -f docker-compose.prod.yml up -d
+          docker compose -f docker-compose.prod.yml up -d
           
           # Очистка старых образов для экономии места
           docker image prune -f
           
           # Проверка состояния контейнеров
-          docker-compose -f docker-compose.prod.yml ps
+          docker compose -f docker-compose.prod.yml ps
           
           # Показать логи для проверки запуска
-          docker-compose -f docker-compose.prod.yml logs app --tail=20
+          docker compose -f docker-compose.prod.yml logs app --tail=20

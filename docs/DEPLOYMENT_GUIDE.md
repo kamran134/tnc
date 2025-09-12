@@ -32,26 +32,27 @@
 - Минимум 2GB RAM, 20GB диска
 - Открытые порты: 80, 443, 22
 
-### Установка Docker и Docker Compose
+### Установка Docker и Docker Compose V2
 
 ```bash
 # Обновление системы
 sudo apt update && sudo apt upgrade -y
 
-# Установка Docker
+# Установка Docker (включает Docker Compose V2)
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 
 # Добавление пользователя в группу docker
 sudo usermod -aG docker $USER
 
-# Установка Docker Compose
-sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+# Проверка версии Docker Compose V2
+docker compose version
 
 # Перезагрузка или выход/вход для применения изменений группы
 newgrp docker
 ```
+
+**Примечание:** Docker Compose V2 встроен в Docker CLI (команда `docker compose` вместо `docker-compose`).
 
 ### Создание директории проекта
 
@@ -74,7 +75,7 @@ mkdir -p ssl logs
 docker login ghcr.io -u kamran134
 
 # Первый запуск (загрузка образа из GHCR)
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml up -d
 ```
 
 **Важно:** На сервере НЕ нужно клонировать репозиторий и собирать проект. Мы используем готовые образы из GHCR!
@@ -215,17 +216,17 @@ cd /opt/tnc-website
 echo "YOUR_GITHUB_TOKEN" | docker login ghcr.io -u kamran134 --password-stdin
 
 # Остановка контейнеров
-docker-compose -f docker-compose.prod.yml down
+docker compose -f docker-compose.prod.yml down
 
 # Загрузка нового образа из GHCR
-docker-compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml pull
 
 # Запуск с новым образом
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml up -d
 
 # Проверка статуса
-docker-compose -f docker-compose.prod.yml ps
-docker-compose -f docker-compose.prod.yml logs -f
+docker compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml logs -f
 ```
 
 ## 5. Мониторинг и обслуживание
@@ -234,13 +235,13 @@ docker-compose -f docker-compose.prod.yml logs -f
 
 ```bash
 # Статус контейнеров
-docker-compose ps
+docker compose ps
 
 # Логи приложения
-docker-compose logs app
+docker compose logs app
 
 # Логи Nginx
-docker-compose logs nginx
+docker compose logs nginx
 
 # Использование ресурсов
 docker stats
@@ -298,13 +299,13 @@ docker-compose --version
 
 ```bash
 # Логи контейнера
-docker-compose logs app -f
+docker compose logs app -f
 
 # Вход в контейнер для отладки
-docker-compose exec app sh
+docker compose exec app sh
 
 # Перестроение с очисткой кэша
-docker-compose build --no-cache app
+docker compose build --no-cache app
 ```
 
 ## 7. Масштабирование и оптимизация

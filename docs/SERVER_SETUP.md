@@ -6,14 +6,14 @@
 # Обновление системы
 sudo apt update && sudo apt upgrade -y
 
-# Установка Docker
+# Установка Docker (включает Docker Compose V2)
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 sudo usermod -aG docker $USER
 
-# Установка Docker Compose
-sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+# Проверка версии (Docker Compose V2 встроен в Docker CLI)
+docker --version
+docker compose version
 
 # Перезагрузка для применения изменений
 sudo reboot
@@ -48,13 +48,13 @@ docker pull ghcr.io/kamran134/tnc:latest
 
 ```bash
 # Запуск приложения
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml up -d
 
 # Проверка статуса
-docker-compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml ps
 
 # Просмотр логов
-docker-compose -f docker-compose.prod.yml logs -f
+docker compose -f docker-compose.prod.yml logs -f
 ```
 
 ## 5. Настройка Nginx (опционально)
@@ -95,19 +95,19 @@ EOF
 
 ```bash
 # Обновление приложения
-docker-compose -f docker-compose.prod.yml pull
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d
 
 # Просмотр логов
-docker-compose -f docker-compose.prod.yml logs app -f
+docker compose -f docker-compose.prod.yml logs app -f
 
 # Остановка
-docker-compose -f docker-compose.prod.yml down
+docker compose -f docker-compose.prod.yml down
 
 # Полная перезагрузка
-docker-compose -f docker-compose.prod.yml down
-docker-compose -f docker-compose.prod.yml pull
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml down
+docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d
 ```
 
 ## 7. Настройка автоматических обновлений
@@ -118,8 +118,8 @@ docker-compose -f docker-compose.prod.yml up -d
 cat > update.sh << 'EOF'
 #!/bin/bash
 cd /opt/tnc-website
-docker-compose -f docker-compose.prod.yml pull
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d
 docker image prune -f
 EOF
 

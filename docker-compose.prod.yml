@@ -40,6 +40,6 @@ networks:
   tnc-network:
     driver: bridge
 
-# Команды для обновления:
-# docker-compose -f docker-compose.prod.yml pull  # Загрузка новых образов
-# docker-compose -f docker-compose.prod.yml up -d # Перезапуск с новыми образами
+# Команды для обновления (Docker Compose V2):
+# docker compose -f docker-compose.prod.yml pull   # Загрузка новых образов
+# docker compose -f docker-compose.prod.yml up -d  # Перезапуск с новыми образами
