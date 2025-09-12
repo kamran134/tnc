@@ -1,5 +1,6 @@
 # Продакшн конфигурация Docker Compose
 # Используйте этот файл на сервере для production деплоя
+# Образ автоматически собирается в GitHub Actions и загружается в GHCR
 
 version: '3.8'
 
@@ -16,6 +17,8 @@ services:
     # Не экспонируем порт напрямую, только через nginx
     expose:
       - "3000"
+    # Автоматический перезапуск при обновлении образа
+    pull_policy: always
 
   nginx:
     image: nginx:alpine
@@ -37,5 +40,6 @@ networks:
   tnc-network:
     driver: bridge
 
-# Использование:
-# docker-compose -f docker-compose.prod.yml up -d
+# Команды для обновления:
+# docker-compose -f docker-compose.prod.yml pull  # Загрузка новых образов
+# docker-compose -f docker-compose.prod.yml up -d # Перезапуск с новыми образами

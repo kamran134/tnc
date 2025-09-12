@@ -2,7 +2,17 @@
 
 ## Обзор системы деплоя
 
-Этот проект настроен для автоматического деплоя через GitHub Actions в Docker контейнерах. При каждом push в ветку `main` запускается процесс сборки и автоматического деплоя на сервер.
+Этот проект настроен для автоматического деплоя через GitHub Actions с использованием GitHub Container Registry (GHCR). При каждом push в ветку `main`:
+
+1. **Сборка образа** происходит на GitHub Actions
+2. **Готовый образ** сохраняется в GHCR (ghcr.io)
+3. **На сервере** автоматически загружается новый образ и перезапускается приложение
+
+**Преимущества такого подхода:**
+- ✅ Сервер не тратит ресурсы на сборку
+- ✅ Быстрый деплой (только загрузка готового образа)
+- ✅ Единый образ для всех сред
+- ✅ Версионирование образов в registry
 
 ## Архитектура
 
@@ -51,12 +61,23 @@ sudo mkdir -p /opt/tnc-website
 sudo chown $USER:$USER /opt/tnc-website
 cd /opt/tnc-website
 
-# Клонирование репозитория
-git clone https://github.com/kamran134/tnc.git .
+# Создание необходимых файлов (НЕ нужно клонировать весь репозиторий!)
+# Создаем только docker-compose.prod.yml и nginx.conf
+
+# Скачиваем production конфигурацию
+curl -o docker-compose.prod.yml https://raw.githubusercontent.com/kamran134/tnc/main/docker-compose.prod.yml
 
 # Создание необходимых директорий
 mkdir -p ssl logs
+
+# Авторизация в GHCR для загрузки образов
+docker login ghcr.io -u kamran134
+
+# Первый запуск (загрузка образа из GHCR)
+docker-compose -f docker-compose.prod.yml up -d
 ```
+
+**Важно:** На сервере НЕ нужно клонировать репозиторий и собирать проект. Мы используем готовые образы из GHCR!
 
 ### Настройка Nginx (опционально, для SSL и кастомной конфигурации)
 
@@ -150,6 +171,8 @@ cat ~/.ssh/deploy_key.pub >> ~/.ssh/authorized_keys
 | `SSH_PRIVATE_KEY` | Приватный SSH ключ | Содержимое `~/.ssh/deploy_key` |
 | `PORT` | SSH порт (опционально) | `22` |
 
+**Примечание:** `GITHUB_TOKEN` автоматически доступен в Actions и используется для авторизации в GHCR.
+
 ### Настройка GitHub Packages
 
 Убедитесь, что в настройках репозитория включен GitHub Packages и у Actions есть права на запись в registry.
@@ -178,27 +201,31 @@ cat ~/.ssh/deploy_key.pub >> ~/.ssh/authorized_keys
 
 1. **Push в main ветку** → Запускается GitHub Actions
 2. **Тестирование** → Проверка кода и типов
-3. **Сборка образа** → Docker build и push в registry
-4. **Деплой на сервер** → SSH подключение и обновление
+3. **Сборка образа** → Docker build на GitHub runners
+4. **Push в GHCR** → Готовый образ сохраняется в ghcr.io/kamran134/tnc
+5. **Деплой на сервер** → SSH подключение, pull нового образа, restart контейнеров
 
 ### Ручной деплой
 
 ```bash
-# На сервере
+# На сервере (без git репозитория!)
 cd /opt/tnc-website
 
-# Остановка текущих контейнеров
-docker-compose down
+# Авторизация в GHCR
+echo "YOUR_GITHUB_TOKEN" | docker login ghcr.io -u kamran134 --password-stdin
 
-# Обновление кода
-git pull origin main
+# Остановка контейнеров
+docker-compose -f docker-compose.prod.yml down
 
-# Сборка и запуск новых контейнеров
-docker-compose up -d --build
+# Загрузка нового образа из GHCR
+docker-compose -f docker-compose.prod.yml pull
+
+# Запуск с новым образом
+docker-compose -f docker-compose.prod.yml up -d
 
 # Проверка статуса
-docker-compose ps
-docker-compose logs -f
+docker-compose -f docker-compose.prod.yml ps
+docker-compose -f docker-compose.prod.yml logs -f
 ```
 
 ## 5. Мониторинг и обслуживание

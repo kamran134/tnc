@@ -1,6 +1,22 @@
 # 🐳 Docker Quick Start для TnC Website
 
-## Быстрый запуск в разработке
+## 🚀 Быстрый деплой на сервер (GHCR)
+
+```bash
+# Создание директории
+sudo mkdir -p /opt/tnc-website && cd /opt/tnc-website
+
+# Скачивание конфигурации
+curl -o docker-compose.prod.yml https://raw.githubusercontent.com/kamran134/tnc/main/docker-compose.prod.yml
+
+# Авторизация в GHCR
+docker login ghcr.io -u kamran134
+
+# Запуск приложения (образ загружается из GHCR)
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+## 💻 Локальная разработка
 
 ```bash
 # Клонировать репозиторий
@@ -11,7 +27,7 @@ cd tnc
 npm run docker:dev
 ```
 
-## Локальная сборка и тестирование
+## 🔧 Локальная сборка и тестирование
 
 ```bash
 # Собрать Docker образ
@@ -27,15 +43,17 @@ npm run docker:stop
 npm run docker:clean
 ```
 
-## Production деплой
+## 🔄 Обновление на сервере
 
 ```bash
-# На сервере
+# Загрузка нового образа
+docker-compose -f docker-compose.prod.yml pull
+
+# Перезапуск с новым образом
 docker-compose -f docker-compose.prod.yml up -d
 
-# Мониторинг
-docker-compose logs -f
-docker-compose ps
+# Проверка логов
+docker-compose -f docker-compose.prod.yml logs -f
 ```
 
 ## Полезные команды
