@@ -6,9 +6,14 @@ on:
   pull_request:
     branches: [ main ]
 
+# Добавляем права для работы с packages
+permissions:
+  contents: read
+  packages: write
+
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: kamran134/tnc
 
 jobs:
   test:
@@ -64,6 +69,11 @@ jobs:
           type=ref,event=branch
           type=sha,prefix={{branch}}-
           type=raw,value=latest,enable={{is_default_branch}}
+        # Преобразуем в lowercase для GHCR
+        flavor: |
+          latest=auto
+          prefix=
+          suffix=
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
