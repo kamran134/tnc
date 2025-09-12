@@ -5,6 +5,8 @@ const nextConfig = {
   },
   // Включаем standalone output для Docker оптимизации
   output: 'standalone',
+  // Исправляем warning о workspace root
+  outputFileTracingRoot: require('path').join(__dirname),
   // Опциональные оптимизации
   experimental: {
     optimizePackageImports: ['@heroicons/react'],

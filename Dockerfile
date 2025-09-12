@@ -1,8 +1,8 @@
 # Dockerfile для TnC Tax & Consulting Website
 # Multi-stage сборка для оптимизации размера образа
 
-# Базовый образ для сборки
-FROM node:18-alpine AS base
+# Базовый образ для сборки - используем более новую версию
+FROM node:20-alpine AS base
 
 # Установка зависимостей только когда необходимо
 FROM base AS deps
@@ -12,7 +12,8 @@ WORKDIR /app
 
 # Копирование файлов зависимостей
 COPY package*.json ./
-RUN npm ci --only=production
+# Устанавливаем ВСЕ зависимости (включая devDependencies для сборки)
+RUN npm ci
 
 # Стадия сборки
 FROM base AS builder
