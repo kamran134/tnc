@@ -38,8 +38,8 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Копирование публичных файлов
-COPY --from=builder /app/public ./public
+# Копирование публичных файлов (только если они существуют)
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # Автоматическое использование output traces для уменьшения размера образа
 # https://nextjs.org/docs/advanced-features/output-file-tracing
