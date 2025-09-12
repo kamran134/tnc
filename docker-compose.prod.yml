@@ -1,0 +1,41 @@
+# Продакшн конфигурация Docker Compose
+# Используйте этот файл на сервере для production деплоя
+
+version: '3.8'
+
+services:
+  app:
+    image: ghcr.io/kamran134/tnc:latest
+    container_name: tnc-website-prod
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+    networks:
+      - tnc-network
+    # Не экспонируем порт напрямую, только через nginx
+    expose:
+      - "3000"
+
+  nginx:
+    image: nginx:alpine
+    container_name: tnc-nginx-prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - app
+    networks:
+      - tnc-network
+
+networks:
+  tnc-network:
+    driver: bridge
+
+# Использование:
+# docker-compose -f docker-compose.prod.yml up -d

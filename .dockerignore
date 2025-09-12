@@ -1,0 +1,80 @@
+# Исключаем из Docker образа ненужные файлы
+
+# Зависимости
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js
+.next/
+out/
+
+# Производственная сборка
+/build
+
+# Переменные окружения
+.env*.local
+.env
+
+# Логи
+*.log
+
+# Runtime данные
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Директория для инструментов и библиотек
+.npm
+.eslintcache
+
+# Microbundle кэш
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Временные папки
+.tmp
+.temp
+
+# Кэши редакторов
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Тестирование
+coverage/
+.nyc_output
+
+# Storybook
+storybook-static
+
+# Docker файлы
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Git
+.git
+.gitignore
+
+# CI/CD
+.github/
+
+# Документация разработки
+README.md
+CHANGELOG.md
+CONTRIBUTING.md
