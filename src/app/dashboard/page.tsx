@@ -1,10 +1,62 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
+import { adminDashboardService, DashboardDataDto } from '@/lib/api'
 
 export default function DashboardPage() {
+  const router = useRouter()
+  const { user, logout, isLoading: authLoading } = useAuth()
   const [activeTab, setActiveTab] = useState('overview')
+  const [stats, setStats] = useState<DashboardDataDto | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/dashboard/login')
+    }
+  }, [user, authLoading, router])
+
+  useEffect(() => {
+    loadDashboardStats()
+  }, [])
+
+  const loadDashboardStats = async () => {
+    try {
+      setIsLoading(true)
+      const data = await adminDashboardService.getStatistics()
+      setStats(data)
+      setError(null)
+    } catch (err) {
+      setError('Failed to load dashboard statistics')
+      console.error('Dashboard error:', err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      router.push('/dashboard/login')
+    } catch (err) {
+      console.error('Logout error:', err)
+    }
+  }
+
+  if (authLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
 
   const tabs = [
     { id: 'overview', name: 'Overview', icon: '📊' },
@@ -27,9 +79,20 @@ export default function DashboardPage() {
               </Link>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">Welcome, Admin</span>
+              <span className="text-sm text-gray-600">
+                Welcome, {user.firstName} {user.lastName}
+              </span>
+              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                {user.role}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="text-sm text-red-600 hover:text-red-700 font-medium"
+              >
+                Logout
+              </button>
               <Link href="/" className="text-primary-600 hover:text-primary-700">
-                ← Back to Website
+                ← Website
               </Link>
             </div>
           </div>
@@ -62,7 +125,9 @@ export default function DashboardPage() {
 
         {/* Main Content */}
         <main className="flex-1 p-8">
-          {activeTab === 'overview' && <OverviewTab />}
+          {activeTab === 'overview' && (
+            <OverviewTab stats={stats} isLoading={isLoading} error={error} />
+          )}
           {activeTab === 'content' && <ContentManagementTab />}
           {activeTab === 'services' && <ServicesTab />}
           {activeTab === 'news' && <NewsTab />}
@@ -74,12 +139,57 @@ export default function DashboardPage() {
   )
 }
 
-function OverviewTab() {
-  const stats = [
-    { label: 'Total Services', value: '5', change: '+2 this month' },
-    { label: 'News Articles', value: '12', change: '+3 this week' },
-    { label: 'Job Openings', value: '3', change: 'Active positions' },
-    { label: 'Contact Inquiries', value: '24', change: '+8 this week' },
+function OverviewTab({ 
+  stats, 
+  isLoading, 
+  error 
+}: { 
+  stats: DashboardDataDto | null
+  isLoading: boolean
+  error: string | null
+}) {
+  if (isLoading) {
+    return (
+      <div className="text-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">Loading statistics...</p>
+      </div>
+    )
+  }
+
+  if (error || !stats) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-600">{error || 'Failed to load statistics'}</p>
+      </div>
+    )
+  }
+
+  const statCards = [
+    { 
+      label: 'Total Services', 
+      value: stats.totalServices.toString(), 
+      active: stats.activeServices.toString(),
+      change: `${stats.activeServices} active`
+    },
+    { 
+      label: 'News Articles', 
+      value: stats.totalNews.toString(), 
+      active: stats.publishedNews.toString(),
+      change: `${stats.publishedNews} published` 
+    },
+    { 
+      label: 'Job Openings', 
+      value: stats.totalCareers.toString(), 
+      active: stats.activeCareers.toString(),
+      change: `${stats.activeCareers} active positions` 
+    },
+    { 
+      label: 'Contact Inquiries', 
+      value: stats.totalContacts.toString(), 
+      active: stats.newContacts.toString(),
+      change: `${stats.newContacts} new` 
+    },
   ]
 
   return (
@@ -87,7 +197,7 @@ function OverviewTab() {
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard Overview</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat, index) => (
+        {statCards.map((stat, index) => (
           <div key={index} className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
               {stat.label}

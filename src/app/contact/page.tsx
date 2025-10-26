@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import { contactService } from '@/lib/api'
+import { ContactDto } from '@/types/api'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -13,12 +15,47 @@ export default function ContactPage() {
     service: '',
     message: ''
   })
+  const [submitting, setSubmitting] = useState(false)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission here
-    console.log('Form submitted:', formData)
-    alert('Thank you for your message! We will get back to you soon.')
+    
+    try {
+      setSubmitting(true)
+      setSubmitError(null)
+      
+      const contactData: Omit<ContactDto, 'id' | 'status' | 'submittedAt' | 'notes' | 'deleted' | 'deletedAt' | 'deletedBy'> = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        company: formData.company || undefined,
+        subject: formData.service || 'General Inquiry',
+        message: formData.message
+      }
+      
+      await contactService.submit(contactData)
+      
+      setSubmitSuccess(true)
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        company: '',
+        service: '',
+        message: ''
+      })
+      
+      setTimeout(() => {
+        setSubmitSuccess(false)
+      }, 5000)
+    } catch (err) {
+      console.error('Failed to submit contact form:', err)
+      setSubmitError('Failed to send your message. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -33,7 +70,7 @@ export default function ContactPage() {
       <Header />
       <main>
         {/* Hero Section */}
-        <section className="bg-gradient-to-r from-primary-600 to-primary-700 text-white section-padding">
+        <section className="bg-gradient-to-r from-sky-400 to-sky-500 text-white section-padding">
           <div className="container-max">
             <div className="text-center max-w-4xl mx-auto">
               <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -156,11 +193,24 @@ export default function ContactPage() {
                     ></textarea>
                   </div>
                   
+                  {submitSuccess && (
+                    <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-md">
+                      Thank you for your message! We will get back to you soon.
+                    </div>
+                  )}
+                  
+                  {submitError && (
+                    <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md">
+                      {submitError}
+                    </div>
+                  )}
+                  
                   <button
                     type="submit"
-                    className="w-full btn-primary"
+                    disabled={submitting}
+                    className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Send Message
+                    {submitting ? 'Sending...' : 'Send Message'}
                   </button>
                 </form>
               </div>

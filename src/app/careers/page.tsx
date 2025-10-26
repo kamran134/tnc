@@ -1,43 +1,50 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import { CareerDto } from '@/types/api'
+import { careersService } from '@/lib/api'
 
 export default function CareersPage() {
-  const jobOpenings = [
-    {
-      id: 1,
-      title: 'Senior Tax Consultant',
-      department: 'Tax Services',
-      location: 'Baku, Azerbaijan',
-      type: 'Full-time',
-      experience: '5+ years',
-      description: 'We are seeking an experienced tax consultant to join our growing team and provide expert tax advisory services to our clients.'
-    },
-    {
-      id: 2,
-      title: 'Junior Legal Associate',
-      department: 'Legal Services',
-      location: 'Baku, Azerbaijan',
-      type: 'Full-time',
-      experience: '1-3 years',
-      description: 'Join our legal team as a junior associate to support various corporate legal matters and gain experience in a dynamic environment.'
-    },
-    {
-      id: 3,
-      title: 'Accounting Specialist',
-      department: 'Accounting',
-      location: 'Baku, Azerbaijan',
-      type: 'Full-time',
-      experience: '2-4 years',
-      description: 'Looking for a detail-oriented accounting specialist to handle client bookkeeping, financial reporting, and compliance matters.'
+  const [jobOpenings, setJobOpenings] = useState<CareerDto[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    loadJobs()
+  }, [])
+
+  const loadJobs = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const response = await careersService.getAll({
+        lang: 'az'
+      })
+      setJobOpenings(response.content)
+    } catch (err) {
+      console.error('Failed to load job openings:', err)
+      setError('Failed to load job openings')
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  }
 
   return (
     <div className="min-h-screen">
       <Header />
       <main>
         {/* Hero Section */}
-        <section className="bg-gradient-to-r from-primary-600 to-primary-700 text-white section-padding">
+        <section className="bg-gradient-to-r from-sky-400 to-sky-500 text-white section-padding">
           <div className="container-max">
             <div className="text-center max-w-4xl mx-auto">
               <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -111,60 +118,90 @@ export default function CareersPage() {
               </p>
             </div>
             
-            <div className="grid gap-6">
-              {jobOpenings.map((job) => (
-                <div
-                  key={job.id}
-                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-8"
-                >
-                  <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                        {job.title}
-                      </h3>
-                      
-                      <div className="flex flex-wrap gap-4 mb-4 text-sm text-gray-600">
-                        <span className="flex items-center">
-                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                          </svg>
-                          {job.department}
-                        </span>
-                        <span className="flex items-center">
-                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          {job.location}
-                        </span>
-                        <span className="flex items-center">
-                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          {job.type}
-                        </span>
-                        <span className="flex items-center">
-                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                          </svg>
-                          {job.experience}
-                        </span>
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <p className="text-red-600">{error}</p>
+              </div>
+            ) : jobOpenings.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600">No job openings available at the moment</p>
+              </div>
+            ) : (
+              <div className="grid gap-6">
+                {jobOpenings.map((job) => (
+                  <div
+                    key={job.id}
+                    className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-8"
+                  >
+                    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
+                      <div className="flex-1">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                          {job.title}
+                        </h3>
+                        
+                        <div className="flex flex-wrap gap-4 mb-4 text-sm text-gray-600">
+                          <span className="flex items-center">
+                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            {job.location}
+                          </span>
+                          {job.employmentType && (
+                            <span className="flex items-center">
+                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              {job.employmentType}
+                            </span>
+                          )}
+                          {job.salaryRange && (
+                            <span className="flex items-center">
+                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              {job.salaryRange}
+                            </span>
+                          )}
+                          <span className="flex items-center">
+                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            Posted: {formatDate(job.postDate)}
+                          </span>
+                        </div>
+                        
+                        {job.excerpt && (
+                          <p className="text-gray-700 mb-4">
+                            {job.excerpt}
+                          </p>
+                        )}
+                        
+                        {job.requirements && (
+                          <div className="mb-6">
+                            <h4 className="font-semibold text-gray-900 mb-2">Requirements:</h4>
+                            <div 
+                              className="text-gray-700 prose prose-sm max-w-none"
+                              dangerouslySetInnerHTML={{ __html: job.requirements }}
+                            />
+                          </div>
+                        )}
                       </div>
                       
-                      <p className="text-gray-700 mb-6">
-                        {job.description}
-                      </p>
-                    </div>
-                    
-                    <div className="lg:ml-8">
-                      <button className="btn-primary">
-                        Apply Now
-                      </button>
+                      <div className="lg:ml-8">
+                        <button className="btn-primary">
+                          Apply Now
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
             
             <div className="text-center mt-12">
               <div className="bg-white p-8 rounded-lg shadow-md">

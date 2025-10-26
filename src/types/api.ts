@@ -1,0 +1,472 @@
+// Common Types
+export type LanguageCode = 'az' | 'en' | 'ru';
+export type UserRole = 'ADMIN' | 'MODERATOR';
+export type ContactStatus = 'NEW' | 'READ' | 'REPLIED' | 'CLOSED';
+export type FileType = 'NEWS_IMAGE' | 'CAREER_IMAGE' | 'SERVICE_IMAGE' | 'COMPANY_LOGO' | 'USER_AVATAR' | 'DOCUMENT' | 'OTHER';
+
+// Pagination
+export interface PageableObject {
+  offset: number;
+  sort: SortObject[];
+  unpaged: boolean;
+  pageNumber: number;
+  pageSize: number;
+  paged: boolean;
+}
+
+export interface SortObject {
+  direction: string;
+  nullHandling: string;
+  ascending: boolean;
+  property: string;
+  ignoreCase: boolean;
+}
+
+export interface Page<T> {
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  content: T[];
+  number: number;
+  sort: SortObject[];
+  first: boolean;
+  last: boolean;
+  numberOfElements: number;
+  pageable: PageableObject;
+  empty: boolean;
+}
+
+// Translation DTOs
+export interface ServiceTranslationDto {
+  id?: number;
+  languageCode: LanguageCode;
+  title: string;
+  content: string;
+  excerpt?: string;
+}
+
+export interface NewsTranslationDto {
+  id?: number;
+  languageCode: LanguageCode;
+  title: string;
+  slug?: string;
+  content: string;
+  excerpt?: string;
+}
+
+export interface CareerTranslationDto {
+  id?: number;
+  languageCode: LanguageCode;
+  title: string;
+  slug?: string;
+  content: string;
+  excerpt?: string;
+  requirements?: string;
+}
+
+export interface MembershipTranslationDto {
+  id?: number;
+  languageCode: LanguageCode;
+  title: string;
+  content?: string;
+  excerpt?: string;
+}
+
+export interface CoreValueTranslationDto {
+  id?: number;
+  languageCode: LanguageCode;
+  title: string;
+  content: string;
+  excerpt?: string;
+}
+
+export interface HomeContentTranslationDto {
+  id?: number;
+  languageCode: LanguageCode;
+  title: string;
+  content?: string;
+  excerpt?: string;
+  mission: string;
+  vision: string;
+}
+
+export interface CompanyInfoTranslationDto {
+  id?: number;
+  languageCode: LanguageCode;
+  title: string;
+  content: string;
+  excerpt?: string;
+  mission: string;
+  vision: string;
+}
+
+// Public DTOs
+export interface ServiceDto {
+  id: number;
+  languageCode: LanguageCode;
+  title: string;
+  content: string;
+  excerpt?: string;
+  category: string;
+  iconUrl?: string;
+  sortOrder?: number;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deleted: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface NewsDto {
+  id: number;
+  languageCode: LanguageCode;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  imageUrl?: string;
+  author?: string;
+  publishDate: string;
+  published: boolean;
+  category?: string;
+  readTimeMinutes?: number;
+  tags?: string;
+  createdAt: string;
+  updatedAt: string;
+  deleted: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface CareerDto {
+  id: number;
+  languageCode: LanguageCode;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  requirements?: string;
+  location: string;
+  employmentType?: string;
+  salaryRange?: string;
+  postDate: string;
+  expiryDate?: string;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deleted: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface MembershipDto {
+  id: number;
+  languageCode: LanguageCode;
+  title: string;
+  content?: string;
+  excerpt?: string;
+  name: string;
+  fullName?: string;
+  logoUrl?: string;
+  websiteUrl?: string;
+  sortOrder?: number;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deleted: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface CoreValueDto {
+  id: number;
+  languageCode: LanguageCode;
+  title: string;
+  content: string;
+  excerpt?: string;
+  icon?: string;
+  sortOrder?: number;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deleted: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface HomeContentDto {
+  id: number;
+  languageCode: LanguageCode;
+  title: string;
+  content?: string;
+  excerpt?: string;
+  mission: string;
+  vision: string;
+  values: CoreValueDto[];
+  memberships: MembershipDto[];
+  createdAt: string;
+  updatedAt: string;
+  deleted: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface CompanyInfoDto {
+  id: number;
+  languageCode: LanguageCode;
+  title: string;
+  content: string;
+  excerpt?: string;
+  mission: string;
+  vision: string;
+  address: string;
+  phone: string;
+  email: string;
+  website?: string;
+  foundedYear?: string;
+  teamSize?: string;
+  createdAt: string;
+  updatedAt: string;
+  deleted: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface ContactDto {
+  id?: number;
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  subject?: string;
+  message: string;
+  submissionDate?: string;
+  status?: string;
+}
+
+// Admin DTOs
+export interface ServiceAdminDto {
+  id?: number;
+  category: string;
+  iconUrl?: string;
+  sortOrder?: number;
+  active?: boolean;
+  translations: ServiceTranslationDto[];
+  createdAt?: string;
+  updatedAt?: string;
+  deleted?: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface NewsAdminDto {
+  id?: number;
+  imageUrl?: string;
+  author?: string;
+  publishDate?: string;
+  published?: boolean;
+  category?: string;
+  readTimeMinutes?: number;
+  tags?: string;
+  translations: NewsTranslationDto[];
+  createdAt?: string;
+  updatedAt?: string;
+  deleted?: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface CareerAdminDto {
+  id?: number;
+  location?: string;
+  employmentType?: string;
+  salaryRange?: string;
+  postDate?: string;
+  expiryDate?: string;
+  active?: boolean;
+  translations: CareerTranslationDto[];
+  createdAt?: string;
+  updatedAt?: string;
+  deleted?: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface MembershipAdminDto {
+  id?: number;
+  name: string;
+  fullName?: string;
+  logoUrl?: string;
+  websiteUrl?: string;
+  sortOrder?: number;
+  active?: boolean;
+  translations: MembershipTranslationDto[];
+  createdAt?: string;
+  updatedAt?: string;
+  deleted?: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface CoreValueAdminDto {
+  id?: number;
+  icon?: string;
+  sortOrder?: number;
+  active?: boolean;
+  translations: CoreValueTranslationDto[];
+  createdAt?: string;
+  updatedAt?: string;
+  deleted?: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface HomeContentAdminDto {
+  id?: number;
+  translations: HomeContentTranslationDto[];
+  createdAt?: string;
+  updatedAt?: string;
+  deleted?: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface CompanyInfoAdminDto {
+  id?: number;
+  address: string;
+  phone: string;
+  email: string;
+  website?: string;
+  foundedYear?: string;
+  teamSize?: string;
+  translations: CompanyInfoTranslationDto[];
+  createdAt?: string;
+  updatedAt?: string;
+  deleted?: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface ContactAdminDto extends ContactDto {
+  adminNotes?: string;
+  repliedAt?: string;
+  repliedBy?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  deleted?: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+// Auth DTOs
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+  expiresIn: number;
+  user: UserInfo;
+}
+
+export interface UserInfo {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  role: UserRole;
+  lastLogin?: string;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface CreateUserRequest {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  role: UserRole;
+}
+
+export interface UpdateUserRequest {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  role?: UserRole;
+  active?: boolean;
+}
+
+export interface UserDto {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  role: UserRole;
+  active: boolean;
+  lastLogin?: string;
+  failedLoginAttempts: number;
+  lockedUntil?: string;
+  createdAt: string;
+  updatedAt: string;
+  accountLocked: boolean;
+}
+
+// File Upload DTOs
+export interface FileUploadDto {
+  id: number;
+  fileName: string;
+  originalFileName: string;
+  filePath: string;
+  fileUrl: string;
+  contentType: string;
+  fileSize: number;
+  uploadDate: string;
+  uploadedBy: string;
+}
+
+export interface FileStatistics {
+  totalFiles: number;
+  cleanFiles: number;
+  infectedFiles: number;
+  pendingScans: number;
+  totalSizeBytes: number;
+}
+
+// Dashboard DTOs
+export interface DashboardDataDto {
+  totalServices: number;
+  activeServices: number;
+  totalNews: number;
+  publishedNews: number;
+  totalCareers: number;
+  activeCareers: number;
+  totalContacts: number;
+  newContacts: number;
+}
+
+// API Response Types
+export type PageNewsDto = Page<NewsDto>;
+export type PageCareerDto = Page<CareerDto>;
+export type PageServiceAdminDto = Page<ServiceAdminDto>;
+export type PageNewsAdminDto = Page<NewsAdminDto>;
+export type PageCareerAdminDto = Page<CareerAdminDto>;
+export type PageMembershipAdminDto = Page<MembershipAdminDto>;
+export type PageCoreValueAdminDto = Page<CoreValueAdminDto>;
+export type PageContactAdminDto = Page<ContactAdminDto>;
+export type PageUserDto = Page<UserDto>;
+export type PageFileUploadDto = Page<FileUploadDto>;
+export type PageString = Page<string>;
