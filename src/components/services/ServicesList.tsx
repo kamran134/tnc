@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { LoadingSpinner, Alert, Card } from '@/components/ui'
 import { ServiceDto } from '@/types/api'
 import { servicesService } from '@/lib/api'
 
@@ -32,9 +33,7 @@ export default function ServicesList() {
     return (
       <section className="section-padding bg-gray-50">
         <div className="container-max">
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-          </div>
+          <LoadingSpinner />
         </div>
       </section>
     )
@@ -44,9 +43,7 @@ export default function ServicesList() {
     return (
       <section className="section-padding bg-gray-50">
         <div className="container-max">
-          <div className="text-center py-12">
-            <p className="text-red-600">{error}</p>
-          </div>
+          <Alert type="error" message={error} />
         </div>
       </section>
     )

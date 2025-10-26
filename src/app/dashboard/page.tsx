@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { adminDashboardService, DashboardDataDto } from '@/lib/api'
+import { LoadingSpinner, Alert } from '@/components/ui'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -150,17 +151,16 @@ function OverviewTab({
 }) {
   if (isLoading) {
     return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Loading statistics...</p>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <LoadingSpinner />
       </div>
     )
   }
 
   if (error || !stats) {
     return (
-      <div className="text-center py-12">
-        <p className="text-red-600">{error || 'Failed to load statistics'}</p>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Alert type="error" message={error || 'Failed to load statistics'} />
       </div>
     )
   }

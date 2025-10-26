@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import { PageHero, Alert, Button, Card } from '@/components/ui'
 import { contactService } from '@/lib/api'
 import { ContactDto } from '@/types/api'
 
@@ -69,26 +70,18 @@ export default function ContactPage() {
     <div className="min-h-screen">
       <Header />
       <main>
-        {/* Hero Section */}
-        <section className="bg-gradient-to-r from-sky-400 to-sky-500 text-white section-padding">
-          <div className="container-max">
-            <div className="text-center max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                Contact Us
-              </h1>
-              <p className="text-xl md:text-2xl text-primary-100">
-                Get in touch with our experts for professional consultation
-              </p>
-            </div>
-          </div>
-        </section>
+        {/* Hero Section - Refactored to use PageHero component */}
+        <PageHero 
+          title="Contact Us"
+          description="Get in touch with our experts for professional consultation"
+        />
 
         {/* Contact Form & Info */}
         <section className="section-padding bg-gray-50">
           <div className="container-max">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Contact Form */}
-              <div className="bg-white p-8 rounded-lg shadow-md">
+              <Card>
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">
                   Send us a Message
                 </h2>
@@ -194,30 +187,26 @@ export default function ContactPage() {
                   </div>
                   
                   {submitSuccess && (
-                    <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-md">
-                      Thank you for your message! We will get back to you soon.
-                    </div>
+                    <Alert type="success" message="Thank you for your message! We will get back to you soon." />
                   )}
                   
                   {submitError && (
-                    <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md">
-                      {submitError}
-                    </div>
+                    <Alert type="error" message={submitError} />
                   )}
                   
-                  <button
+                  <Button
                     type="submit"
                     disabled={submitting}
-                    className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                    fullWidth
                   >
                     {submitting ? 'Sending...' : 'Send Message'}
-                  </button>
+                  </Button>
                 </form>
-              </div>
+              </Card>
 
               {/* Contact Information */}
               <div className="space-y-8">
-                <div className="bg-white p-8 rounded-lg shadow-md">
+                <Card>
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">
                     Contact Information
                   </h2>
@@ -270,7 +259,7 @@ export default function ContactPage() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </Card>
                 
                 <div className="bg-primary-50 p-8 rounded-lg">
                   <h3 className="text-xl font-bold text-gray-900 mb-4">
@@ -279,9 +268,9 @@ export default function ContactPage() {
                   <p className="text-gray-700 mb-6">
                     Ready to discuss your specific needs? Schedule a consultation with one of our experts.
                   </p>
-                  <button className="btn-primary">
+                  <Button>
                     Book Consultation
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

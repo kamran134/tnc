@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { membershipsService, MembershipDto } from '@/lib/api';
+import { LoadingSpinner, Alert } from '@/components/ui';
 
 export default function Memberships() {
   const [memberships, setMemberships] = useState<MembershipDto[]>([]);
@@ -29,15 +30,24 @@ export default function Memberships() {
   if (isLoading) {
     return (
       <section className="section-padding bg-gray-50">
-        <div className="container-max text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading memberships...</p>
+        <div className="container-max">
+          <LoadingSpinner />
         </div>
       </section>
     );
   }
 
-  if (error || memberships.length === 0) {
+  if (error) {
+    return (
+      <section className="section-padding bg-gray-50">
+        <div className="container-max">
+          <Alert type="error" message={error} />
+        </div>
+      </section>
+    );
+  }
+
+  if (memberships.length === 0) {
     return null; // Don't show section if no memberships
   }
 

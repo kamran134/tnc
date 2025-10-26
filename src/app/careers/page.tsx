@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import { PageHero, LoadingSpinner, Alert, Button, Card, EmptyState } from '@/components/ui'
 import { CareerDto } from '@/types/api'
 import { careersService } from '@/lib/api'
 
@@ -43,19 +44,11 @@ export default function CareersPage() {
     <div className="min-h-screen">
       <Header />
       <main>
-        {/* Hero Section */}
-        <section className="bg-gradient-to-r from-sky-400 to-sky-500 text-white section-padding">
-          <div className="container-max">
-            <div className="text-center max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                Working at TnC
-              </h1>
-              <p className="text-xl md:text-2xl text-primary-100 mb-8">
-                At TnC each of us strives for better in everything we do. It&apos;s how we approach our work with each other and with our clients.
-              </p>
-            </div>
-          </div>
-        </section>
+        {/* Hero Section - Refactored to use PageHero component */}
+        <PageHero 
+          title="Working at TnC"
+          description="At TnC each of us strives for better in everything we do. It's how we approach our work with each other and with our clients."
+        />
 
         {/* Why Work With Us */}
         <section className="section-padding bg-white">
@@ -119,23 +112,17 @@ export default function CareersPage() {
             </div>
             
             {loading ? (
-              <div className="flex justify-center items-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-              </div>
+              <LoadingSpinner />
             ) : error ? (
-              <div className="text-center py-12">
-                <p className="text-red-600">{error}</p>
-              </div>
+              <Alert type="error" message={error} />
             ) : jobOpenings.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-600">No job openings available at the moment</p>
-              </div>
+              <EmptyState message="No job openings available at the moment" />
             ) : (
               <div className="grid gap-6">
                 {jobOpenings.map((job) => (
-                  <div
+                  <Card
                     key={job.id}
-                    className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-8"
+                    hover
                   >
                     <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
                       <div className="flex-1">
@@ -193,18 +180,18 @@ export default function CareersPage() {
                       </div>
                       
                       <div className="lg:ml-8">
-                        <button className="btn-primary">
+                        <Button>
                           Apply Now
-                        </button>
+                        </Button>
                       </div>
                     </div>
-                  </div>
+                  </Card>
                 ))}
               </div>
             )}
             
             <div className="text-center mt-12">
-              <div className="bg-white p-8 rounded-lg shadow-md">
+              <Card>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">
                   Don&apos;t See the Right Position?
                 </h3>
@@ -212,10 +199,10 @@ export default function CareersPage() {
                   We&apos;re always looking for talented individuals to join our team. 
                   Send us your resume and let us know how you can contribute to our mission.
                 </p>
-                <button className="btn-secondary">
+                <Button variant="secondary">
                   Submit Your Resume
-                </button>
-              </div>
+                </Button>
+              </Card>
             </div>
           </div>
         </section>

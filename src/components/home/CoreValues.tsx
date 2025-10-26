@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { CoreValueDto } from '@/types/api'
 import { coreValuesService } from '@/lib/api'
+import { LoadingSpinner, Alert } from '@/components/ui'
 
 export default function CoreValues() {
   const [values, setValues] = useState<CoreValueDto[]>([])
@@ -31,9 +32,7 @@ export default function CoreValues() {
     return (
       <section className="section-padding bg-white">
         <div className="container-max">
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-          </div>
+          <LoadingSpinner />
         </div>
       </section>
     )
@@ -43,9 +42,7 @@ export default function CoreValues() {
     return (
       <section className="section-padding bg-white">
         <div className="container-max">
-          <div className="text-center py-12">
-            <p className="text-red-600">{error}</p>
-          </div>
+          <Alert type="error" message={error} />
         </div>
       </section>
     )

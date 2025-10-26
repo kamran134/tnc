@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import { PageHero, LoadingSpinner, Alert, Button, Card, EmptyState } from '@/components/ui'
 import { NewsDto } from '@/types/api'
 import { newsService } from '@/lib/api'
 
@@ -63,43 +64,26 @@ export default function NewsPage() {
     <div className="min-h-screen">
       <Header />
       <main>
-        {/* Hero Section */}
-        <section className="bg-gradient-to-r from-sky-400 to-sky-500 text-white section-padding">
-          <div className="container-max">
-            <div className="text-center max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                News & Insights
-              </h1>
-              <p className="text-xl md:text-2xl text-primary-100">
-                Stay updated with the latest tax, legal, and business insights
-              </p>
-            </div>
-          </div>
-        </section>
+        {/* Hero Section - Refactored to use PageHero component */}
+        <PageHero 
+          title="News & Insights"
+          description="Stay updated with the latest tax, legal, and business insights"
+        />
 
         {/* News Articles */}
         <section className="section-padding bg-gray-50">
           <div className="container-max">
             {loading && currentPage === 0 ? (
-              <div className="flex justify-center items-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-              </div>
+              <LoadingSpinner />
             ) : error ? (
-              <div className="text-center py-12">
-                <p className="text-red-600">{error}</p>
-              </div>
+              <Alert type="error" message={error} />
             ) : newsArticles.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-600">No news articles available</p>
-              </div>
+              <EmptyState message="No news articles available" />
             ) : (
               <>
                 <div className="grid gap-8 md:gap-12">
                   {newsArticles.map((article) => (
-                    <article
-                      key={article.id}
-                      className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden"
-                    >
+                    <Card key={article.id} hover padding="none" className="overflow-hidden">
                       {article.imageUrl && (
                         <div className="w-full h-64 bg-gray-200">
                           <img
@@ -142,19 +126,18 @@ export default function NewsPage() {
                           Read More →
                         </button>
                       </div>
-                    </article>
+                    </Card>
                   ))}
                 </div>
                 
                 {hasMore && (
                   <div className="text-center mt-12">
-                    <button 
-                      className="btn-primary"
+                    <Button 
                       onClick={loadMore}
                       disabled={loading}
                     >
                       {loading ? 'Loading...' : 'Load More Articles'}
-                    </button>
+                    </Button>
                   </div>
                 )}
               </>
