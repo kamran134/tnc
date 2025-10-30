@@ -48,6 +48,36 @@ pids
 
 # OS
 .DS_Store
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# GitHub
+.github
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Documentation
+*.md
+docs/
+
+# Tests
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+__tests__/
+coverage/
+
+# CI/CD (не нужно в образе)
+.gitlab-ci.yml
+.travis.yml
+azure-pipelines.yml
 .DS_Store?
 ._*
 .Spotlight-V100

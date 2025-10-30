@@ -12,7 +12,7 @@ export default function Header() {
     { name: 'News', href: '/news' },
     { name: 'Careers', href: '/careers' },
     { name: 'Contact', href: '/contact' },
-    { name: 'Dashboard', href: '/dashboard' }
+    // Dashboard скрыт - доступ только через прямой URL /dashboard
   ]
 
   return (
