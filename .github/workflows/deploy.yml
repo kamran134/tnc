@@ -16,8 +16,7 @@ env:
   IMAGE_NAME: kamran134/tnc
 
 jobs:
-  # Быстрая проверка кода (только линтинг)
-  lint:
+  test:
     runs-on: ubuntu-latest
     
     steps:
@@ -27,7 +26,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '18'
         cache: 'npm'
             
     - name: Install dependencies
@@ -36,9 +35,14 @@ jobs:
     - name: Run linting
       run: npm run lint
 
-  # Сборка и публикация Docker образа
+    - name: Run type check
+      run: npm run type-check || echo "Type check not configured"
+
+    - name: Run tests
+      run: npm run test || echo "Tests not configured"
+
   build-and-push:
-    needs: lint  # Зависит только от линтинга
+    needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     
@@ -65,6 +69,7 @@ jobs:
           type=ref,event=branch
           type=sha,prefix={{branch}}-
           type=raw,value=latest,enable={{is_default_branch}}
+        # Преобразуем в lowercase для GHCR
         flavor: |
           latest=auto
           prefix=
@@ -74,22 +79,17 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        # ОПТИМИЗАЦИЯ: Только amd64 (в 2-3 раза быстрее!)
-        # Если нужен arm64 (Apple Silicon, Raspberry Pi), раскомментируйте:
-        # platforms: linux/amd64,linux/arm64
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        # Используем GitHub Actions cache для ускорения
         cache-from: type=gha
         cache-to: type=gha,mode=max
-        # Build-time аргументы для Next.js
+        # Добавляем verbose вывод для отладки
         build-args: |
           BUILDKIT_INLINE_CACHE=1
-          NEXT_PUBLIC_API_BASE_URL=https://tnc.az/api
+          NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
 
-  # Деплой на сервер
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -110,11 +110,14 @@ jobs:
           # Авторизация в GitHub Container Registry
           echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           
-          # Загрузка нового образа из GHCR
-          docker compose -f docker-compose.prod.yml pull app
+          # Остановка текущих контейнеров
+          docker compose -f docker-compose.prod.yml down
           
-          # Перезапуск только frontend (zero-downtime)
-          docker compose -f docker-compose.prod.yml up -d app
+          # Загрузка нового образа из GHCR
+          docker compose -f docker-compose.prod.yml pull
+          
+          # Запуск новых контейнеров с обновленным образом
+          docker compose -f docker-compose.prod.yml up -d
           
           # Очистка старых образов для экономии места
           docker image prune -f

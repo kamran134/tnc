@@ -24,8 +24,8 @@ COPY . .
 # Отключение телеметрии Next.js
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# ВАЖНО: Build-time аргумент для API URL
-ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
+# 👇 Добавляем это:
+ARG NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
 
 # Сборка приложения
