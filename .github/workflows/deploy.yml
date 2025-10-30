@@ -88,6 +88,7 @@ jobs:
         # Добавляем verbose вывод для отладки
         build-args: |
           BUILDKIT_INLINE_CACHE=1
+          NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
 
   deploy:
     needs: build-and-push
