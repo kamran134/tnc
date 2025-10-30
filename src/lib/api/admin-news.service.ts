@@ -20,7 +20,7 @@ export const adminNewsService = {
     endDate?: string;
   }): Promise<PageNewsAdminDto> {
     try {
-      const response = await apiClient.get<PageNewsAdminDto>('/api/admin/news', { params });
+      const response = await apiClient.get<PageNewsAdminDto>('/admin/news', { params });
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -30,7 +30,7 @@ export const adminNewsService = {
   // Get news by ID for admin
   async getById(id: number): Promise<NewsAdminDto> {
     try {
-      const response = await apiClient.get<NewsAdminDto>(`/api/admin/news/${id}`);
+      const response = await apiClient.get<NewsAdminDto>(`/admin/news/${id}`);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -40,7 +40,7 @@ export const adminNewsService = {
   // Create new news
   async create(news: NewsAdminDto): Promise<NewsAdminDto> {
     try {
-      const response = await apiClient.post<NewsAdminDto>('/api/admin/news', news);
+      const response = await apiClient.post<NewsAdminDto>('/admin/news', news);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -50,7 +50,7 @@ export const adminNewsService = {
   // Update news
   async update(id: number, news: NewsAdminDto): Promise<NewsAdminDto> {
     try {
-      const response = await apiClient.put<NewsAdminDto>(`/api/admin/news/${id}`, news);
+      const response = await apiClient.put<NewsAdminDto>(`/admin/news/${id}`, news);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -60,7 +60,7 @@ export const adminNewsService = {
   // Delete news (soft delete)
   async delete(id: number): Promise<void> {
     try {
-      await apiClient.delete(`/api/admin/news/${id}`);
+      await apiClient.delete(`/admin/news/${id}`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -69,7 +69,7 @@ export const adminNewsService = {
   // Publish news
   async publish(id: number): Promise<void> {
     try {
-      await apiClient.patch(`/api/admin/news/${id}/publish`);
+      await apiClient.patch(`/admin/news/${id}/publish`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -78,7 +78,7 @@ export const adminNewsService = {
   // Unpublish news
   async unpublish(id: number): Promise<void> {
     try {
-      await apiClient.patch(`/api/admin/news/${id}/unpublish`);
+      await apiClient.patch(`/admin/news/${id}/unpublish`);
     } catch (error) {
       throw handleApiError(error);
     }

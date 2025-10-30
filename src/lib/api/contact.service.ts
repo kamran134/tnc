@@ -5,7 +5,7 @@ export const contactService = {
   // Submit contact form
   async submit(contact: ContactDto): Promise<ContactDto> {
     try {
-      const response = await apiClient.post<ContactDto>('/api/contact', contact);
+      const response = await apiClient.post<ContactDto>('/contact', contact);
       return response.data;
     } catch (error) {
       throw handleApiError(error);

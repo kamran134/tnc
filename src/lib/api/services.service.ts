@@ -8,7 +8,7 @@ export const servicesService = {
   // Get all active services
   async getAll(lang: LanguageCode = 'az'): Promise<ServiceDto[]> {
     try {
-      const response = await apiClient.get<ServiceDto[]>('/api/services', {
+      const response = await apiClient.get<ServiceDto[]>('/services', {
         params: { lang },
       });
       return response.data;
@@ -20,7 +20,7 @@ export const servicesService = {
   // Get services by category
   async getByCategory(category: string, lang: LanguageCode = 'az'): Promise<ServiceDto[]> {
     try {
-      const response = await apiClient.get<ServiceDto[]>(`/api/services/category/${category}`, {
+      const response = await apiClient.get<ServiceDto[]>(`/services/category/${category}`, {
         params: { lang },
       });
       return response.data;
@@ -32,7 +32,7 @@ export const servicesService = {
   // Get all service categories
   async getCategories(): Promise<string[]> {
     try {
-      const response = await apiClient.get<string[]>('/api/services/categories');
+      const response = await apiClient.get<string[]>('/services/categories');
       return response.data;
     } catch (error) {
       throw handleApiError(error);

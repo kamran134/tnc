@@ -17,7 +17,7 @@ export const adminFilesService = {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await apiClient.post<FileUploadDto>('/api/admin/files/upload', formData, {
+      const response = await apiClient.post<FileUploadDto>('/admin/files/upload', formData, {
         params: { fileType, description },
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -37,7 +37,7 @@ export const adminFilesService = {
     size?: number;
   }): Promise<PageFileUploadDto> {
     try {
-      const response = await apiClient.get<PageFileUploadDto>('/api/admin/files', { params });
+      const response = await apiClient.get<PageFileUploadDto>('/admin/files', { params });
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -47,7 +47,7 @@ export const adminFilesService = {
   // Get file by ID
   async getById(id: number): Promise<FileUploadDto> {
     try {
-      const response = await apiClient.get<FileUploadDto>(`/api/admin/files/${id}`);
+      const response = await apiClient.get<FileUploadDto>(`/admin/files/${id}`);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -57,7 +57,7 @@ export const adminFilesService = {
   // Delete file
   async delete(id: number): Promise<void> {
     try {
-      await apiClient.delete(`/api/admin/files/${id}`);
+      await apiClient.delete(`/admin/files/${id}`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -66,7 +66,7 @@ export const adminFilesService = {
   // Get file types
   async getFileTypes(): Promise<Record<string, string>> {
     try {
-      const response = await apiClient.get<Record<string, string>>('/api/admin/files/types');
+      const response = await apiClient.get<Record<string, string>>('/admin/files/types');
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -76,7 +76,7 @@ export const adminFilesService = {
   // Get file statistics
   async getStatistics(): Promise<FileStatistics> {
     try {
-      const response = await apiClient.get<FileStatistics>('/api/admin/files/statistics');
+      const response = await apiClient.get<FileStatistics>('/admin/files/statistics');
       return response.data;
     } catch (error) {
       throw handleApiError(error);

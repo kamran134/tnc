@@ -23,7 +23,7 @@ export const careersService = {
     endDate?: string;
   }): Promise<PageCareerDto> {
     try {
-      const response = await apiClient.get<PageCareerDto>('/api/careers', {
+      const response = await apiClient.get<PageCareerDto>('/careers', {
         params: {
           lang: params?.lang || 'az',
           page: params?.page || 0,
@@ -40,7 +40,7 @@ export const careersService = {
   // Get career by slug
   async getBySlug(slug: string, lang: LanguageCode = 'az'): Promise<CareerDto> {
     try {
-      const response = await apiClient.get<CareerDto>(`/api/careers/${slug}`, {
+      const response = await apiClient.get<CareerDto>(`/careers/${slug}`, {
         params: { lang },
       });
       return response.data;
@@ -52,7 +52,7 @@ export const careersService = {
   // Get available career locations
   async getLocations(page: number = 0, size: number = 50): Promise<PageString> {
     try {
-      const response = await apiClient.get<PageString>('/api/careers/locations', {
+      const response = await apiClient.get<PageString>('/careers/locations', {
         params: { page, size },
       });
       return response.data;
@@ -64,7 +64,7 @@ export const careersService = {
   // Get available employment types
   async getEmploymentTypes(page: number = 0, size: number = 50): Promise<PageString> {
     try {
-      const response = await apiClient.get<PageString>('/api/careers/employment-types', {
+      const response = await apiClient.get<PageString>('/careers/employment-types', {
         params: { page, size },
       });
       return response.data;

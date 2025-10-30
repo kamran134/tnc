@@ -21,7 +21,7 @@ export const adminCareersService = {
     endDate?: string;
   }): Promise<PageCareerAdminDto> {
     try {
-      const response = await apiClient.get<PageCareerAdminDto>('/api/admin/careers', { params });
+      const response = await apiClient.get<PageCareerAdminDto>('/admin/careers', { params });
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -31,7 +31,7 @@ export const adminCareersService = {
   // Get career by ID for admin
   async getById(id: number): Promise<CareerAdminDto> {
     try {
-      const response = await apiClient.get<CareerAdminDto>(`/api/admin/careers/${id}`);
+      const response = await apiClient.get<CareerAdminDto>(`/admin/careers/${id}`);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -41,7 +41,7 @@ export const adminCareersService = {
   // Create new career
   async create(career: CareerAdminDto): Promise<CareerAdminDto> {
     try {
-      const response = await apiClient.post<CareerAdminDto>('/api/admin/careers', career);
+      const response = await apiClient.post<CareerAdminDto>('/admin/careers', career);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -51,7 +51,7 @@ export const adminCareersService = {
   // Update career
   async update(id: number, career: CareerAdminDto): Promise<CareerAdminDto> {
     try {
-      const response = await apiClient.put<CareerAdminDto>(`/api/admin/careers/${id}`, career);
+      const response = await apiClient.put<CareerAdminDto>(`/admin/careers/${id}`, career);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -61,7 +61,7 @@ export const adminCareersService = {
   // Delete career (soft delete)
   async delete(id: number): Promise<void> {
     try {
-      await apiClient.delete(`/api/admin/careers/${id}`);
+      await apiClient.delete(`/admin/careers/${id}`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -70,7 +70,7 @@ export const adminCareersService = {
   // Activate career
   async activate(id: number): Promise<void> {
     try {
-      await apiClient.patch(`/api/admin/careers/${id}/activate`);
+      await apiClient.patch(`/admin/careers/${id}/activate`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -79,7 +79,7 @@ export const adminCareersService = {
   // Deactivate career
   async deactivate(id: number): Promise<void> {
     try {
-      await apiClient.patch(`/api/admin/careers/${id}/deactivate`);
+      await apiClient.patch(`/admin/careers/${id}/deactivate`);
     } catch (error) {
       throw handleApiError(error);
     }

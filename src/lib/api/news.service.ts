@@ -21,7 +21,7 @@ export const newsService = {
     endDate?: string;
   }): Promise<PageNewsDto> {
     try {
-      const response = await apiClient.get<PageNewsDto>('/api/news', {
+      const response = await apiClient.get<PageNewsDto>('/news', {
         params: {
           lang: params?.lang || 'az',
           page: params?.page || 0,
@@ -39,7 +39,7 @@ export const newsService = {
   // Get news by slug
   async getBySlug(slug: string, lang: LanguageCode = 'az'): Promise<NewsDto> {
     try {
-      const response = await apiClient.get<NewsDto>(`/api/news/${slug}`, {
+      const response = await apiClient.get<NewsDto>(`/news/${slug}`, {
         params: { lang },
       });
       return response.data;

@@ -5,7 +5,7 @@ export const adminDashboardService = {
   // Get dashboard statistics
   async getStatistics(): Promise<DashboardDataDto> {
     try {
-      const response = await apiClient.get<DashboardDataDto>('/api/admin/dashboard/statistics');
+      const response = await apiClient.get<DashboardDataDto>('/admin/dashboard/statistics');
       return response.data;
     } catch (error) {
       throw handleApiError(error);

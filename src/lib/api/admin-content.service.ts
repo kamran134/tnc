@@ -16,7 +16,7 @@ export const adminMembershipsService = {
     sort?: string;
   }): Promise<PageMembershipAdminDto> {
     try {
-      const response = await apiClient.get<PageMembershipAdminDto>('/api/admin/memberships', { params });
+      const response = await apiClient.get<PageMembershipAdminDto>('/admin/memberships', { params });
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -25,7 +25,7 @@ export const adminMembershipsService = {
 
   async getAllAsList(): Promise<MembershipAdminDto[]> {
     try {
-      const response = await apiClient.get<MembershipAdminDto[]>('/api/admin/memberships/list');
+      const response = await apiClient.get<MembershipAdminDto[]>('/admin/memberships/list');
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -34,7 +34,7 @@ export const adminMembershipsService = {
 
   async getById(id: number): Promise<MembershipAdminDto> {
     try {
-      const response = await apiClient.get<MembershipAdminDto>(`/api/admin/memberships/${id}`);
+      const response = await apiClient.get<MembershipAdminDto>(`/admin/memberships/${id}`);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -43,7 +43,7 @@ export const adminMembershipsService = {
 
   async create(membership: MembershipAdminDto): Promise<MembershipAdminDto> {
     try {
-      const response = await apiClient.post<MembershipAdminDto>('/api/admin/memberships', membership);
+      const response = await apiClient.post<MembershipAdminDto>('/admin/memberships', membership);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -52,7 +52,7 @@ export const adminMembershipsService = {
 
   async update(id: number, membership: MembershipAdminDto): Promise<MembershipAdminDto> {
     try {
-      const response = await apiClient.put<MembershipAdminDto>(`/api/admin/memberships/${id}`, membership);
+      const response = await apiClient.put<MembershipAdminDto>(`/admin/memberships/${id}`, membership);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -61,7 +61,7 @@ export const adminMembershipsService = {
 
   async delete(id: number): Promise<void> {
     try {
-      await apiClient.delete(`/api/admin/memberships/${id}`);
+      await apiClient.delete(`/admin/memberships/${id}`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -69,7 +69,7 @@ export const adminMembershipsService = {
 
   async activate(id: number): Promise<void> {
     try {
-      await apiClient.patch(`/api/admin/memberships/${id}/activate`);
+      await apiClient.patch(`/admin/memberships/${id}/activate`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -77,7 +77,7 @@ export const adminMembershipsService = {
 
   async deactivate(id: number): Promise<void> {
     try {
-      await apiClient.patch(`/api/admin/memberships/${id}/deactivate`);
+      await apiClient.patch(`/admin/memberships/${id}/deactivate`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -85,7 +85,7 @@ export const adminMembershipsService = {
 
   async reorder(ids: number[]): Promise<void> {
     try {
-      await apiClient.post('/api/admin/memberships/reorder', ids);
+      await apiClient.post('/admin/memberships/reorder', ids);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -100,7 +100,7 @@ export const adminCoreValuesService = {
     sort?: string;
   }): Promise<PageCoreValueAdminDto> {
     try {
-      const response = await apiClient.get<PageCoreValueAdminDto>('/api/admin/core-values', { params });
+      const response = await apiClient.get<PageCoreValueAdminDto>('/admin/core-values', { params });
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -109,7 +109,7 @@ export const adminCoreValuesService = {
 
   async getAllAsList(): Promise<CoreValueAdminDto[]> {
     try {
-      const response = await apiClient.get<CoreValueAdminDto[]>('/api/admin/core-values/list');
+      const response = await apiClient.get<CoreValueAdminDto[]>('/admin/core-values/list');
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -118,7 +118,7 @@ export const adminCoreValuesService = {
 
   async getById(id: number): Promise<CoreValueAdminDto> {
     try {
-      const response = await apiClient.get<CoreValueAdminDto>(`/api/admin/core-values/${id}`);
+      const response = await apiClient.get<CoreValueAdminDto>(`/admin/core-values/${id}`);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -127,7 +127,7 @@ export const adminCoreValuesService = {
 
   async create(coreValue: CoreValueAdminDto): Promise<CoreValueAdminDto> {
     try {
-      const response = await apiClient.post<CoreValueAdminDto>('/api/admin/core-values', coreValue);
+      const response = await apiClient.post<CoreValueAdminDto>('/admin/core-values', coreValue);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -136,7 +136,7 @@ export const adminCoreValuesService = {
 
   async update(id: number, coreValue: CoreValueAdminDto): Promise<CoreValueAdminDto> {
     try {
-      const response = await apiClient.put<CoreValueAdminDto>(`/api/admin/core-values/${id}`, coreValue);
+      const response = await apiClient.put<CoreValueAdminDto>(`/admin/core-values/${id}`, coreValue);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -145,7 +145,7 @@ export const adminCoreValuesService = {
 
   async delete(id: number): Promise<void> {
     try {
-      await apiClient.delete(`/api/admin/core-values/${id}`);
+      await apiClient.delete(`/admin/core-values/${id}`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -153,7 +153,7 @@ export const adminCoreValuesService = {
 
   async activate(id: number): Promise<void> {
     try {
-      await apiClient.patch(`/api/admin/core-values/${id}/activate`);
+      await apiClient.patch(`/admin/core-values/${id}/activate`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -161,7 +161,7 @@ export const adminCoreValuesService = {
 
   async deactivate(id: number): Promise<void> {
     try {
-      await apiClient.patch(`/api/admin/core-values/${id}/deactivate`);
+      await apiClient.patch(`/admin/core-values/${id}/deactivate`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -169,7 +169,7 @@ export const adminCoreValuesService = {
 
   async reorder(ids: number[]): Promise<void> {
     try {
-      await apiClient.post('/api/admin/core-values/reorder', ids);
+      await apiClient.post('/admin/core-values/reorder', ids);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -180,7 +180,7 @@ export const adminCoreValuesService = {
 export const adminHomeContentService = {
   async get(): Promise<HomeContentAdminDto> {
     try {
-      const response = await apiClient.get<HomeContentAdminDto>('/api/admin/home-content');
+      const response = await apiClient.get<HomeContentAdminDto>('/admin/home-content');
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -189,7 +189,7 @@ export const adminHomeContentService = {
 
   async create(homeContent: HomeContentAdminDto): Promise<HomeContentAdminDto> {
     try {
-      const response = await apiClient.post<HomeContentAdminDto>('/api/admin/home-content', homeContent);
+      const response = await apiClient.post<HomeContentAdminDto>('/admin/home-content', homeContent);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -198,7 +198,7 @@ export const adminHomeContentService = {
 
   async update(homeContent: HomeContentAdminDto): Promise<HomeContentAdminDto> {
     try {
-      const response = await apiClient.put<HomeContentAdminDto>('/api/admin/home-content', homeContent);
+      const response = await apiClient.put<HomeContentAdminDto>('/admin/home-content', homeContent);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -207,7 +207,7 @@ export const adminHomeContentService = {
 
   async delete(): Promise<void> {
     try {
-      await apiClient.delete('/api/admin/home-content');
+      await apiClient.delete('/admin/home-content');
     } catch (error) {
       throw handleApiError(error);
     }
@@ -218,7 +218,7 @@ export const adminHomeContentService = {
 export const adminCompanyInfoService = {
   async get(): Promise<CompanyInfoAdminDto> {
     try {
-      const response = await apiClient.get<CompanyInfoAdminDto>('/api/admin/company-info');
+      const response = await apiClient.get<CompanyInfoAdminDto>('/admin/company-info');
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -227,7 +227,7 @@ export const adminCompanyInfoService = {
 
   async create(companyInfo: CompanyInfoAdminDto): Promise<CompanyInfoAdminDto> {
     try {
-      const response = await apiClient.post<CompanyInfoAdminDto>('/api/admin/company-info', companyInfo);
+      const response = await apiClient.post<CompanyInfoAdminDto>('/admin/company-info', companyInfo);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -236,7 +236,7 @@ export const adminCompanyInfoService = {
 
   async update(companyInfo: CompanyInfoAdminDto): Promise<CompanyInfoAdminDto> {
     try {
-      const response = await apiClient.put<CompanyInfoAdminDto>('/api/admin/company-info', companyInfo);
+      const response = await apiClient.put<CompanyInfoAdminDto>('/admin/company-info', companyInfo);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -245,7 +245,7 @@ export const adminCompanyInfoService = {
 
   async delete(): Promise<void> {
     try {
-      await apiClient.delete('/api/admin/company-info');
+      await apiClient.delete('/admin/company-info');
     } catch (error) {
       throw handleApiError(error);
     }

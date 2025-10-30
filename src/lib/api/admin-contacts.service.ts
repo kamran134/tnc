@@ -21,7 +21,7 @@ export const adminContactsService = {
     endDate?: string;
   }): Promise<PageContactAdminDto> {
     try {
-      const response = await apiClient.get<PageContactAdminDto>('/api/admin/contacts', { params });
+      const response = await apiClient.get<PageContactAdminDto>('/admin/contacts', { params });
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -31,7 +31,7 @@ export const adminContactsService = {
   // Get contact by ID for admin
   async getById(id: number): Promise<ContactAdminDto> {
     try {
-      const response = await apiClient.get<ContactAdminDto>(`/api/admin/contacts/${id}`);
+      const response = await apiClient.get<ContactAdminDto>(`/admin/contacts/${id}`);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -41,7 +41,7 @@ export const adminContactsService = {
   // Delete contact (soft delete)
   async delete(id: number): Promise<void> {
     try {
-      await apiClient.delete(`/api/admin/contacts/${id}`);
+      await apiClient.delete(`/admin/contacts/${id}`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -51,7 +51,7 @@ export const adminContactsService = {
   async updateStatus(id: number, status: ContactStatus): Promise<ContactAdminDto> {
     try {
       const response = await apiClient.patch<ContactAdminDto>(
-        `/api/admin/contacts/${id}/status`,
+        `/admin/contacts/${id}/status`,
         null,
         { params: { status } }
       );
@@ -64,7 +64,7 @@ export const adminContactsService = {
   // Mark contact as replied
   async markAsReplied(id: number): Promise<ContactAdminDto> {
     try {
-      const response = await apiClient.patch<ContactAdminDto>(`/api/admin/contacts/${id}/reply`);
+      const response = await apiClient.patch<ContactAdminDto>(`/admin/contacts/${id}/reply`);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -75,7 +75,7 @@ export const adminContactsService = {
   async addAdminNotes(id: number, notes: string): Promise<ContactAdminDto> {
     try {
       const response = await apiClient.patch<ContactAdminDto>(
-        `/api/admin/contacts/${id}/notes`,
+        `/admin/contacts/${id}/notes`,
         notes,
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -88,7 +88,7 @@ export const adminContactsService = {
   // Get contact count by status
   async getCountByStatus(status: ContactStatus): Promise<number> {
     try {
-      const response = await apiClient.get<number>('/api/admin/contacts/stats/count-by-status', {
+      const response = await apiClient.get<number>('/admin/contacts/stats/count-by-status', {
         params: { status },
       });
       return response.data;
@@ -100,7 +100,7 @@ export const adminContactsService = {
   // Get contact count since date
   async getCountSince(since: string): Promise<number> {
     try {
-      const response = await apiClient.get<number>('/api/admin/contacts/stats/count-since', {
+      const response = await apiClient.get<number>('/admin/contacts/stats/count-since', {
         params: { since },
       });
       return response.data;

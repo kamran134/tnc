@@ -92,6 +92,27 @@ apiClient.interceptors.response.use(
 
     // If error is 401 and we haven't retried yet
     if (error.response?.status === 401 && !originalRequest._retry) {
+      // Check if this is a public endpoint (no auth required)
+      const publicEndpoints = [
+        '/home-content',
+        '/core-values',
+        '/memberships',
+        '/company-info',
+        '/services',
+        '/news',
+        '/careers',
+        '/contact'
+      ];
+      
+      const isPublicEndpoint = publicEndpoints.some(endpoint => 
+        originalRequest.url?.includes(endpoint)
+      );
+      
+      // For public endpoints, just return the error without redirect
+      if (isPublicEndpoint) {
+        return Promise.reject(error);
+      }
+
       if (isRefreshing) {
         // If already refreshing, queue this request
         return new Promise((resolve, reject) => {
@@ -122,7 +143,7 @@ apiClient.interceptors.response.use(
 
       try {
         // Attempt to refresh the token
-        const response = await axios.post(`${API_BASE_URL}/api/auth/refresh`, {
+        const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
           refreshToken
         });
 

@@ -12,7 +12,7 @@ export const adminServicesService = {
     sort?: string;
   }): Promise<PageServiceAdminDto> {
     try {
-      const response = await apiClient.get<PageServiceAdminDto>('/api/admin/services', { params });
+      const response = await apiClient.get<PageServiceAdminDto>('/admin/services', { params });
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -22,7 +22,7 @@ export const adminServicesService = {
   // Get all services as list for admin
   async getAllAsList(): Promise<ServiceAdminDto[]> {
     try {
-      const response = await apiClient.get<ServiceAdminDto[]>('/api/admin/services/list');
+      const response = await apiClient.get<ServiceAdminDto[]>('/admin/services/list');
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -32,7 +32,7 @@ export const adminServicesService = {
   // Get service by ID for admin
   async getById(id: number): Promise<ServiceAdminDto> {
     try {
-      const response = await apiClient.get<ServiceAdminDto>(`/api/admin/services/${id}`);
+      const response = await apiClient.get<ServiceAdminDto>(`/admin/services/${id}`);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -42,7 +42,7 @@ export const adminServicesService = {
   // Create new service
   async create(service: ServiceAdminDto): Promise<ServiceAdminDto> {
     try {
-      const response = await apiClient.post<ServiceAdminDto>('/api/admin/services', service);
+      const response = await apiClient.post<ServiceAdminDto>('/admin/services', service);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -52,7 +52,7 @@ export const adminServicesService = {
   // Update service
   async update(id: number, service: ServiceAdminDto): Promise<ServiceAdminDto> {
     try {
-      const response = await apiClient.put<ServiceAdminDto>(`/api/admin/services/${id}`, service);
+      const response = await apiClient.put<ServiceAdminDto>(`/admin/services/${id}`, service);
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -62,7 +62,7 @@ export const adminServicesService = {
   // Delete service (soft delete)
   async delete(id: number): Promise<void> {
     try {
-      await apiClient.delete(`/api/admin/services/${id}`);
+      await apiClient.delete(`/admin/services/${id}`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -71,7 +71,7 @@ export const adminServicesService = {
   // Activate service
   async activate(id: number): Promise<void> {
     try {
-      await apiClient.patch(`/api/admin/services/${id}/activate`);
+      await apiClient.patch(`/admin/services/${id}/activate`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -80,7 +80,7 @@ export const adminServicesService = {
   // Deactivate service
   async deactivate(id: number): Promise<void> {
     try {
-      await apiClient.patch(`/api/admin/services/${id}/deactivate`);
+      await apiClient.patch(`/admin/services/${id}/deactivate`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -89,7 +89,7 @@ export const adminServicesService = {
   // Reorder services
   async reorder(ids: number[]): Promise<void> {
     try {
-      await apiClient.post('/api/admin/services/reorder', ids);
+      await apiClient.post('/admin/services/reorder', ids);
     } catch (error) {
       throw handleApiError(error);
     }
