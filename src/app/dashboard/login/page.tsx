@@ -28,7 +28,11 @@ export default function LoginPage() {
       });
 
       if (response.ok) {
-        router.push('/dashboard');
+        console.log('Login successful, redirecting...');
+        
+        // Используем window.location для полного перезагрузки страницы
+        // Это гарантирует, что cookies будут установлены перед проверкой middleware
+        window.location.href = '/dashboard';
       } else {
         const errorData = await response.json();
         setError(errorData.message || 'Ошибка входа');

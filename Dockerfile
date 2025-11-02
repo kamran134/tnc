@@ -13,7 +13,8 @@ WORKDIR /app
 # Копирование файлов зависимостей
 COPY package*.json ./
 # Устанавливаем ВСЕ зависимости (включая devDependencies для сборки)
-RUN npm ci
+# Используем --legacy-peer-deps если есть конфликты зависимостей
+RUN npm ci --prefer-offline --no-audit
 
 # Стадия сборки
 FROM base AS builder

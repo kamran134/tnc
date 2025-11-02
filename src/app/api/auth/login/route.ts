@@ -25,12 +25,20 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json();
 
+    console.log('Login successful, setting cookies...');
+    console.log('Request URL:', request.url);
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+
     // Создаем NextResponse и устанавливаем HTTP-only cookies
     const nextResponse = NextResponse.json(data.user, { status: 200 });
     
+    // Определяем secure на основе протокола, а не NODE_ENV
+    const isSecure = request.url.startsWith('https://') || process.env.NODE_ENV === 'production';
+    console.log('Setting cookies with secure:', isSecure);
+    
     nextResponse.cookies.set('access_token', data.accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isSecure,
       sameSite: 'lax',
       maxAge: data.expiresIn || 86400, // используем expiresIn из ответа
       path: '/',
@@ -38,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     nextResponse.cookies.set('refresh_token', data.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isSecure,
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 дней для refresh token
       path: '/',

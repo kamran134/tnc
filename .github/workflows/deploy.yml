@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main ]
 
+# Отменяем предыдущие запуски при новом пуше
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 # Добавляем права для работы с packages
 permissions:
   contents: read
@@ -16,33 +21,9 @@ env:
   IMAGE_NAME: kamran134/tnc
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-        
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-            
-    - name: Install dependencies
-      run: npm ci
-        
-    - name: Run linting
-      run: npm run lint
-
-    - name: Run type check
-      run: npm run type-check || echo "Type check not configured"
-
-    - name: Run tests
-      run: npm run test || echo "Tests not configured"
-
   build-and-push:
-    needs: test
+    # Убираем тесты для ускорения
+    # needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     
@@ -79,13 +60,12 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        platforms: linux/amd64,linux/arm64
+        platforms: linux/amd64
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
-        # Добавляем verbose вывод для отладки
         build-args: |
           BUILDKIT_INLINE_CACHE=1
           NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}

@@ -24,6 +24,13 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['@heroicons/react'],
   },
+  // Оптимизация сборки
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  // Отключаем source maps в проде для ускорения сборки
+  productionBrowserSourceMaps: false,
 }
 
 module.exports = nextConfig
