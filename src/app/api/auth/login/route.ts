@@ -25,22 +25,28 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json();
 
-    console.log('Login successful, setting cookies...');
+    console.log('=== LOGIN DEBUG ===');
     console.log('Request URL:', request.url);
     console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log('X-Forwarded-Proto:', request.headers.get('x-forwarded-proto'));
+    console.log('Host:', request.headers.get('host'));
 
     // Создаем NextResponse и устанавливаем HTTP-only cookies
     const nextResponse = NextResponse.json(data.user, { status: 200 });
     
-    // Определяем secure на основе протокола, а не NODE_ENV
-    const isSecure = request.url.startsWith('https://') || process.env.NODE_ENV === 'production';
-    console.log('Setting cookies with secure:', isSecure);
+    // Проверяем протокол из заголовков (для Nginx proxy) или из URL
+    const forwardedProto = request.headers.get('x-forwarded-proto');
+    const isSecure = forwardedProto === 'https' || request.url.startsWith('https://');
+    
+    console.log('Protocol from header:', forwardedProto);
+    console.log('Protocol from URL:', request.url.split('://')[0]);
+    console.log('Final isSecure:', isSecure);
     
     nextResponse.cookies.set('access_token', data.accessToken, {
       httpOnly: true,
       secure: isSecure,
       sameSite: 'lax',
-      maxAge: data.expiresIn || 86400, // используем expiresIn из ответа
+      maxAge: data.expiresIn || 86400,
       path: '/',
     });
 
@@ -48,9 +54,13 @@ export async function POST(request: NextRequest) {
       httpOnly: true,
       secure: isSecure,
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 дней для refresh token
+      maxAge: 60 * 60 * 24 * 7,
       path: '/',
     });
+
+    console.log('✅ Cookies set successfully');
+    console.log('Access token length:', data.accessToken?.length);
+    console.log('Refresh token length:', data.refreshToken?.length);
 
     return nextResponse;
   } catch (error) {

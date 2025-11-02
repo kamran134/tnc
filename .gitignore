@@ -33,3 +33,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# server config и инструкции (содержат реальную конфигурацию с сервера)
+nginx-server.conf
+NGINX_UPDATE_INSTRUCTIONS.md
