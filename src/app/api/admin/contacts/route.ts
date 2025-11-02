@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/api/admin/contacts?${params}`, {
+    const response = await fetch(`${BACKEND_URL}/admin/contacts?${params}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

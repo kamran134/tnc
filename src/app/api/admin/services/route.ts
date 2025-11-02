@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/api/admin/services?${params}`, {
+    const response = await fetch(`${BACKEND_URL}/admin/services?${params}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/api/admin/services`, {
+    const response = await fetch(`${BACKEND_URL}/admin/services`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

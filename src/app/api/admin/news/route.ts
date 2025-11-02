@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/api/admin/news?${params}`, {
+    const response = await fetch(`${BACKEND_URL}/admin/news?${params}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     console.log('Creating news with data:', JSON.stringify(body, null, 2));
     
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/api/admin/news`, {
+    const response = await fetch(`${BACKEND_URL}/admin/news`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

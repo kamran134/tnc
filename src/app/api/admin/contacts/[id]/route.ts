@@ -18,7 +18,7 @@ export async function PATCH(
 
     const body = await request.json();
     
-    const response = await fetch(`${BACKEND_URL}/api/admin/contacts/${params.id}`, {
+    const response = await fetch(`${BACKEND_URL}/admin/contacts/${params.id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

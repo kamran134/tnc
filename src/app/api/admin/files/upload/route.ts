@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     backendFormData.append('file', file);
 
     // Создаем URL с параметрами
-    const url = new URL(`${BACKEND_URL}/api/admin/files/upload`);
+    const url = new URL(`${BACKEND_URL}/admin/files/upload`);
     url.searchParams.append('fileType', fileType);
     if (description) {
       url.searchParams.append('description', description);
