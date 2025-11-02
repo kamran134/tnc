@@ -458,6 +458,18 @@ export interface DashboardDataDto {
   newContacts: number;
 }
 
+// Dashboard Statistics
+export interface DashboardDataDto {
+  totalServices: number;
+  activeServices: number;
+  totalNews: number;
+  publishedNews: number;
+  totalCareers: number;
+  activeCareers: number;
+  totalContacts: number;
+  newContacts: number;
+}
+
 // API Response Types
 export type PageNewsDto = Page<NewsDto>;
 export type PageCareerDto = Page<CareerDto>;

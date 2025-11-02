@@ -49,6 +49,19 @@ export default function ServicesList() {
     )
   }
 
+  // ПУНКТ 5: Если нет сервисов - показываем пустое состояние
+  if (!services || services.length === 0) {
+    return (
+      <section className="section-padding bg-gray-50">
+        <div className="container-max">
+          <div className="text-center py-16">
+            <p className="text-gray-500 text-lg">No services available at the moment.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="section-padding bg-gray-50">
       <div className="container-max">

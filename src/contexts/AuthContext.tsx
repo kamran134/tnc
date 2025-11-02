@@ -52,8 +52,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const response = await authService.login({ email, password });
-      setUser(response.user as unknown as UserDto);
+      await authService.login({ email, password });
+      const currentUser = await authService.getCurrentUser();
+      setUser(currentUser);
     } catch (error) {
       setUser(null);
       throw error;

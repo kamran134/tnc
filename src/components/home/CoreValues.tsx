@@ -48,6 +48,11 @@ export default function CoreValues() {
     )
   }
 
+  // ПУНКТ 5: Если нет данных - не показываем секцию
+  if (!values || values.length === 0) {
+    return null;
+  }
+
   return (
     <section className="section-padding bg-white">
       <div className="container-max">
