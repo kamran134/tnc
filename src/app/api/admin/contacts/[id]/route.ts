@@ -5,7 +5,7 @@ const BACKEND_URL = process.env.BACKEND_URL || 'https://tnc.az/api';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Получаем токен из cookies
@@ -16,9 +16,10 @@ export async function PATCH(
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
+    const { id } = await params;
     const body = await request.json();
     
-    const response = await fetch(`${BACKEND_URL}/admin/contacts/${params.id}`, {
+    const response = await fetch(`${BACKEND_URL}/admin/contacts/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
