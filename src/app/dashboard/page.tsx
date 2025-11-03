@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { DashboardDataDto } from '@/types/api';
+import { authService, adminDashboardService } from '@/lib/api';
 
 interface User {
   id: number;
@@ -23,17 +24,14 @@ export default function DashboardPage() {
   useEffect(() => {
     async function loadUser() {
       try {
-        const response = await fetch('/api/auth/me');
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-          // Загружаем статистику после успешной аутентификации
-          loadStatistics();
-        } else {
-          router.push('/dashboard/login');
-        }
+        console.log('🔍 Loading user data...');
+        const userData = await authService.getCurrentUser();
+        console.log('✅ User loaded:', userData);
+        setUser(userData);
+        // Загружаем статистику после успешной аутентификации
+        loadStatistics();
       } catch (error) {
-        console.error('Error loading user:', error);
+        console.error('❌ Error loading user:', error);
         router.push('/dashboard/login');
       } finally {
         setIsLoading(false);
@@ -42,13 +40,12 @@ export default function DashboardPage() {
 
     async function loadStatistics() {
       try {
-        const response = await fetch('/api/admin/dashboard');
-        if (response.ok) {
-          const statsData = await response.json();
-          setStatistics(statsData);
-        }
+        console.log('📊 Loading statistics...');
+        const statsData = await adminDashboardService.getStatistics();
+        console.log('✅ Statistics loaded:', statsData);
+        setStatistics(statsData);
       } catch (error) {
-        console.error('Error loading statistics:', error);
+        console.error('❌ Error loading statistics:', error);
       } finally {
         setStatsLoading(false);
       }

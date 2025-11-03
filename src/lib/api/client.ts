@@ -1,7 +1,16 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 
 // API Configuration
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
+// В ЛЮБОМ случае используем полный URL к бекенду
+// Rewrites в next.config.js нужны только для проксирования на серверной стороне Next.js
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://tnc.az/api';
+
+console.log('🔧 API Client Config:', {
+  NEXT_PUBLIC_USE_PROXY: process.env.NEXT_PUBLIC_USE_PROXY,
+  NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  API_BASE_URL,
+  mode: 'DIRECT TO BACKEND'
+});
 
 // Token storage keys
 const ACCESS_TOKEN_KEY = 'access_token';

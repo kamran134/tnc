@@ -16,6 +16,9 @@ const nextConfig = {
       },
     ],
   },
+  // Rewrites НЕ НУЖНЫ для клиентских запросов
+  // Клиент идет напрямую на https://tnc.az/api
+  // Только /api/auth/login обрабатывается Next.js API route для установки cookies
   // Включаем standalone output для Docker оптимизации
   output: 'standalone',
   // Исправляем warning о workspace root
@@ -24,8 +27,6 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['@heroicons/react'],
   },
-  // Оптимизация сборки
-  swcMinify: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },

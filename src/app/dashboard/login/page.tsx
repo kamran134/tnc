@@ -13,33 +13,68 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
+    
     setIsLoading(true);
     setError('');
 
     try {
+      console.log('🔐 CLIENT: Sending login request...');
+      console.log('📧 Email:', formData.email);
+      
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
+        credentials: 'include', // ВАЖНО! Для cookies
       });
 
+      console.log('📥 CLIENT: Response status:', response.status);
+      console.log('📥 CLIENT: Response headers:', Object.fromEntries(response.headers.entries()));
+
       if (response.ok) {
-        console.log('Login successful, redirecting...');
+        const data = await response.json();
+        console.log('✅ CLIENT: Login successful!');
+        console.log('📦 CLIENT: Response data keys:', Object.keys(data));
+        console.log('🔑 CLIENT: Access token:', data.accessToken ? `EXISTS (${data.accessToken.substring(0, 20)}...)` : 'MISSING');
+        console.log('🔑 CLIENT: Refresh token:', data.refreshToken ? `EXISTS (${data.refreshToken.substring(0, 20)}...)` : 'MISSING');
         
-        // Используем window.location для полного перезагрузки страницы
-        // Это гарантирует, что cookies будут установлены перед проверкой middleware
-        window.location.href = '/dashboard';
+        if (!data.accessToken) {
+          console.error('❌ CLIENT: ERROR - No access token in response!');
+          setError('Ошибка: токен не получен');
+          setIsLoading(false);
+          return;
+        }
+        
+        // Сохраняем токены в localStorage
+        localStorage.setItem('access_token', data.accessToken);
+        localStorage.setItem('refresh_token', data.refreshToken);
+        console.log('💾 CLIENT: Tokens saved to localStorage');
+        
+        // Проверяем cookies
+        console.log('🍪 CLIENT: Current document.cookie:', document.cookie);
+        
+        console.log('🔄 CLIENT: Redirecting to /dashboard in 200ms...');
+        
+        // Cookies уже установлены сервером через Set-Cookie заголовок
+        // Используем window.location для полной перезагрузки
+        setTimeout(() => {
+          console.log('🚀 CLIENT: Executing redirect NOW!');
+          window.location.href = '/dashboard';
+        }, 200);
       } else {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        console.error('❌ CLIENT: Login failed:', errorData);
         setError(errorData.message || 'Ошибка входа');
+        setIsLoading(false);
       }
     } catch (error) {
-      setError('Ошибка сети');
-    } finally {
+      console.error('💥 CLIENT: Login error:', error);
+      setError('Ошибка сети: ' + (error instanceof Error ? error.message : String(error)));
       setIsLoading(false);
     }
   };
