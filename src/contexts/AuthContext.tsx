@@ -36,27 +36,47 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const loadUser = async () => {
+    console.log('🔄 ======================== AUTH CONTEXT: LOAD USER ========================');
+    console.log('🔍 Checking authentication status...');
+    
     try {
       if (authService.isAuthenticated()) {
+        console.log('✅ User is authenticated - fetching user data...');
         const currentUser = await authService.getCurrentUser();
+        console.log('✅ User data loaded:', currentUser.email);
         setUser(currentUser);
+      } else {
+        console.log('⚠️ User is NOT authenticated');
+        setUser(null);
       }
     } catch (error) {
-      console.error('Failed to load user:', error);
+      console.error('❌ Failed to load user:', error);
       setUser(null);
     } finally {
       setIsLoading(false);
+      console.log('🔄 ======================== AUTH CONTEXT: LOAD USER END ========================\n');
     }
   };
 
   const login = async (email: string, password: string) => {
+    console.log('🔐 ======================== AUTH CONTEXT: LOGIN ========================');
+    console.log('📧 Email:', email);
+    
     setIsLoading(true);
     try {
+      console.log('🚀 Calling authService.login...');
       await authService.login({ email, password });
+      
+      console.log('✅ Login successful - fetching user data...');
       const currentUser = await authService.getCurrentUser();
+      
+      console.log('✅ User data fetched:', currentUser.email);
       setUser(currentUser);
+      console.log('🔐 ======================== AUTH CONTEXT: LOGIN SUCCESS ========================\n');
     } catch (error) {
+      console.error('❌ Login failed:', error);
       setUser(null);
+      console.log('🔐 ======================== AUTH CONTEXT: LOGIN ERROR ========================\n');
       throw error;
     } finally {
       setIsLoading(false);
@@ -64,26 +84,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = async () => {
+    console.log('🚪 ======================== AUTH CONTEXT: LOGOUT ========================');
+    
     setIsLoading(true);
     try {
+      console.log('🚀 Calling authService.logout...');
       await authService.logout();
+      console.log('✅ Logout successful');
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('❌ Logout error:', error);
     } finally {
       setUser(null);
       setIsLoading(false);
+      console.log('🚪 ======================== AUTH CONTEXT: LOGOUT END ========================\n');
     }
   };
 
   const refreshUser = async () => {
+    console.log('🔄 ======================== AUTH CONTEXT: REFRESH USER ========================');
+    
     try {
       if (authService.isAuthenticated()) {
+        console.log('✅ User is authenticated - refreshing user data...');
         const currentUser = await authService.getCurrentUser();
+        console.log('✅ User data refreshed:', currentUser.email);
         setUser(currentUser);
+      } else {
+        console.log('⚠️ User is NOT authenticated');
+        setUser(null);
       }
     } catch (error) {
-      console.error('Failed to refresh user:', error);
+      console.error('❌ Failed to refresh user:', error);
       setUser(null);
+    } finally {
+      console.log('🔄 ======================== AUTH CONTEXT: REFRESH USER END ========================\n');
     }
   };
 

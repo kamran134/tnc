@@ -5,29 +5,43 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
+  console.log('========================================================================');
   console.log('🔒 MIDDLEWARE START =====================');
+  console.log('⏰ Time:', new Date().toISOString());
   console.log('📍 Path:', pathname);
   console.log('🌐 Full URL:', request.url);
+  console.log('🔍 Method:', request.method);
+  console.log('🌍 Headers:', JSON.stringify(Object.fromEntries(request.headers.entries()), null, 2));
   
   // Только для /dashboard (НЕ для /dashboard/login)
   if (pathname.startsWith('/dashboard') && !pathname.startsWith('/dashboard/login')) {
     const accessToken = request.cookies.get('access_token');
     
     console.log('🔐 Protected route detected:', pathname);
-    console.log('🍪 Access token cookie:', accessToken?.value ? `EXISTS (${accessToken.value.substring(0, 20)}...)` : 'MISSING');
-    console.log('🍪 All cookies:', request.cookies.getAll().map(c => `${c.name}=${c.value.substring(0, 10)}...`));
+    console.log('🍪 Access token cookie:', accessToken?.value ? `EXISTS (${accessToken.value.substring(0, 30)}...)` : '❌ MISSING');
+    
+    const allCookies = request.cookies.getAll();
+    console.log('🍪 All cookies:');
+    allCookies.forEach(c => {
+      console.log(`   - ${c.name}=${c.value.substring(0, 20)}...`);
+    });
     
     if (!accessToken) {
-      console.log('❌ NO ACCESS TOKEN - Redirecting to login');
-      console.log('🔒 MIDDLEWARE END (REDIRECT) =====================\n');
+      console.log('❌ NO ACCESS TOKEN FOUND');
+      console.log('🔀 REDIRECTING to /dashboard/login');
+      console.log('🔒 MIDDLEWARE END (REDIRECT) =====================');
+      console.log('========================================================================\n');
       return NextResponse.redirect(new URL('/dashboard/login', request.url));
     }
+    
     console.log('✅ ACCESS TOKEN FOUND - Allowing access');
+    console.log('✅ Token value:', accessToken.value.substring(0, 50) + '...');
   } else {
     console.log('📖 Public route or login page - allowing access');
   }
 
-  console.log('🔒 MIDDLEWARE END (PASS) =====================\n');
+  console.log('✅ MIDDLEWARE END (PASS) =====================');
+  console.log('========================================================================\n');
   return NextResponse.next();
 }
 
