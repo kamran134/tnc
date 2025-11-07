@@ -53,13 +53,16 @@ export async function POST(request: NextRequest) {
     // В development всегда используем secure: false для localhost
     const isSecure = process.env.NODE_ENV === 'production';
     
+    // В development НЕ используем httpOnly чтобы можно было проверить в devtools
+    const useHttpOnly = process.env.NODE_ENV === 'production';
+    
     console.log('🍪 ======================== SETTING COOKIES ========================');
     console.log('🍪 NODE_ENV:', process.env.NODE_ENV);
     console.log('🍪 Secure flag:', isSecure);
-    
-    // В development НЕ используем httpOnly чтобы можно было проверить в devtools
-    const useHttpOnly = process.env.NODE_ENV === 'production';
     console.log('🍪 HttpOnly flag:', useHttpOnly);
+    console.log('🍪 SameSite:', 'lax');
+    console.log('🍪 Domain: NOT SET (will use current domain)');
+    console.log('🍪 Path: /');
     
     const accessTokenMaxAge = data.expiresIn || 86400;
     const refreshTokenMaxAge = 60 * 60 * 24 * 7;

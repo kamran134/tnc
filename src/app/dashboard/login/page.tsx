@@ -21,8 +21,13 @@ export default function LoginPage() {
     setError('');
 
     try {
-      console.log('🔐 CLIENT: Sending login request...');
+      console.log('========================================================================');
+      console.log('🔐 CLIENT: ==================== LOGIN START ====================');
+      console.log('⏰ Time:', new Date().toISOString());
       console.log('📧 Email:', formData.email);
+      console.log('🌐 Current URL:', window.location.href);
+      console.log('🍪 Cookies BEFORE login:', document.cookie);
+      console.log('🚀 Sending POST to /api/auth/login...');
       
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -33,39 +38,49 @@ export default function LoginPage() {
         credentials: 'include', // ВАЖНО! Для cookies
       });
 
-      console.log('📥 CLIENT: Response status:', response.status);
-      console.log('📥 CLIENT: Response headers:', Object.fromEntries(response.headers.entries()));
+      console.log('📥 CLIENT: Response received!');
+      console.log('📥 Status:', response.status, response.statusText);
+      console.log('📥 Response headers:');
+      const headers = Object.fromEntries(response.headers.entries());
+      Object.keys(headers).forEach(key => {
+        console.log(`   ${key}: ${headers[key]}`);
+      });
+      console.log('🍪 Cookies AFTER response:', document.cookie);
 
       if (response.ok) {
         const data = await response.json();
         console.log('✅ CLIENT: Login successful!');
-        console.log('📦 CLIENT: Response data keys:', Object.keys(data));
-        console.log('🔑 CLIENT: Access token:', data.accessToken ? `EXISTS (${data.accessToken.substring(0, 20)}...)` : 'MISSING');
-        console.log('🔑 CLIENT: Refresh token:', data.refreshToken ? `EXISTS (${data.refreshToken.substring(0, 20)}...)` : 'MISSING');
+        console.log('📦 Response data:', JSON.stringify(data, null, 2));
+        console.log('🔑 Access token:', data.accessToken ? `EXISTS (${data.accessToken.substring(0, 30)}...)` : '❌ MISSING');
+        console.log('🔑 Refresh token:', data.refreshToken ? `EXISTS (${data.refreshToken.substring(0, 30)}...)` : '❌ MISSING');
         
         if (!data.accessToken) {
           console.error('❌ CLIENT: ERROR - No access token in response!');
+          console.log('🔐 CLIENT: ==================== LOGIN FAILED (NO TOKEN) ====================');
+          console.log('========================================================================\n');
           setError('Ошибка: токен не получен');
           setIsLoading(false);
           return;
         }
         
-        // Сохраняем токены в localStorage
-        localStorage.setItem('access_token', data.accessToken);
-        localStorage.setItem('refresh_token', data.refreshToken);
-        console.log('💾 CLIENT: Tokens saved to localStorage');
+        // НЕ сохраняем в localStorage - используем только HTTP-only cookies!
+        console.log('✅ Tokens received, cookies should be set by server');
         
-        // Проверяем cookies
-        console.log('🍪 CLIENT: Current document.cookie:', document.cookie);
+        // Проверяем cookies после установки
+        console.log('🍪 Checking cookies after login...');
+        console.log('🍪 document.cookie:', document.cookie);
         
-        console.log('🔄 CLIENT: Redirecting to /dashboard in 200ms...');
+        // Небольшая задержка чтобы cookies точно установились
+        console.log('⏳ Waiting 500ms for cookies to be set...');
+        await new Promise(resolve => setTimeout(resolve, 500));
         
-        // Cookies уже установлены сервером через Set-Cookie заголовок
-        // Используем window.location для полной перезагрузки
-        setTimeout(() => {
-          console.log('🚀 CLIENT: Executing redirect NOW!');
-          window.location.href = '/dashboard';
-        }, 200);
+        console.log('🍪 Cookies after 500ms delay:', document.cookie);
+        console.log('🔄 Redirecting to /dashboard...');
+        console.log('🔐 CLIENT: ==================== LOGIN SUCCESS ====================');
+        console.log('========================================================================\n');
+        
+        // Используем window.location для полной перезагрузки и применения cookies
+        window.location.href = '/dashboard';
       } else {
         const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
         console.error('❌ CLIENT: Login failed:', errorData);
