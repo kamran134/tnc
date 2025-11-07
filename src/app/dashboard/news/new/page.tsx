@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ImageUpload } from '@/components/ui';
+import { authorizedFetch } from '@/lib/api/fetch';
 
 export default function CreateNewsPage() {
   const router = useRouter();
@@ -39,7 +40,7 @@ export default function CreateNewsPage() {
     setIsLoading(true);
     
     try {
-      const response = await fetch('/api/admin/news', {
+      const response = await authorizedFetch('/api/admin/news', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

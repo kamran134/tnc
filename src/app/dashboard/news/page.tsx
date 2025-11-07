@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { NewsAdminDto, PageNewsAdminDto } from '@/types/api';
+import { authorizedFetch } from '@/lib/api/fetch';
 
 export default function NewsPage() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function NewsPage() {
         ...(publishedFilter && { published: publishedFilter }),
       });
 
-      const response = await fetch(`/api/admin/news?${params}`);
+      const response = await authorizedFetch(`/api/admin/news?${params}`);
       if (response.ok) {
         const data: PageNewsAdminDto = await response.json();
         setNews(data.content);

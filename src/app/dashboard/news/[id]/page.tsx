@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ImageUpload } from '@/components/ui';
+import { authorizedFetch } from '@/lib/api/fetch';
 
 interface Translation {
   languageCode: string;
@@ -38,7 +39,7 @@ export default function EditNewsPage() {
     const loadNews = async () => {
       try {
         setIsLoadingData(true);
-        const response = await fetch(`/api/admin/news/${newsId}`);
+        const response = await authorizedFetch(`/api/admin/news/${newsId}`);
         
         if (response.ok) {
           const data = await response.json();
@@ -101,7 +102,7 @@ export default function EditNewsPage() {
     setIsLoading(true);
     
     try {
-      const response = await fetch(`/api/admin/news/${newsId}`, {
+      const response = await authorizedFetch(`/api/admin/news/${newsId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

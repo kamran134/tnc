@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ImageUpload } from '@/components/ui';
+import { authorizedFetch } from '@/lib/api/fetch';
 
 interface Translation {
   languageCode: string;
@@ -35,7 +36,7 @@ export default function EditServicePage() {
     const loadService = async () => {
       try {
         setIsLoadingData(true);
-        const response = await fetch(`/api/admin/services/${serviceId}`);
+        const response = await authorizedFetch(`/api/admin/services/${serviceId}`);
         
         if (response.ok) {
           const data = await response.json();
@@ -93,7 +94,7 @@ export default function EditServicePage() {
     setIsLoading(true);
     
     try {
-      const response = await fetch(`/api/admin/services/${serviceId}`, {
+      const response = await authorizedFetch(`/api/admin/services/${serviceId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

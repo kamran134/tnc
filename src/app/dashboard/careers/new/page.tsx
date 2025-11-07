@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { authorizedFetch } from '@/lib/api/fetch';
 
 export default function CreateCareerPage() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function CreateCareerPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/admin/careers', {
+      const response = await authorizedFetch('/api/admin/careers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
