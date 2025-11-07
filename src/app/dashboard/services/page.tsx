@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ServiceAdminDto, PageServiceAdminDto } from '@/types/api';
+import { authorizedFetch } from '@/lib/api/fetch';
 
 export default function ServicesPage() {
   const router = useRouter();
@@ -22,7 +23,8 @@ export default function ServicesPage() {
         ...(categoryFilter && { category: categoryFilter }),
       });
 
-      const response = await fetch(`/api/admin/services?${params}`);
+      const response = await authorizedFetch(`/api/admin/services?${params}`);
+      
       if (response.ok) {
         const data: PageServiceAdminDto = await response.json();
         setServices(data.content);
