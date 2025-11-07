@@ -63,8 +63,12 @@ export default function LoginPage() {
           return;
         }
         
-        // НЕ сохраняем в localStorage - используем только HTTP-only cookies!
-        console.log('✅ Tokens received, cookies should be set by server');
+        // Сохраняем токены в localStorage для axios клиента
+        console.log('💾 Saving tokens to localStorage...');
+        localStorage.setItem('access_token', data.accessToken);
+        localStorage.setItem('refresh_token', data.refreshToken);
+        console.log('✅ Tokens saved to localStorage');
+        console.log('✅ Cookies also set by server (HTTP-only)');
         
         // Проверяем cookies после установки
         console.log('🍪 Checking cookies after login...');
