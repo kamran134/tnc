@@ -70,13 +70,12 @@ export default function LoginPage() {
         console.log('🍪 Checking cookies after login...');
         console.log('🍪 document.cookie:', document.cookie);
         
-        // ⏸️ ВРЕМЕННАЯ ЗАДЕРЖКА ДЛЯ ОТЛАДКИ - 10 СЕКУНД!
-        console.log('⏳ Waiting 10 SECONDS for debugging (check Network & Console tabs)...');
-        console.log('⏸️ ================ YOU HAVE 10 SECONDS TO CHECK DEVTOOLS ================');
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        // Небольшая задержка чтобы cookies точно установились
+        console.log('⏳ Waiting 500ms for cookies to be set...');
+        await new Promise(resolve => setTimeout(resolve, 500));
         
-        console.log('🍪 Cookies after 10s delay:', document.cookie);
-        console.log('🔄 Redirecting to /dashboard NOW...');
+        console.log('🍪 Cookies after 500ms delay:', document.cookie);
+        console.log('🔄 Redirecting to /dashboard...');
         console.log('🔐 CLIENT: ==================== LOGIN SUCCESS ====================');
         console.log('========================================================================\n');
         
