@@ -25,9 +25,12 @@ COPY . .
 # Отключение телеметрии Next.js
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# 👇 Добавляем это:
+# 👇 Добавляем build-time аргументы:
 ARG NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+
+ARG BACKEND_URL=http://backend:8080
+ENV BACKEND_URL=${BACKEND_URL}
 
 # Сборка приложения
 RUN npm run build

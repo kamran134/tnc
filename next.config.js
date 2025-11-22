@@ -21,20 +21,12 @@ const nextConfig = {
   // Только /api/auth/login обрабатывается Next.js API route для установки cookies
   // Включаем standalone output для Docker оптимизации
   output: 'standalone',
-  // Исправляем warning о workspace root
-  outputFileTracingRoot: require('path').join(__dirname),
-  // Разрешаем runtime переменные окружения для standalone
+  // Включаем instrumentation для runtime env vars
   experimental: {
+    instrumentationHook: true,
     serverActions: {
       allowedOrigins: ['tnc.az', 'www.tnc.az'],
     },
-  },
-  // Явно указываем какие env переменные нужны в runtime
-  env: {
-    BACKEND_URL: process.env.BACKEND_URL,
-  },
-  // Опциональные оптимизации
-  experimental: {
     optimizePackageImports: ['@heroicons/react'],
   },
   compiler: {
