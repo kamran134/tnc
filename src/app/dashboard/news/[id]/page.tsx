@@ -266,7 +266,8 @@ export default function EditNewsPage() {
                     onChange={(e) => updateTranslation(index, 'title', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
                     placeholder={`Article title in ${translation.languageCode.toUpperCase()}`}
-                    required
+                    minLength={5}
+                    required={translation.languageCode === 'az'}
                   />
                 </div>
 
@@ -300,7 +301,7 @@ export default function EditNewsPage() {
                     rows={12}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
                     placeholder={`Full article content in ${translation.languageCode.toUpperCase()}`}
-                    required
+                    required={translation.languageCode === 'az'}
                   />
                 </div>
               </div>

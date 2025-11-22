@@ -107,6 +107,7 @@ export default function CreateCareerPage() {
                   onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
                   placeholder="e.g., Baku, Azerbaijan"
+                  minLength={5}
                   required
                 />
               </div>
@@ -186,7 +187,8 @@ export default function CreateCareerPage() {
                     onChange={(e) => updateTranslation(index, 'title', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
                     placeholder={`Job title in ${translation.languageCode.toUpperCase()}`}
-                    required
+                    minLength={5}
+                    required={translation.languageCode === 'az'}
                   />
                 </div>
 
@@ -209,7 +211,7 @@ export default function CreateCareerPage() {
                     rows={8}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
                     placeholder={`Detailed job description, requirements, and responsibilities in ${translation.languageCode.toUpperCase()}`}
-                    required
+                    required={translation.languageCode === 'az'}
                   />
                 </div>
               </div>
