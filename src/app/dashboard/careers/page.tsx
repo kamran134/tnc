@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CareerAdminDto, PageCareerAdminDto } from '@/types/api';
-import { authorizedFetch } from '@/lib/api/fetch';
 
 export default function CareersPage() {
   const router = useRouter();
@@ -26,7 +25,7 @@ export default function CareersPage() {
         ...(employmentTypeFilter && { employmentType: employmentTypeFilter }),
       });
 
-      const response = await authorizedFetch(`/api/admin/careers?${params}`);
+      const response = await fetch(`/api/admin/careers?${params}`);
       if (response.ok) {
         const data: PageCareerAdminDto = await response.json();
         setCareers(data.content);
@@ -86,7 +85,7 @@ export default function CareersPage() {
 
   const toggleJobActive = async (jobId: number, currentActive: boolean) => {
     try {
-      const response = await authorizedFetch(`/api/admin/careers/${jobId}`, {
+      const response = await fetch(`/api/admin/careers/${jobId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ active: !currentActive })

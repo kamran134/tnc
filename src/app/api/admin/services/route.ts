@@ -12,7 +12,11 @@ export async function GET(request: NextRequest) {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('access_token')?.value;
 
+    console.log('🔐 [Admin Services API] Request received');
+    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
+
     if (!accessToken) {
+      console.log('❌ No access token - returning 401');
       return NextResponse.json(
         { message: 'Not authenticated' },
         { status: 401 }
@@ -20,7 +24,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/admin/services?${params}`, {
+    const backendUrl = `${BACKEND_URL}/api/admin/services?${params}`;
+    console.log('🚀 Proxying to backend:', backendUrl);
+    
+    const response = await fetch(backendUrl, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -28,8 +35,11 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    console.log('📥 Backend response status:', response.status);
+
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Failed to fetch services' }));
+      console.log('❌ Backend returned error:', error);
       return NextResponse.json(
         { message: error.message || 'Failed to fetch services' },
         { status: response.status }
@@ -37,6 +47,7 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
+    console.log('✅ Services fetched successfully, count:', data.content?.length || 0);
     return NextResponse.json(data, { status: 200 });
 
   } catch (error) {
@@ -64,7 +75,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/admin/services`, {
+    const response = await fetch(`${BACKEND_URL}/api/admin/services`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

@@ -19,7 +19,7 @@ export async function PATCH(
     const { id } = await params;
     const body = await request.json();
     
-    const response = await fetch(`${BACKEND_URL}/admin/careers/${id}`, {
+    const response = await fetch(`${BACKEND_URL}/api/admin/careers/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

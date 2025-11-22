@@ -36,4 +36,10 @@ next-env.d.ts
 
 # server config и инструкции (содержат реальную конфигурацию с сервера)
 nginx-server.conf
+nginx.conf
+docker-compose.prod.yml
+ssl/
+uploads/
+postgres-data/
+logs/
 NGINX_UPDATE_INSTRUCTIONS.md

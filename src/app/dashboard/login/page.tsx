@@ -63,22 +63,15 @@ export default function LoginPage() {
           return;
         }
         
-        // Сохраняем токены в localStorage для axios клиента
-        console.log('💾 Saving tokens to localStorage...');
-        localStorage.setItem('access_token', data.accessToken);
-        localStorage.setItem('refresh_token', data.refreshToken);
-        console.log('✅ Tokens saved to localStorage');
-        console.log('✅ Cookies also set by server (HTTP-only)');
-        
         // Проверяем cookies после установки
         console.log('🍪 Checking cookies after login...');
         console.log('🍪 document.cookie:', document.cookie);
         
         // Небольшая задержка чтобы cookies точно установились
-        console.log('⏳ Waiting 500ms for cookies to be set...');
-        await new Promise(resolve => setTimeout(resolve, 500));
+        console.log('⏳ Waiting 200ms for cookies to be set...');
+        await new Promise(resolve => setTimeout(resolve, 200));
         
-        console.log('🍪 Cookies after 500ms delay:', document.cookie);
+        console.log('🍪 Cookies after 200ms delay:', document.cookie);
         console.log('🔄 Redirecting to /dashboard...');
         console.log('🔐 CLIENT: ==================== LOGIN SUCCESS ====================');
         console.log('========================================================================\n');

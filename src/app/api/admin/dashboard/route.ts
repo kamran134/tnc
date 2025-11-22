@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/admin/dashboard/statistics`, {
+    const response = await fetch(`${BACKEND_URL}/api/admin/dashboard/statistics`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

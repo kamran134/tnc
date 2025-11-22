@@ -23,6 +23,16 @@ const nextConfig = {
   output: 'standalone',
   // Исправляем warning о workspace root
   outputFileTracingRoot: require('path').join(__dirname),
+  // Разрешаем runtime переменные окружения для standalone
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['tnc.az', 'www.tnc.az'],
+    },
+  },
+  // Явно указываем какие env переменные нужны в runtime
+  env: {
+    BACKEND_URL: process.env.BACKEND_URL,
+  },
   // Опциональные оптимизации
   experimental: {
     optimizePackageImports: ['@heroicons/react'],

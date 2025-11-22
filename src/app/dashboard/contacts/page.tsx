@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ContactAdminDto, PageContactAdminDto } from '@/types/api';
-import { authorizedFetch } from '@/lib/api/fetch';
 
 export default function ContactsPage() {
   const router = useRouter();
@@ -26,7 +25,7 @@ export default function ContactsPage() {
         ...(statusFilter && { status: statusFilter }),
       });
 
-      const response = await authorizedFetch(`/api/admin/contacts?${params}`);
+      const response = await fetch(`/api/admin/contacts?${params}`);
       if (response.ok) {
         const data: PageContactAdminDto = await response.json();
         setContacts(data.content);
@@ -82,7 +81,7 @@ export default function ContactsPage() {
 
   const updateContactStatus = async (contactId: string, newStatus: string) => {
     try {
-      const response = await authorizedFetch(`/api/admin/contacts/${contactId}`, {
+      const response = await fetch(`/api/admin/contacts/${contactId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })

@@ -19,7 +19,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/admin/news/${id}`, {
+    const response = await fetch(`${BACKEND_URL}/api/admin/news/${id}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -66,7 +66,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     console.log('Updating news with data:', JSON.stringify(body, null, 2));
     
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/admin/news/${id}`, {
+    const response = await fetch(`${BACKEND_URL}/api/admin/news/${id}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -134,7 +134,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/admin/news/${id}`, {
+    const response = await fetch(`${BACKEND_URL}/api/admin/news/${id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

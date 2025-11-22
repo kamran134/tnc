@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ImageUpload } from '@/components/ui';
-import { authorizedFetch } from '@/lib/api/fetch';
 
 export default function CreateServicePage() {
   const router = useRouter();
@@ -40,7 +39,7 @@ export default function CreateServicePage() {
     setIsLoading(true);
 
     try {
-      const response = await authorizedFetch('/api/admin/services', {
+      const response = await fetch('/api/admin/services', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
