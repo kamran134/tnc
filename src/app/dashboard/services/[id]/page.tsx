@@ -93,10 +93,16 @@ export default function EditServicePage() {
     setIsLoading(true);
     
     try {
+      // Фильтруем переводы - оставляем только те, где есть title или content
+      const filteredData = {
+        ...formData,
+        translations: formData.translations.filter(t => t.title.trim() || t.content.trim())
+      };
+
       const response = await fetch(`/api/admin/services/${serviceId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(filteredData)
       });
 
       if (response.ok) {
