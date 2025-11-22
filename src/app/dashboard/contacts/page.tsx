@@ -230,7 +230,7 @@ export default function ContactsPage() {
                         <select
                           value={contact.status || 'NEW'}
                           onChange={(e) => updateContactStatus(contact.id!.toString(), e.target.value)}
-                          className="text-sm border border-gray-300 rounded px-2 py-1"
+                          className="text-sm border border-gray-300 rounded px-2 py-1 bg-white text-gray-900"
                         >
                           <option value="NEW">New</option>
                           <option value="IN_PROGRESS">In Progress</option>
