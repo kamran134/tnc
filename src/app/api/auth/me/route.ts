@@ -30,11 +30,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log('🚀 Forwarding request to backend:', `${BACKEND_URL}/auth/me`);
+    console.log('🚀 Forwarding request to backend:', `${BACKEND_URL}/api/auth/me`);
     console.log('🔑 Using Authorization header: Bearer', accessToken.substring(0, 30) + '...');
     
     // Запрашиваем данные пользователя с бэкенда согласно Swagger: /api/auth/me
-    const response = await fetch(`${BACKEND_URL}/auth/me`, {
+    const response = await fetch(`${BACKEND_URL}/api/auth/me`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

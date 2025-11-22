@@ -22,11 +22,11 @@ export async function POST(request: NextRequest) {
 
     // Если есть refresh token, пытаемся сделать logout на бэкенде согласно Swagger
     if (refreshToken) {
-      console.log('🚀 Forwarding logout request to backend:', `${BACKEND_URL}/auth/logout`);
+      console.log('🚀 Forwarding logout request to backend:', `${BACKEND_URL}/api/auth/logout`);
       console.log('📦 Request body:', JSON.stringify({ refreshToken: refreshToken.substring(0, 30) + '...' }));
       
       try {
-        const response = await fetch(`${BACKEND_URL}/auth/logout`, {
+        const response = await fetch(`${BACKEND_URL}/api/auth/logout`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
