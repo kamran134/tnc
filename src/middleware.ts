@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// ПРОСТАЯ ЛОГИКА: только /dashboard требует токен
+const locales = ['az', 'en', 'ru'];
+const defaultLocale = 'az';
+
+// ЛОГИКА: авторизация для /dashboard + поддержка языков
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
@@ -42,9 +45,24 @@ export function middleware(request: NextRequest) {
 
   console.log('✅ MIDDLEWARE END (PASS) =====================');
   console.log('========================================================================\n');
-  return NextResponse.next();
+  
+  // Добавляем информацию о языке в заголовки
+  const response = NextResponse.next();
+  
+  // Определяем текущий язык из URL
+  const pathnameLocale = locales.find(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  );
+  
+  const currentLocale = pathnameLocale || defaultLocale;
+  response.headers.set('x-locale', currentLocale);
+  
+  return response;
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*']
+  matcher: [
+    // Применяем ко всем путям
+    '/((?!api|_next/static|_next/image|favicon.ico|uploads).*)',
+  ]
 };

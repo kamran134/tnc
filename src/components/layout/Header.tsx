@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import LanguageSwitcher from './LanguageSwitcher'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -25,7 +26,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -35,6 +36,7 @@ export default function Header() {
                 {item.name}
               </Link>
             ))}
+            <LanguageSwitcher />
           </div>
 
           {/* Mobile menu button */}
@@ -60,7 +62,7 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t">
+          <div className="md:hidden py-4 border-t space-y-2">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -71,6 +73,9 @@ export default function Header() {
                 {item.name}
               </Link>
             ))}
+            <div className="pt-2 border-t">
+              <LanguageSwitcher />
+            </div>
           </div>
         )}
       </nav>
