@@ -44,11 +44,17 @@ export default function EditNewsPage() {
           const data = await response.json();
           console.log('Loaded news data:', data);
           
+          // Конвертируем imageUrl из /api/files/ в /uploads/
+          let imageUrl = data.imageUrl || '';
+          if (imageUrl && imageUrl.includes('/api/files/')) {
+            imageUrl = imageUrl.replace(/^https?:\/\/[^\/]+/, '').replace('/api/files/', '/uploads/');
+          }
+          
           // Transform backend data to form format
           setFormData({
             published: data.published || false,
             author: data.author || '',
-            imageUrl: data.imageUrl || '',
+            imageUrl: imageUrl,
             category: data.category || '',
             readTimeMinutes: data.readTimeMinutes || 5,
             tags: data.tags || '',

@@ -41,10 +41,16 @@ export default function EditServicePage() {
           const data = await response.json();
           console.log('Loaded service data:', data);
           
+          // Конвертируем iconUrl из /api/files/ в /uploads/
+          let iconUrl = data.iconUrl || '';
+          if (iconUrl && iconUrl.includes('/api/files/')) {
+            iconUrl = iconUrl.replace(/^https?:\/\/[^\/]+/, '').replace('/api/files/', '/uploads/');
+          }
+          
           // Transform backend data to form format
           setFormData({
             category: data.category || '',
-            iconUrl: data.iconUrl || '',
+            iconUrl: iconUrl,
             sortOrder: data.sortOrder || 0,
             active: data.active !== false,
             translations: [
