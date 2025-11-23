@@ -1,28 +1,35 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { PageHero, LoadingSpinner, Alert, Button, Card, EmptyState } from '@/components/ui'
-import { CareerDto } from '@/types/api'
+import { CareerDto, LanguageCode } from '@/types/api'
 import { careersService } from '@/lib/api'
 
 export default function CareersPage() {
+  const params = useParams();
+  const lang = (params.lang as LanguageCode) || 'az';
+  
   const [jobOpenings, setJobOpenings] = useState<CareerDto[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    loadJobs()
-  }, [])
+    if (lang) {
+      loadJobs()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang])
 
   const loadJobs = async () => {
     try {
       setLoading(true)
       setError(null)
       const response = await careersService.getAll({
-        lang: 'az'
+        lang
       })
       setJobOpenings(response.content)
     } catch (err) {

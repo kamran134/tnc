@@ -43,18 +43,26 @@ export function middleware(request: NextRequest) {
     console.log('📖 Public route or login page - allowing access');
   }
 
-  console.log('✅ MIDDLEWARE END (PASS) =====================');
-  console.log('========================================================================\n');
-  
   // Проверяем, есть ли язык в URL
   const pathnameLocale = locales.find(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
-  
+
+  // Если это корень без языка, редиректим на /az
+  if (pathname === '/') {
+    console.log('🔀 ROOT PATH DETECTED - REDIRECTING to /az');
+    console.log('🔒 MIDDLEWARE END (LANG REDIRECT) =====================');
+    console.log('========================================================================\n');
+    return NextResponse.redirect(new URL('/az', request.url));
+  }
+
   const currentLocale = pathnameLocale || defaultLocale;
   
   const response = NextResponse.next();
   response.headers.set('x-locale', currentLocale);
+
+  console.log('✅ MIDDLEWARE END (PASS) =====================');
+  console.log('========================================================================\n');
   
   return response;
 }

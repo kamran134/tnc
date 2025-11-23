@@ -1,25 +1,32 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { LoadingSpinner, Alert, Card } from '@/components/ui'
-import { ServiceDto } from '@/types/api'
+import { ServiceDto, LanguageCode } from '@/types/api'
 import { servicesService } from '@/lib/api'
 
 export default function ServicesList() {
+  const params = useParams();
+  const lang = (params.lang as LanguageCode) || 'az';
+
   const [services, setServices] = useState<ServiceDto[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    loadServices()
-  }, [])
+    if (lang) {
+      loadServices()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang])
 
   const loadServices = async () => {
     try {
       setLoading(true)
       setError(null)
-      const data = await servicesService.getAll('az')
+      const data = await servicesService.getAll(lang)
       setServices(data)
     } catch (err) {
       console.error('Failed to load services:', err)
@@ -107,7 +114,7 @@ export default function ServicesList() {
                   
                   <div className="flex-shrink-0 mt-6 lg:mt-0">
                     <Link
-                      href="/contact"
+                      href={`/${lang}/contact`}
                       className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 transition-colors duration-200"
                     >
                       Get Consultation
@@ -129,7 +136,7 @@ export default function ServicesList() {
               and how we can tailor our services to meet your needs.
             </p>
             <Link
-              href="/contact"
+              href={`/${lang}/contact`}
               className="btn-primary"
             >
               Contact Our Experts

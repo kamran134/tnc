@@ -1,18 +1,21 @@
 'use client'
 
 import { useState } from 'react'
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import LanguageSwitcher from './LanguageSwitcher'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const params = useParams();
+  const lang = (params.lang as string) || 'az';
 
   const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'Services', href: '/services' },
-    { name: 'News', href: '/news' },
-    { name: 'Careers', href: '/careers' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'Home', href: `/${lang}` },
+    { name: 'Services', href: `/${lang}/services` },
+    { name: 'News', href: `/${lang}/news` },
+    { name: 'Careers', href: `/${lang}/careers` },
+    { name: 'Contact', href: `/${lang}/contact` },
     // Dashboard скрыт - доступ только через прямой URL /dashboard
   ]
 
@@ -21,7 +24,7 @@ export default function Header() {
       <nav className="container-max">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-primary-700">
+          <Link href={`/${lang}`} className="text-2xl font-bold text-primary-700">
             TnC
           </Link>
 

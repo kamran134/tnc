@@ -1,7 +1,12 @@
+'use client';
+
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
+  const params = useParams();
+  const lang = (params.lang as string) || 'az';
 
   const services = [
     'Accounting & Finance',
@@ -12,11 +17,11 @@ export default function Footer() {
   ]
 
   const quickLinks = [
-    { name: 'About Us', href: '/about' },
-    { name: 'Services', href: '/services' },
-    { name: 'News', href: '/news' },
-    { name: 'Careers', href: '/careers' },
-    { name: 'Contact', href: '/contact' }
+    { name: 'About Us', href: `/${lang}/about` },
+    { name: 'Services', href: `/${lang}/services` },
+    { name: 'News', href: `/${lang}/news` },
+    { name: 'Careers', href: `/${lang}/careers` },
+    { name: 'Contact', href: `/${lang}/contact` }
   ]
 
   return (
@@ -50,7 +55,7 @@ export default function Footer() {
             <ul className="space-y-2">
               {services.map((service) => (
                 <li key={service}>
-                  <Link href="/services" className="text-gray-300 hover:text-white transition-colors">
+                  <Link href={`/${lang}/services`} className="text-gray-300 hover:text-white transition-colors">
                     {service}
                   </Link>
                 </li>

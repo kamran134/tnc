@@ -1,6 +1,12 @@
+'use client';
+
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
 
 export default function Hero() {
+  const params = useParams();
+  const lang = (params.lang as string) || 'az';
+
   return (
     <section className="bg-gradient-to-r from-sky-400 to-sky-500 text-white section-padding">
       <div className="container-max">
@@ -13,13 +19,13 @@ export default function Hero() {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
-              href="/services"
+              href={`/${lang}/services`}
               className="bg-white text-primary-700 font-semibold py-3 px-8 rounded-lg hover:bg-gray-100 transition-colors duration-200"
             >
               Our Services
             </Link>
             <Link
-              href="/contact"
+              href={`/${lang}/contact`}
               className="border-2 border-white text-white font-semibold py-3 px-8 rounded-lg hover:bg-white hover:text-primary-700 transition-colors duration-200"
             >
               Get in Touch
