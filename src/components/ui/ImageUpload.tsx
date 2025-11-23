@@ -219,7 +219,7 @@ export default function ImageUpload({
                 width={300}
                 height={200}
                 className="max-w-full max-h-48 rounded-lg border border-gray-200 object-contain"
-                unoptimized={preview.startsWith('data:')}
+                unoptimized
               />
               <button
                 type="button"
