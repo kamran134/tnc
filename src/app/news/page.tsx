@@ -84,10 +84,15 @@ export default function NewsPage() {
             ) : (
               <>
                 <div className="grid gap-8 md:gap-12">
-                  {newsArticles.map((article) => (
+                  {newsArticles.map((article) => {
+                    const href = article.languageCode === 'az'
+                      ? `/news/${article.slug}`
+                      : `/${article.languageCode}/news/${article.slug}`;
+                    
+                    return (
                     <Link 
                       key={article.id}
-                      href={`/news/${article.languageCode}/${article.slug}`}
+                      href={href}
                       className="block"
                     >
                       <Card hover padding="none" className="overflow-hidden h-full transition-transform hover:scale-[1.02]">
@@ -141,7 +146,8 @@ export default function NewsPage() {
                         </div>
                       </Card>
                     </Link>
-                  ))}
+                    );
+                  })}
                 </div>
                 
                 {hasMore && (
