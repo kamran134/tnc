@@ -175,6 +175,7 @@ export default function NewsPage() {
                               alt=""
                               width={40}
                               height={40}
+                              unoptimized
                             />
                           )}
                           <div>

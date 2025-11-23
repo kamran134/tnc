@@ -71,13 +71,13 @@ export default function ImageUpload({
         const data = await response.json();
         console.log('File uploaded:', data);
         
-        // Конвертируем бэкенд URL в проксированный через Next.js
+        // Конвертируем бэкенд URL для nginx
         // Бэкенд возвращает: http://localhost:8080/api/files/news_image/filename.jpg
-        // Мы конвертируем в: /api/files/news_image/filename.jpg
+        // Nginx раздаёт из: /uploads/news_image/filename.jpg
         let imageUrl = data.fileUrl;
         if (imageUrl) {
-          // Удаляем базовый URL бэкенда, оставляем только путь
-          imageUrl = imageUrl.replace(/^https?:\/\/[^\/]+/, '');
+          // Удаляем базовый URL и заменяем /api/files/ на /uploads/
+          imageUrl = imageUrl.replace(/^https?:\/\/[^\/]+/, '').replace('/api/files/', '/uploads/');
         }
         
         onChange(imageUrl, data.id);
