@@ -8,11 +8,11 @@ import Footer from '@/components/layout/Footer';
 import { LoadingSpinner, Alert } from '@/components/ui';
 import { CareerDto } from '@/types/api';
 
-export default function CareerDetailPageAz() {
+export default function CareerDetailAz() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
-  const lang = 'az'; // Для маршрута без префикса используем азербайджанский
+  const lang = 'az';
   
   const [career, setCareer] = useState<CareerDto | null>(null);
   const [loading, setLoading] = useState(true);
@@ -104,10 +104,8 @@ export default function CareerDetailPageAz() {
       <Header />
       
       <main>
-        {/* Job Header */}
         <article className="section-padding bg-white">
           <div className="container-max max-w-4xl">
-            {/* Breadcrumbs */}
             <nav className="mb-8 text-sm">
               <ol className="flex items-center space-x-2 text-gray-500">
                 <li>
@@ -122,12 +120,10 @@ export default function CareerDetailPageAz() {
               </ol>
             </nav>
 
-            {/* Title */}
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
               {career.title}
             </h1>
 
-            {/* Job Details Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 pb-8 border-b border-gray-200">
               <div className="flex flex-col">
                 <span className="text-sm text-gray-500 mb-1">Location</span>
@@ -156,14 +152,12 @@ export default function CareerDetailPageAz() {
               </div>
             </div>
 
-            {/* Excerpt */}
             {career.excerpt && (
               <div className="text-xl text-gray-700 leading-relaxed mb-8 font-medium border-l-4 border-primary-500 pl-6">
                 {career.excerpt}
               </div>
             )}
 
-            {/* Job Description */}
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Job Description</h2>
               <div 
@@ -172,7 +166,6 @@ export default function CareerDetailPageAz() {
               />
             </div>
 
-            {/* Requirements */}
             {career.requirements && (
               <div className="mb-12">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Requirements</h2>
@@ -183,7 +176,6 @@ export default function CareerDetailPageAz() {
               </div>
             )}
 
-            {/* Expiry Notice */}
             {career.expiryDate && new Date(career.expiryDate) > new Date() && (
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8">
                 <p className="text-amber-800">
@@ -192,7 +184,6 @@ export default function CareerDetailPageAz() {
               </div>
             )}
 
-            {/* Apply Section */}
             <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-8 mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Interested in this position?</h2>
               <p className="text-gray-700 mb-6">
@@ -206,7 +197,6 @@ export default function CareerDetailPageAz() {
               </button>
             </div>
 
-            {/* Back Button */}
             <div className="pt-8 border-t border-gray-200">
               <button
                 onClick={() => router.push('/careers')}

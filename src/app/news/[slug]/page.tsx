@@ -9,11 +9,11 @@ import Footer from '@/components/layout/Footer';
 import { LoadingSpinner, Alert } from '@/components/ui';
 import { NewsDto } from '@/types/api';
 
-export default function NewsDetailPageAz() {
+export default function NewsDetailAz() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
-  const lang = 'az'; // Для маршрута без префикса используем азербайджанский
+  const lang = 'az';
   
   const [news, setNews] = useState<NewsDto | null>(null);
   const [loading, setLoading] = useState(true);
@@ -95,10 +95,8 @@ export default function NewsDetailPageAz() {
       <Header />
       
       <main>
-        {/* Article Header */}
         <article className="section-padding bg-white">
           <div className="container-max max-w-4xl">
-            {/* Breadcrumbs */}
             <nav className="mb-8 text-sm">
               <ol className="flex items-center space-x-2 text-gray-500">
                 <li>
@@ -113,7 +111,6 @@ export default function NewsDetailPageAz() {
               </ol>
             </nav>
 
-            {/* Category Badge */}
             {news.category && (
               <div className="mb-4">
                 <span className="inline-block bg-primary-100 text-primary-700 px-4 py-1 rounded-full text-sm font-medium">
@@ -122,12 +119,10 @@ export default function NewsDetailPageAz() {
               </div>
             )}
 
-            {/* Title */}
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
               {news.title}
             </h1>
 
-            {/* Meta Information */}
             <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-8 pb-8 border-b border-gray-200">
               {news.author && (
                 <div className="flex items-center">
@@ -155,7 +150,6 @@ export default function NewsDetailPageAz() {
               )}
             </div>
 
-            {/* Featured Image */}
             {news.imageUrl && (
               <div className="relative w-full h-96 mb-12 rounded-xl overflow-hidden">
                 <Image
@@ -169,14 +163,12 @@ export default function NewsDetailPageAz() {
               </div>
             )}
 
-            {/* Excerpt */}
             {news.excerpt && (
               <div className="text-xl text-gray-700 leading-relaxed mb-8 font-medium border-l-4 border-primary-500 pl-6 italic">
                 {news.excerpt}
               </div>
             )}
 
-            {/* Content */}
             <div className="prose prose-lg max-w-none">
               <div 
                 className="text-gray-700 leading-relaxed"
@@ -184,7 +176,6 @@ export default function NewsDetailPageAz() {
               />
             </div>
 
-            {/* Tags */}
             {news.tags && (
               <div className="mt-12 pt-8 border-t border-gray-200">
                 <h3 className="text-sm font-semibold text-gray-900 mb-3">Tags:</h3>
@@ -201,7 +192,6 @@ export default function NewsDetailPageAz() {
               </div>
             )}
 
-            {/* Back to News Button */}
             <div className="mt-12 pt-8 border-t border-gray-200">
               <button
                 onClick={() => router.push('/news')}
