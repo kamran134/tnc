@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { PageHero, LoadingSpinner, Alert, Button, Card, EmptyState } from '@/components/ui'
@@ -85,11 +86,13 @@ export default function NewsPage() {
                   {newsArticles.map((article) => (
                     <Card key={article.id} hover padding="none" className="overflow-hidden">
                       {article.imageUrl && (
-                        <div className="w-full h-64 bg-gray-200">
-                          <img
+                        <div className="relative w-full h-64 bg-gray-200">
+                          <Image
                             src={article.imageUrl}
                             alt={article.title}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           />
                         </div>
                       )}

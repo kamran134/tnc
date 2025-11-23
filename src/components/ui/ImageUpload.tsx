@@ -70,7 +70,17 @@ export default function ImageUpload({
       if (response.ok) {
         const data = await response.json();
         console.log('File uploaded:', data);
-        onChange(data.fileUrl, data.id);
+        
+        // Конвертируем бэкенд URL в проксированный через Next.js
+        // Бэкенд возвращает: http://localhost:8080/api/files/news_image/filename.jpg
+        // Мы конвертируем в: /api/files/news_image/filename.jpg
+        let imageUrl = data.fileUrl;
+        if (imageUrl) {
+          // Удаляем базовый URL бэкенда, оставляем только путь
+          imageUrl = imageUrl.replace(/^https?:\/\/[^\/]+/, '');
+        }
+        
+        onChange(imageUrl, data.id);
       } else {
         const error = await response.json();
         console.error('Upload failed:', error);

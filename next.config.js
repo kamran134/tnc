@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['localhost'],
+    // Разрешаем все локальные домены для разработки
+    domains: ['localhost', '127.0.0.1'],
     remotePatterns: [
       {
         protocol: 'http',
@@ -10,11 +11,24 @@ const nextConfig = {
         pathname: '/api/files/**',
       },
       {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+        port: '8080',
+        pathname: '/api/files/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'tnc.az',
+        pathname: '/api/files/**',
+      },
+      {
         protocol: 'https',
         hostname: '*.tnc.az',
         pathname: '/api/files/**',
       },
     ],
+    // Разрешаем локальные паттерны для проксированных изображений
+    unoptimized: false,
   },
   // Rewrites НЕ НУЖНЫ для клиентских запросов
   // Клиент идет напрямую на https://tnc.az/api
