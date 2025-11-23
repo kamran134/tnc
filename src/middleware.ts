@@ -51,14 +51,6 @@ export function middleware(request: NextRequest) {
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
   
-  // Если нет языка в URL и это страница с контентом (news, careers)
-  if (!pathnameLocale && (pathname.startsWith('/news/') || pathname.startsWith('/careers/'))) {
-    // Редирект на версию с языком по умолчанию
-    const newUrl = new URL(`/${defaultLocale}${pathname}`, request.url);
-    console.log('🔀 Redirecting to localized URL:', newUrl.pathname);
-    return NextResponse.redirect(newUrl);
-  }
-  
   const currentLocale = pathnameLocale || defaultLocale;
   
   const response = NextResponse.next();
