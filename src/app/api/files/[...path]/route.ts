@@ -4,11 +4,12 @@ const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
-    const path = params.path.join('/');
-    const imageUrl = `${BACKEND_URL}/api/files/${path}`;
+    const { path } = await params;
+    const imagePath = path.join('/');
+    const imageUrl = `${BACKEND_URL}/api/files/${imagePath}`;
 
     console.log('Proxying image request:', imageUrl);
 
