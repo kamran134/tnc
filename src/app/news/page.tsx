@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import Image from 'next/image'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
@@ -84,53 +85,62 @@ export default function NewsPage() {
               <>
                 <div className="grid gap-8 md:gap-12">
                   {newsArticles.map((article) => (
-                    <Card key={article.id} hover padding="none" className="overflow-hidden">
-                      {article.imageUrl && (
-                        <div className="relative w-full h-64 bg-gray-200">
-                          <Image
-                            src={article.imageUrl}
-                            alt={article.title}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            unoptimized
-                          />
-                        </div>
-                      )}
-                      <div className="p-8">
-                        <div className="flex flex-wrap items-center gap-4 mb-4">
-                          {article.category && (
-                            <span className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm font-medium">
-                              {article.category}
-                            </span>
-                          )}
-                          <span className="text-gray-500 text-sm">{formatDate(article.publishDate)}</span>
-                          {article.readTimeMinutes && (
-                            <span className="text-gray-500 text-sm">{article.readTimeMinutes} min read</span>
-                          )}
-                        </div>
-                        
-                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 hover:text-primary-600 cursor-pointer">
-                          {article.title}
-                        </h2>
-                        
-                        {article.excerpt && (
-                          <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                            {article.excerpt}
-                          </p>
+                    <Link 
+                      key={article.id}
+                      href={`/news/${article.languageCode}/${article.slug}`}
+                      className="block"
+                    >
+                      <Card hover padding="none" className="overflow-hidden h-full transition-transform hover:scale-[1.02]">
+                        {article.imageUrl && (
+                          <div className="relative w-full h-64 bg-gray-200">
+                            <Image
+                              src={article.imageUrl}
+                              alt={article.title}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                              unoptimized
+                            />
+                          </div>
                         )}
-                        
-                        {article.author && (
-                          <p className="text-sm text-gray-500 mb-4">
-                            By {article.author}
-                          </p>
-                        )}
-                        
-                        <button className="text-primary-600 font-semibold hover:text-primary-700 transition-colors duration-200">
-                          Read More →
-                        </button>
-                      </div>
-                    </Card>
+                        <div className="p-8">
+                          <div className="flex flex-wrap items-center gap-4 mb-4">
+                            {article.category && (
+                              <span className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm font-medium">
+                                {article.category}
+                              </span>
+                            )}
+                            <span className="text-gray-500 text-sm">{formatDate(article.publishDate)}</span>
+                            {article.readTimeMinutes && (
+                              <span className="text-gray-500 text-sm">{article.readTimeMinutes} min read</span>
+                            )}
+                          </div>
+                          
+                          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 hover:text-primary-600">
+                            {article.title}
+                          </h2>
+                          
+                          {article.excerpt && (
+                            <p className="text-gray-600 text-lg leading-relaxed mb-6">
+                              {article.excerpt}
+                            </p>
+                          )}
+                          
+                          {article.author && (
+                            <p className="text-sm text-gray-500 mb-4">
+                              By {article.author}
+                            </p>
+                          )}
+                          
+                          <span className="text-primary-600 font-semibold hover:text-primary-700 transition-colors duration-200 inline-flex items-center">
+                            Read More 
+                            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </span>
+                        </div>
+                      </Card>
+                    </Link>
                   ))}
                 </div>
                 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { PageHero, LoadingSpinner, Alert, Button, Card, EmptyState } from '@/components/ui'
@@ -126,9 +127,11 @@ export default function CareersPage() {
                   >
                     <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
                       <div className="flex-1">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                          {job.title}
-                        </h3>
+                        <Link href={`/careers/${job.languageCode}/${job.slug}`}>
+                          <h3 className="text-2xl font-bold text-gray-900 mb-2 hover:text-primary-600 transition-colors cursor-pointer">
+                            {job.title}
+                          </h3>
+                        </Link>
                         
                         <div className="flex flex-wrap gap-4 mb-4 text-sm text-gray-600">
                           <span className="flex items-center">
@@ -180,9 +183,11 @@ export default function CareersPage() {
                       </div>
                       
                       <div className="lg:ml-8">
-                        <Button>
-                          Apply Now
-                        </Button>
+                        <Link href={`/careers/${job.languageCode}/${job.slug}`}>
+                          <Button>
+                            View Details
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                   </Card>
