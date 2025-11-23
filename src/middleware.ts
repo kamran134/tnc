@@ -46,15 +46,22 @@ export function middleware(request: NextRequest) {
   console.log('✅ MIDDLEWARE END (PASS) =====================');
   console.log('========================================================================\n');
   
-  // Добавляем информацию о языке в заголовки
-  const response = NextResponse.next();
-  
-  // Определяем текущий язык из URL
+  // Проверяем, есть ли язык в URL
   const pathnameLocale = locales.find(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
   
+  // Если нет языка в URL и это страница с контентом (news, careers)
+  if (!pathnameLocale && (pathname.startsWith('/news/') || pathname.startsWith('/careers/'))) {
+    // Редирект на версию с языком по умолчанию
+    const newUrl = new URL(`/${defaultLocale}${pathname}`, request.url);
+    console.log('🔀 Redirecting to localized URL:', newUrl.pathname);
+    return NextResponse.redirect(newUrl);
+  }
+  
   const currentLocale = pathnameLocale || defaultLocale;
+  
+  const response = NextResponse.next();
   response.headers.set('x-locale', currentLocale);
   
   return response;

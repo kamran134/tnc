@@ -66,14 +66,18 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     let newPath = pathname;
     
     // Убираем /az, /en или /ru с начала
-    if (pathname.startsWith('/az/') || pathname.startsWith('/en/') || pathname.startsWith('/ru/')) {
-      newPath = pathname.substring(3); // убираем /xx
+    if (pathname.startsWith('/az/')) {
+      newPath = pathname.substring(3); // убираем /az
+    } else if (pathname.startsWith('/en/')) {
+      newPath = pathname.substring(3); // убираем /en
+    } else if (pathname.startsWith('/ru/')) {
+      newPath = pathname.substring(3); // убираем /ru
     } else if (pathname === '/az' || pathname === '/en' || pathname === '/ru') {
       newPath = '/';
     }
 
-    // Добавляем новый язык (кроме az - он по умолчанию)
-    const finalPath = newLocale === 'az' ? newPath : `/${newLocale}${newPath}`;
+    // Всегда добавляем язык в URL (включая az)
+    const finalPath = `/${newLocale}${newPath}`;
     
     setLocaleState(newLocale);
     router.push(finalPath);

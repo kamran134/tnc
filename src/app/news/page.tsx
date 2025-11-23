@@ -85,9 +85,8 @@ export default function NewsPage() {
               <>
                 <div className="grid gap-8 md:gap-12">
                   {newsArticles.map((article) => {
-                    const href = article.languageCode === 'az'
-                      ? `/news/${article.slug}`
-                      : `/${article.languageCode}/news/${article.slug}`;
+                    // Всегда используем формат с языком
+                    const href = `/${article.languageCode}/news/${article.slug}`;
                     
                     return (
                     <Link 

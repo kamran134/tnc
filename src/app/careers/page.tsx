@@ -127,7 +127,7 @@ export default function CareersPage() {
                   >
                     <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
                       <div className="flex-1">
-                        <Link href={job.languageCode === 'az' ? `/careers/${job.slug}` : `/${job.languageCode}/careers/${job.slug}`}>
+                        <Link href={`/${job.languageCode}/careers/${job.slug}`}>
                           <h3 className="text-2xl font-bold text-gray-900 mb-2 hover:text-primary-600 transition-colors cursor-pointer">
                             {job.title}
                           </h3>
@@ -183,7 +183,7 @@ export default function CareersPage() {
                       </div>
                       
                       <div className="lg:ml-8">
-                        <Link href={job.languageCode === 'az' ? `/careers/${job.slug}` : `/${job.languageCode}/careers/${job.slug}`}>
+                        <Link href={`/${job.languageCode}/careers/${job.slug}`}>
                           <Button>
                             View Details
                           </Button>
