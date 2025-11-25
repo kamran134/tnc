@@ -99,6 +99,7 @@ export default function NewsPage() {
                             alt={article.title}
                             fill
                             className="object-cover"
+                            unoptimized
                           />
                         </div>
                       )}
