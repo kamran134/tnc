@@ -29,6 +29,10 @@ export default function CareerDetail() {
         if (response.ok) {
           const data = await response.json();
           setCareer(data);
+          // Сохраняем ID вакансии для смены языка
+          if (data.id) {
+            sessionStorage.setItem('currentCareerId', data.id.toString());
+          }
         } else if (response.status === 404) {
           setError('Job posting not found');
         } else {

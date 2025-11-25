@@ -30,6 +30,10 @@ export default function NewsDetail() {
         if (response.ok) {
           const data = await response.json();
           setNews(data);
+          // Сохраняем ID новости для смены языка
+          if (data.id) {
+            sessionStorage.setItem('currentNewsId', data.id.toString());
+          }
         } else if (response.status === 404) {
           setError('News article not found');
         } else {
