@@ -42,6 +42,13 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
+# 👇 ВАЖНО: Прокидываем переменные в runtime
+ARG NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+
+ARG BACKEND_URL
+ENV BACKEND_URL=${BACKEND_URL}
+
 # Создание пользователя nextjs для безопасности
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
