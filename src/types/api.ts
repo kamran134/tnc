@@ -103,19 +103,16 @@ export interface CompanyInfoTranslationDto {
 // Public DTOs
 export interface ServiceDto {
   id: number;
-  languageCode: LanguageCode;
   title: string;
+  slug: string;
   content: string;
+  languageCode: LanguageCode;
   excerpt?: string;
-  category: string;
+  imageUrl?: string;
   iconUrl?: string;
-  sortOrder?: number;
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-  deleted: boolean;
-  deletedAt?: string;
-  deletedBy?: string;
+  category: string;
+  displayOrder?: number;
+  featured: boolean;
 }
 
 export interface NewsDto {
@@ -132,51 +129,38 @@ export interface NewsDto {
   category?: string;
   readTimeMinutes?: number;
   tags?: string;
-  createdAt: string;
-  updatedAt: string;
-  deleted: boolean;
-  deletedAt?: string;
-  deletedBy?: string;
 }
 
 export interface CareerDto {
   id: number;
-  languageCode: LanguageCode;
   title: string;
   slug: string;
+  languageCode: LanguageCode;
   content: string;
   excerpt?: string;
   requirements?: string;
+  position: string;
   location: string;
   employmentType?: string;
   salaryRange?: string;
   postDate: string;
   expiryDate?: string;
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-  deleted: boolean;
-  deletedAt?: string;
-  deletedBy?: string;
 }
 
 export interface MembershipDto {
   id: number;
-  languageCode: LanguageCode;
   title: string;
-  content?: string;
-  excerpt?: string;
-  name: string;
-  fullName?: string;
+  description?: string;
+  languageCode: LanguageCode;
+  servicesProvided?: string;
+  partnershipDetails?: string;
+  contactInfo?: string;
+  imageUrl?: string;
   logoUrl?: string;
   websiteUrl?: string;
-  sortOrder?: number;
+  partnershipType?: string;
+  establishedDate?: string;
   active: boolean;
-  createdAt: string;
-  updatedAt: string;
-  deleted: boolean;
-  deletedAt?: string;
-  deletedBy?: string;
 }
 
 export interface CoreValueDto {
@@ -199,22 +183,28 @@ export interface HomeContentDto {
   id: number;
   languageCode: LanguageCode;
   title: string;
+  subtitle?: string;
   content?: string;
   excerpt?: string;
+  heroImageUrl?: string;
+  ctaButtonText?: string;
+  ctaButtonUrl?: string;
   mission: string;
   vision: string;
+  section1Title?: string;
+  section1Content?: string;
+  section2Title?: string;
+  section2Content?: string;
+  statisticsTitle?: string;
+  statsNumbers?: string;
   values: CoreValueDto[];
   memberships: MembershipDto[];
-  createdAt: string;
-  updatedAt: string;
-  deleted: boolean;
-  deletedAt?: string;
-  deletedBy?: string;
 }
 
 export interface CompanyInfoDto {
   id: number;
   languageCode: LanguageCode;
+  companyName: string;
   title: string;
   content: string;
   excerpt?: string;
@@ -224,13 +214,11 @@ export interface CompanyInfoDto {
   phone: string;
   email: string;
   website?: string;
+  linkedinUrl?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
   foundedYear?: string;
   teamSize?: string;
-  createdAt: string;
-  updatedAt: string;
-  deleted: boolean;
-  deletedAt?: string;
-  deletedBy?: string;
 }
 
 export interface ContactDto {
