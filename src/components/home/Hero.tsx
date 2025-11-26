@@ -2,15 +2,17 @@
 
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 
 export default function Hero() {
   const params = useParams();
   const lang = (params.lang as string) || 'az';
+  const { ref, isVisible } = useScrollAnimation();
 
   return (
-    <section className="relative bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white flex items-center justify-center overflow-hidden" style={{ height: 'calc(100vh - 73px)' }}>
+    <section ref={ref as any} className="snap-start relative bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white flex items-center justify-center overflow-hidden" style={{ height: 'calc(100vh - 73px)' }}>
       <div className="container-max relative z-20">
-        <div className="text-center max-w-6xl mx-auto">
+        <div className={`text-center max-w-6xl mx-auto transition-all duration-1200 ease-out ${isVisible ? 'opacity-100 scale-100 blur-0' : 'opacity-0 scale-90 blur-sm'}`}>
           <h1 className="text-5xl md:text-5xl font-bold mb-12">
             Professional Tax & Consulting Services
           </h1>

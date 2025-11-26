@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react'
 import { CoreValueDto } from '@/types/api'
 import { coreValuesService } from '@/lib/api'
 import { LoadingSpinner, Alert } from '@/components/ui'
+import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 
 export default function CoreValues() {
   const [values, setValues] = useState<CoreValueDto[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { ref, isVisible } = useScrollAnimation()
 
   useEffect(() => {
     loadCoreValues()
@@ -30,7 +32,7 @@ export default function CoreValues() {
 
   if (loading) {
     return (
-      <section className="section-padding bg-white">
+      <section className="snap-start section-padding bg-white flex items-center" style={{ minHeight: '100vh' }}>
         <div className="container-max">
           <LoadingSpinner />
         </div>
@@ -40,7 +42,7 @@ export default function CoreValues() {
 
   if (error) {
     return (
-      <section className="section-padding bg-white">
+      <section className="snap-start section-padding bg-white flex items-center" style={{ minHeight: '100vh' }}>
         <div className="container-max">
           <Alert type="error" message={error} />
         </div>
@@ -54,9 +56,9 @@ export default function CoreValues() {
   }
 
   return (
-    <section className="section-padding bg-white">
+    <section ref={ref as any} className="snap-start section-padding bg-white flex items-center" style={{ minHeight: '100vh' }}>
       <div className="container-max">
-        <div className="text-center mb-16">
+        <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Our Core Values
           </h2>
@@ -66,11 +68,11 @@ export default function CoreValues() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {values.map((value) => (
+          {values.map((value, index) => (
             <div
               key={value.id}
-              className="bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-shadow duration-200"
-            >
+              className={`bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-50 translate-y-20'}`}
+              style={{ transitionDelay: `${index * 150}ms` }}>
               <div className="flex items-center mb-6">
                 <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mr-4">
                   {value.icon ? (

@@ -25,8 +25,8 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="container-max section-padding">
+    <footer className="snap-start bg-gray-900 text-white flex items-center" style={{ minHeight: '100vh' }}>
+      <div className="container-max section-padding w-full">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>

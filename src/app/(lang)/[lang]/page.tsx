@@ -10,14 +10,14 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       <Header />
-      <main>
+      <main className="snap-y snap-mandatory overflow-y-scroll" style={{ height: 'calc(100vh - 73px)' }}>
         <Hero />
         <Memberships />
         <Mission />
         <Vision />
         <CoreValues />
+        <Footer />
       </main>
-      <Footer />
     </div>
   )
 }

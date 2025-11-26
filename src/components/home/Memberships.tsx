@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import { membershipsService, MembershipDto } from '@/lib/api';
 import { LoadingSpinner, Alert } from '@/components/ui';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 export default function Memberships() {
   const [memberships, setMemberships] = useState<MembershipDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { ref, isVisible } = useScrollAnimation();
 
   useEffect(() => {
     loadMemberships();
@@ -29,7 +31,7 @@ export default function Memberships() {
 
   if (isLoading) {
     return (
-      <section className="section-padding bg-gray-50">
+      <section className="snap-start section-padding bg-gray-50 flex items-center" style={{ minHeight: '100vh' }}>
         <div className="container-max">
           <LoadingSpinner />
         </div>
@@ -39,7 +41,7 @@ export default function Memberships() {
 
   if (error) {
     return (
-      <section className="section-padding bg-gray-50">
+      <section className="snap-start section-padding bg-gray-50 flex items-center" style={{ minHeight: '100vh' }}>
         <div className="container-max">
           <Alert type="error" message={error} />
         </div>
@@ -52,9 +54,9 @@ export default function Memberships() {
   }
 
   return (
-    <section className="section-padding bg-gray-50">
+    <section ref={ref as any} className="snap-start section-padding bg-gray-50 flex items-center" style={{ minHeight: '100vh' }}>
       <div className="container-max">
-        <div className="text-center mb-12">
+        <div className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Our Professional Memberships
           </h2>
@@ -65,11 +67,11 @@ export default function Memberships() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {memberships.map((membership) => (
+          {memberships.map((membership, index) => (
             <div
               key={membership.id}
-              className="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
-            >
+              className={`bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 rotate-12 scale-75'}`}
+              style={{ transitionDelay: `${index * 200}ms`, transformOrigin: 'bottom center' }}>
               <div className="text-center">
                 {membership.logoUrl ? (
                   <div className="w-16 h-16 mx-auto mb-4">

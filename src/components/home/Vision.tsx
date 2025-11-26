@@ -1,12 +1,18 @@
+'use client';
+
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+
 export default function Vision() {
+  const { ref, isVisible } = useScrollAnimation();
+
   return (
-    <section className="section-padding bg-primary-50">
+    <section ref={ref as any} className="snap-start section-padding bg-primary-50 flex items-center" style={{ minHeight: '100vh' }}>
       <div className="container-max">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+          <h2 className={`text-3xl md:text-4xl font-bold text-gray-900 mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-90 -rotate-3'}`}>
             Our Vision
           </h2>
-          <div className="prose prose-lg mx-auto">
+          <div className={`prose prose-lg mx-auto transition-all duration-1200 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-20'}`}>
             <p className="text-xl text-gray-700 leading-relaxed">
               Our aspiration is to consistently deliver exceptional outcomes that go beyond client 
               expectations, contributing significant value to their businesses. We aim to establish 
@@ -14,7 +20,7 @@ export default function Vision() {
               highest standards of ethical integrity and expertise.
             </p>
           </div>
-          <div className="mt-12 bg-white rounded-lg p-8 shadow-md">
+          <div className={`mt-12 bg-white rounded-lg p-8 shadow-md transition-all duration-1200 delay-500 ${isVisible ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-75 rotate-6'}`}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">Leading the Industry</h3>
