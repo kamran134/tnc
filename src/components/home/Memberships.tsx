@@ -77,7 +77,7 @@ export default function Memberships() {
                   <div className="w-16 h-16 mx-auto mb-4">
                     <img 
                       src={membership.logoUrl} 
-                      alt={membership.name}
+                      alt={membership.title}
                       className="w-full h-full object-contain"
                     />
                   </div>
@@ -99,16 +99,18 @@ export default function Memberships() {
                   </div>
                 )}
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  {membership.name}
-                </h3>
-                {membership.fullName && (
-                  <h4 className="text-sm text-primary-600 font-semibold mb-3">
-                    {membership.fullName}
-                  </h4>
-                )}
-                <p className="text-gray-600">
                   {membership.title}
-                </p>
+                </h3>
+                {membership.description && (
+                  <p className="text-sm text-gray-600 mb-3">
+                    {membership.description}
+                  </p>
+                )}
+                {membership.partnershipType && (
+                  <p className="text-sm text-primary-600 font-semibold mb-3">
+                    {membership.partnershipType}
+                  </p>
+                )}
                 {membership.websiteUrl && (
                   <a
                     href={membership.websiteUrl}
