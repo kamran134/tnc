@@ -144,7 +144,7 @@ export default function ContactsPage() {
                 placeholder="Search by name, email, or message..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
               />
             </div>
             <div>
@@ -152,7 +152,7 @@ export default function ContactsPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900"
               >
                 <option value="">All Status</option>
                 <option value="NEW">New</option>
@@ -230,7 +230,7 @@ export default function ContactsPage() {
                         <select
                           value={contact.status || 'NEW'}
                           onChange={(e) => updateContactStatus(contact.id!.toString(), e.target.value)}
-                          className="text-sm border border-gray-300 rounded px-2 py-1 bg-white text-gray-900"
+                          className="text-sm border border-gray-300 rounded px-2 py-1 bg-gray-50 text-gray-900"
                         >
                           <option value="NEW">New</option>
                           <option value="IN_PROGRESS">In Progress</option>

@@ -119,7 +119,7 @@ export default function CreateNewsPage() {
                   type="text"
                   value={formData.author}
                   onChange={(e) => setFormData(prev => ({ ...prev, author: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                   placeholder="Article author"
                 />
               </div>
@@ -139,7 +139,7 @@ export default function CreateNewsPage() {
                   type="datetime-local"
                   value={formData.publishDate}
                   onChange={(e) => setFormData(prev => ({ ...prev, publishDate: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900"
                 />
               </div>
 
@@ -171,7 +171,7 @@ export default function CreateNewsPage() {
                     type="text"
                     value={translation.title}
                     onChange={(e) => updateTranslation(index, 'title', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                     placeholder={`Article title in ${translation.languageCode.toUpperCase()}`}
                     minLength={5}
                     required={translation.languageCode === 'az'}
@@ -184,7 +184,7 @@ export default function CreateNewsPage() {
                     value={translation.excerpt}
                     onChange={(e) => updateTranslation(index, 'excerpt', e.target.value)}
                     rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                     placeholder={`Brief excerpt in ${translation.languageCode.toUpperCase()}`}
                   />
                 </div>
@@ -195,7 +195,7 @@ export default function CreateNewsPage() {
                     value={translation.content}
                     onChange={(e) => updateTranslation(index, 'content', e.target.value)}
                     rows={8}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                     placeholder={`Article content in ${translation.languageCode.toUpperCase()}`}
                     required={translation.languageCode === 'az'}
                   />

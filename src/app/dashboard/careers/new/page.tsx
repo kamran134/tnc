@@ -111,7 +111,7 @@ export default function CreateCareerPage() {
                   type="text"
                   value={formData.location}
                   onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                   placeholder="e.g., Baku, Azerbaijan"
                   minLength={5}
                   required
@@ -123,7 +123,7 @@ export default function CreateCareerPage() {
                 <select
                   value={formData.employmentType}
                   onChange={(e) => setFormData(prev => ({ ...prev, employmentType: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900"
                 >
                   <option value="FULL_TIME">Full Time</option>
                   <option value="PART_TIME">Part Time</option>
@@ -138,7 +138,7 @@ export default function CreateCareerPage() {
                   type="text"
                   value={formData.salaryRange}
                   onChange={(e) => setFormData(prev => ({ ...prev, salaryRange: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                   placeholder="e.g., $50,000 - $70,000"
                 />
               </div>
@@ -149,7 +149,7 @@ export default function CreateCareerPage() {
                   type="datetime-local"
                   value={formData.postDate}
                   onChange={(e) => setFormData(prev => ({ ...prev, postDate: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900"
                 />
               </div>
 
@@ -159,7 +159,7 @@ export default function CreateCareerPage() {
                   type="datetime-local"
                   value={formData.expiryDate}
                   onChange={(e) => setFormData(prev => ({ ...prev, expiryDate: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900"
                 />
               </div>
 
@@ -191,7 +191,7 @@ export default function CreateCareerPage() {
                     type="text"
                     value={translation.title}
                     onChange={(e) => updateTranslation(index, 'title', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                     placeholder={`Job title in ${translation.languageCode.toUpperCase()}`}
                     minLength={5}
                     required={translation.languageCode === 'az'}
@@ -204,7 +204,7 @@ export default function CreateCareerPage() {
                     value={translation.excerpt}
                     onChange={(e) => updateTranslation(index, 'excerpt', e.target.value)}
                     rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                     placeholder={`Brief job description in ${translation.languageCode.toUpperCase()}`}
                   />
                 </div>
@@ -215,7 +215,7 @@ export default function CreateCareerPage() {
                     value={translation.content}
                     onChange={(e) => updateTranslation(index, 'content', e.target.value)}
                     rows={8}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                     placeholder={`Detailed job description, requirements, and responsibilities in ${translation.languageCode.toUpperCase()}`}
                     required={translation.languageCode === 'az'}
                   />

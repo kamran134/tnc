@@ -109,7 +109,7 @@ export default function CreateServicePage() {
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900"
                   required
                 >
                   <option value="">Select Category</option>
@@ -139,7 +139,7 @@ export default function CreateServicePage() {
                   type="number"
                   value={formData.sortOrder}
                   onChange={(e) => setFormData(prev => ({ ...prev, sortOrder: parseInt(e.target.value) || 0 }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                   placeholder="0"
                   min="0"
                 />
@@ -173,7 +173,7 @@ export default function CreateServicePage() {
                     type="text"
                     value={translation.title}
                     onChange={(e) => updateTranslation(index, 'title', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                     placeholder={`Service title in ${translation.languageCode.toUpperCase()}`}
                     minLength={5}
                     required={translation.languageCode === 'az'}
@@ -186,7 +186,7 @@ export default function CreateServicePage() {
                     value={translation.excerpt}
                     onChange={(e) => updateTranslation(index, 'excerpt', e.target.value)}
                     rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                     placeholder={`Brief service description in ${translation.languageCode.toUpperCase()}`}
                   />
                 </div>
@@ -197,7 +197,7 @@ export default function CreateServicePage() {
                     value={translation.content}
                     onChange={(e) => updateTranslation(index, 'content', e.target.value)}
                     rows={8}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                     placeholder={`Detailed service description in ${translation.languageCode.toUpperCase()}`}
                     required={translation.languageCode === 'az'}
                   />

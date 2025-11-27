@@ -200,7 +200,7 @@ export default function EditNewsPage() {
                   type="text"
                   value={formData.author}
                   onChange={(e) => setFormData(prev => ({ ...prev, author: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                   placeholder="Article author"
                 />
               </div>
@@ -220,7 +220,7 @@ export default function EditNewsPage() {
                   type="text"
                   value={formData.category}
                   onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                   placeholder="e.g., Company News, Industry Updates"
                 />
               </div>
@@ -231,7 +231,7 @@ export default function EditNewsPage() {
                   type="number"
                   value={formData.readTimeMinutes}
                   onChange={(e) => setFormData(prev => ({ ...prev, readTimeMinutes: parseInt(e.target.value) || 5 }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                   placeholder="5"
                   min="1"
                   max="60"
@@ -244,7 +244,7 @@ export default function EditNewsPage() {
                   type="text"
                   value={formData.tags}
                   onChange={(e) => setFormData(prev => ({ ...prev, tags: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                   placeholder="tag1, tag2, tag3"
                 />
               </div>
@@ -276,7 +276,7 @@ export default function EditNewsPage() {
                     type="text"
                     value={translation.title}
                     onChange={(e) => updateTranslation(index, 'title', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                     placeholder={`Article title in ${translation.languageCode.toUpperCase()}`}
                     minLength={5}
                     required={translation.languageCode === 'az'}
@@ -289,7 +289,7 @@ export default function EditNewsPage() {
                     type="text"
                     value={translation.slug}
                     onChange={(e) => updateTranslation(index, 'slug', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                     placeholder={`article-url-${translation.languageCode}`}
                   />
                 </div>
@@ -300,7 +300,7 @@ export default function EditNewsPage() {
                     value={translation.excerpt}
                     onChange={(e) => updateTranslation(index, 'excerpt', e.target.value)}
                     rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                     placeholder={`Brief article description in ${translation.languageCode.toUpperCase()}`}
                   />
                 </div>
@@ -311,7 +311,7 @@ export default function EditNewsPage() {
                     value={translation.content}
                     onChange={(e) => updateTranslation(index, 'content', e.target.value)}
                     rows={12}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                     placeholder={`Full article content in ${translation.languageCode.toUpperCase()}`}
                     required={translation.languageCode === 'az'}
                   />
