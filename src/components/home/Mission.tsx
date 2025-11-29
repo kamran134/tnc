@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { companyInfoService } from '@/lib/api';
-import { CompanyInfoDto } from '@/types/api';
+import { CompanyInfoDto, LanguageCode } from '@/types/api';
 
 interface MissionProps {
   lang: string;
@@ -17,7 +17,7 @@ export default function Mission({ lang }: MissionProps) {
   useEffect(() => {
     const loadCompanyInfo = async () => {
       try {
-        const data = await companyInfoService.getCompanyInfo(lang);
+        const data = await companyInfoService.getCompanyInfo(lang as LanguageCode);
         setCompanyInfo(data);
       } catch (error) {
         console.error('Failed to load company info:', error);

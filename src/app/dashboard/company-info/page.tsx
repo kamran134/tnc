@@ -27,6 +27,7 @@ export default function CompanyInfoPage() {
   // Load company info data
   useEffect(() => {
     checkAuthAndLoad();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkAuthAndLoad = async () => {
