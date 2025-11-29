@@ -11,42 +11,59 @@ export default function CompanyInfoPage() {
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [exists, setExists] = useState(false);
   const [formData, setFormData] = useState<CompanyInfoAdminDto>({
+    companyName: '',
     email: '',
     phone: '',
     website: '',
     linkedinUrl: '',
     logoUrl: '',
     foundedYear: '',
+    teamSize: '',
     translations: [
       { 
         languageCode: 'az', 
-        companyName: '', 
         address: '', 
         description: '', 
         history: '',
+        missionTitle: '',
+        missionDescription: '',
         missions: [{ title: '', description: '', displayOrder: 1 }],
+        visionTitle: '',
+        visionDescription: '',
         visions: [{ title: '', description: '', displayOrder: 1 }],
+        valuesTitle: '',
+        valuesDescription: '',
         values: [{ title: '', description: '', displayOrder: 1 }],
       },
       { 
         languageCode: 'en', 
-        companyName: '', 
         address: '', 
         description: '', 
         history: '',
-        missions: [{ title: '', description: '', displayOrder: 1 }],
-        visions: [{ title: '', description: '', displayOrder: 1 }],
-        values: [{ title: '', description: '', displayOrder: 1 }],
+        missionTitle: '',
+        missionDescription: '',
+        missions: [],
+        visionTitle: '',
+        visionDescription: '',
+        visions: [],
+        valuesTitle: '',
+        valuesDescription: '',
+        values: [],
       },
       { 
         languageCode: 'ru', 
-        companyName: '', 
         address: '', 
         description: '', 
         history: '',
-        missions: [{ title: '', description: '', displayOrder: 1 }],
-        visions: [{ title: '', description: '', displayOrder: 1 }],
-        values: [{ title: '', description: '', displayOrder: 1 }],
+        missionTitle: '',
+        missionDescription: '',
+        missions: [],
+        visionTitle: '',
+        visionDescription: '',
+        visions: [],
+        valuesTitle: '',
+        valuesDescription: '',
+        values: [],
       },
     ]
   });
@@ -166,42 +183,59 @@ export default function CompanyInfoPage() {
       alert('Company information deleted successfully!');
       setExists(false);
       setFormData({
+        companyName: '',
         email: '',
         phone: '',
         website: '',
         linkedinUrl: '',
         logoUrl: '',
         foundedYear: '',
+        teamSize: '',
         translations: [
           { 
             languageCode: 'az', 
-            companyName: '', 
             address: '', 
             description: '', 
             history: '',
+            missionTitle: '',
+            missionDescription: '',
             missions: [{ title: '', description: '', displayOrder: 1 }],
+            visionTitle: '',
+            visionDescription: '',
             visions: [{ title: '', description: '', displayOrder: 1 }],
+            valuesTitle: '',
+            valuesDescription: '',
             values: [{ title: '', description: '', displayOrder: 1 }],
           },
           { 
             languageCode: 'en', 
-            companyName: '', 
             address: '', 
             description: '', 
             history: '',
-            missions: [{ title: '', description: '', displayOrder: 1 }],
-            visions: [{ title: '', description: '', displayOrder: 1 }],
-            values: [{ title: '', description: '', displayOrder: 1 }],
+            missionTitle: '',
+            missionDescription: '',
+            missions: [],
+            visionTitle: '',
+            visionDescription: '',
+            visions: [],
+            valuesTitle: '',
+            valuesDescription: '',
+            values: [],
           },
           { 
             languageCode: 'ru', 
-            companyName: '', 
             address: '', 
             description: '', 
             history: '',
-            missions: [{ title: '', description: '', displayOrder: 1 }],
-            visions: [{ title: '', description: '', displayOrder: 1 }],
-            values: [{ title: '', description: '', displayOrder: 1 }],
+            missionTitle: '',
+            missionDescription: '',
+            missions: [],
+            visionTitle: '',
+            visionDescription: '',
+            visions: [],
+            valuesTitle: '',
+            valuesDescription: '',
+            values: [],
           },
         ]
       });
@@ -255,13 +289,23 @@ export default function CompanyInfoPage() {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">General Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Company Name *</label>
+              <input
+                type="text"
+                value={formData.companyName}
+                onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
+                required
+              />
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                placeholder="info@company.com"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
                 required
               />
             </div>
@@ -272,8 +316,7 @@ export default function CompanyInfoPage() {
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                placeholder="+994 XX XXX XX XX"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
                 required
               />
             </div>
@@ -284,8 +327,7 @@ export default function CompanyInfoPage() {
                 type="url"
                 value={formData.website || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, website: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                placeholder="https://company.com"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
               />
             </div>
 
@@ -295,8 +337,7 @@ export default function CompanyInfoPage() {
                 type="url"
                 value={formData.linkedinUrl || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, linkedinUrl: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                placeholder="https://linkedin.com/company/..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
               />
             </div>
 
@@ -333,25 +374,14 @@ export default function CompanyInfoPage() {
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Company Name *</label>
-                <input
-                  type="text"
-                  value={translation.companyName}
-                  onChange={(e) => updateTranslation(index, 'companyName', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                  placeholder={`Company name in ${translation.languageCode.toUpperCase()}`}
-                  required={translation.languageCode === 'az'}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Address *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Address {translation.languageCode === 'az' ? '*' : ''}
+                </label>
                 <input
                   type="text"
                   value={translation.address}
                   onChange={(e) => updateTranslation(index, 'address', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                  placeholder={`Office address in ${translation.languageCode.toUpperCase()}`}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
                   required={translation.languageCode === 'az'}
                 />
               </div>
@@ -362,15 +392,39 @@ export default function CompanyInfoPage() {
                   value={translation.description || ''}
                   onChange={(e) => updateTranslation(index, 'description', e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                  placeholder={`Brief company description in ${translation.languageCode.toUpperCase()}`}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
                 />
               </div>
 
-              {/* Mission Items */}
-              <div className="mt-6">
+              {/* Mission Section */}
+              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Mission Section Title {translation.languageCode === 'az' ? '*' : ''}
+                  </label>
+                  <input
+                    type="text"
+                    value={translation.missionTitle}
+                    onChange={(e) => updateTranslation(index, 'missionTitle', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                    placeholder="e.g., Our Mission"
+                    required={translation.languageCode === 'az'}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Mission Section Description</label>
+                  <textarea
+                    value={translation.missionDescription || ''}
+                    onChange={(e) => updateTranslation(index, 'missionDescription', e.target.value)}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                    placeholder="Brief description of mission section"
+                  />
+                </div>
                 <div className="flex justify-between items-center mb-3">
-                  <label className="block text-sm font-medium text-gray-700">Mission Items *</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Mission Items {translation.languageCode === 'az' ? '*' : ''}
+                  </label>
                   <button
                     type="button"
                     onClick={() => addItem(index, 'missions')}
@@ -380,7 +434,7 @@ export default function CompanyInfoPage() {
                   </button>
                 </div>
                 {translation.missions.map((item, iIndex) => (
-                  <div key={iIndex} className="border border-gray-200 rounded-lg p-4 mb-3 bg-blue-50">
+                  <div key={iIndex} className="border border-gray-200 rounded-lg p-4 mb-3 bg-white">
                     <div className="flex justify-between mb-2">
                       <span className="text-sm font-medium text-gray-600">Mission #{iIndex + 1}</span>
                       {translation.missions.length > 1 && (
@@ -399,26 +453,51 @@ export default function CompanyInfoPage() {
                         placeholder="Title"
                         value={item.title}
                         onChange={(e) => updateItem(index, 'missions', iIndex, 'title', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
+                        required={translation.languageCode === 'az'}
                       />
                       <textarea
                         placeholder="Description"
                         value={item.description}
                         onChange={(e) => updateItem(index, 'missions', iIndex, 'description', e.target.value)}
                         rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
+                        required={translation.languageCode === 'az'}
                       />
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Vision Items */}
-              <div className="mt-6">
+              {/* Vision Section */}
+              <div className="mt-6 p-4 bg-green-50 rounded-lg">
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Vision Section Title {translation.languageCode === 'az' ? '*' : ''}
+                  </label>
+                  <input
+                    type="text"
+                    value={translation.visionTitle}
+                    onChange={(e) => updateTranslation(index, 'visionTitle', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
+                    placeholder="e.g., Our Vision"
+                    required={translation.languageCode === 'az'}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Vision Section Description</label>
+                  <textarea
+                    value={translation.visionDescription || ''}
+                    onChange={(e) => updateTranslation(index, 'visionDescription', e.target.value)}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
+                    placeholder="Brief description of vision section"
+                  />
+                </div>
                 <div className="flex justify-between items-center mb-3">
-                  <label className="block text-sm font-medium text-gray-700">Vision Items *</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Vision Items {translation.languageCode === 'az' ? '*' : ''}
+                  </label>
                   <button
                     type="button"
                     onClick={() => addItem(index, 'visions')}
@@ -428,7 +507,7 @@ export default function CompanyInfoPage() {
                   </button>
                 </div>
                 {translation.visions.map((item, iIndex) => (
-                  <div key={iIndex} className="border border-gray-200 rounded-lg p-4 mb-3 bg-green-50">
+                  <div key={iIndex} className="border border-gray-200 rounded-lg p-4 mb-3 bg-white">
                     <div className="flex justify-between mb-2">
                       <span className="text-sm font-medium text-gray-600">Vision #{iIndex + 1}</span>
                       {translation.visions.length > 1 && (
@@ -447,26 +526,51 @@ export default function CompanyInfoPage() {
                         placeholder="Title"
                         value={item.title}
                         onChange={(e) => updateItem(index, 'visions', iIndex, 'title', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
-                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-gray-50 text-gray-900"
+                        required={translation.languageCode === 'az'}
                       />
                       <textarea
                         placeholder="Description"
                         value={item.description}
                         onChange={(e) => updateItem(index, 'visions', iIndex, 'description', e.target.value)}
                         rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
-                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-gray-50 text-gray-900"
+                        required={translation.languageCode === 'az'}
                       />
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Core Value Items */}
-              <div className="mt-6">
+              {/* Values Section */}
+              <div className="mt-6 p-4 bg-purple-50 rounded-lg">
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Values Section Title {translation.languageCode === 'az' ? '*' : ''}
+                  </label>
+                  <input
+                    type="text"
+                    value={translation.valuesTitle}
+                    onChange={(e) => updateTranslation(index, 'valuesTitle', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
+                    placeholder="e.g., Our Core Values"
+                    required={translation.languageCode === 'az'}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Values Section Description</label>
+                  <textarea
+                    value={translation.valuesDescription || ''}
+                    onChange={(e) => updateTranslation(index, 'valuesDescription', e.target.value)}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
+                    placeholder="Brief description of values section"
+                  />
+                </div>
                 <div className="flex justify-between items-center mb-3">
-                  <label className="block text-sm font-medium text-gray-700">Core Value Items *</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Value Items {translation.languageCode === 'az' ? '*' : ''}
+                  </label>
                   <button
                     type="button"
                     onClick={() => addItem(index, 'values')}
@@ -476,7 +580,7 @@ export default function CompanyInfoPage() {
                   </button>
                 </div>
                 {translation.values.map((item, iIndex) => (
-                  <div key={iIndex} className="border border-gray-200 rounded-lg p-4 mb-3 bg-purple-50">
+                  <div key={iIndex} className="border border-gray-200 rounded-lg p-4 mb-3 bg-white">
                     <div className="flex justify-between mb-2">
                       <span className="text-sm font-medium text-gray-600">Value #{iIndex + 1}</span>
                       {translation.values.length > 1 && (
@@ -495,16 +599,16 @@ export default function CompanyInfoPage() {
                         placeholder="Title"
                         value={item.title}
                         onChange={(e) => updateItem(index, 'values', iIndex, 'title', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
-                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-gray-50 text-gray-900"
+                        required={translation.languageCode === 'az'}
                       />
                       <textarea
                         placeholder="Description"
                         value={item.description}
                         onChange={(e) => updateItem(index, 'values', iIndex, 'description', e.target.value)}
                         rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
-                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-gray-50 text-gray-900"
+                        required={translation.languageCode === 'az'}
                       />
                     </div>
                   </div>
@@ -517,9 +621,7 @@ export default function CompanyInfoPage() {
                   value={translation.history || ''}
                   onChange={(e) => updateTranslation(index, 'history', e.target.value)}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                  placeholder={`Company history in ${translation.languageCode.toUpperCase()}`}
-                  maxLength={1000}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
                 />
               </div>
             </div>

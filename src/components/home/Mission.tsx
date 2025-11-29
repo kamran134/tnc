@@ -49,8 +49,13 @@ export default function Mission({ lang }: MissionProps) {
       <div className="container-max">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className={`text-3xl md:text-4xl font-bold text-gray-900 mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
-            Our Mission
+            {companyInfo?.missionTitle || 'Our Mission'}
           </h2>
+          {companyInfo?.missionDescription && (
+            <p className={`text-lg text-gray-600 mb-6 transition-all duration-1000 delay-100 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+              {companyInfo.missionDescription}
+            </p>
+          )}
           {companyInfo?.missions && companyInfo.missions.length > 0 ? (
             <div className="space-y-6">
               {companyInfo.missions.map((mission, index) => (

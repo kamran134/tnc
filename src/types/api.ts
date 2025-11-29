@@ -100,12 +100,17 @@ export interface MissionVisionValueItemDto {
 export interface CompanyInfoTranslationDto {
   id?: number;
   languageCode: LanguageCode;
-  companyName: string;
   address: string;
   description?: string;
   history?: string;
+  missionTitle: string;
+  missionDescription?: string;
   missions: MissionVisionValueItemDto[];
+  visionTitle: string;
+  visionDescription?: string;
   visions: MissionVisionValueItemDto[];
+  valuesTitle: string;
+  valuesDescription?: string;
   values: MissionVisionValueItemDto[];
 }
 
@@ -217,8 +222,14 @@ export interface CompanyInfoDto {
   logoUrl?: string;
   description?: string;
   history?: string;
+  missionTitle: string;
+  missionDescription?: string;
   missions: MissionVisionValueItemDto[];
+  visionTitle: string;
+  visionDescription?: string;
   visions: MissionVisionValueItemDto[];
+  valuesTitle: string;
+  valuesDescription?: string;
   values: MissionVisionValueItemDto[];
   address: string;
   phone: string;
@@ -332,6 +343,7 @@ export interface HomeContentAdminDto {
 
 export interface CompanyInfoAdminDto {
   id?: number;
+  companyName: string;
   logoUrl?: string;
   foundedYear?: string;
   email: string;
