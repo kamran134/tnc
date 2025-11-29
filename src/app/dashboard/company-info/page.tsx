@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminCompanyInfoService, authService } from '@/lib/api';
-import { CompanyInfoAdminDto, CompanyInfoTranslationDto } from '@/types/api';
+import { CompanyInfoAdminDto, CompanyInfoTranslationDto, MissionVisionValueItemDto } from '@/types/api';
 
 export default function CompanyInfoPage() {
   const router = useRouter();
@@ -18,9 +18,36 @@ export default function CompanyInfoPage() {
     logoUrl: '',
     foundedYear: '',
     translations: [
-      { languageCode: 'az', companyName: '', address: '', mission: '', vision: '', description: '', history: '', values: '' },
-      { languageCode: 'en', companyName: '', address: '', mission: '', vision: '', description: '', history: '', values: '' },
-      { languageCode: 'ru', companyName: '', address: '', mission: '', vision: '', description: '', history: '', values: '' },
+      { 
+        languageCode: 'az', 
+        companyName: '', 
+        address: '', 
+        description: '', 
+        history: '',
+        missions: [{ title: '', description: '', displayOrder: 1 }],
+        visions: [{ title: '', description: '', displayOrder: 1 }],
+        values: [{ title: '', description: '', displayOrder: 1 }],
+      },
+      { 
+        languageCode: 'en', 
+        companyName: '', 
+        address: '', 
+        description: '', 
+        history: '',
+        missions: [{ title: '', description: '', displayOrder: 1 }],
+        visions: [{ title: '', description: '', displayOrder: 1 }],
+        values: [{ title: '', description: '', displayOrder: 1 }],
+      },
+      { 
+        languageCode: 'ru', 
+        companyName: '', 
+        address: '', 
+        description: '', 
+        history: '',
+        missions: [{ title: '', description: '', displayOrder: 1 }],
+        visions: [{ title: '', description: '', displayOrder: 1 }],
+        values: [{ title: '', description: '', displayOrder: 1 }],
+      },
     ]
   });
 
@@ -85,9 +112,46 @@ export default function CompanyInfoPage() {
     }
   };
 
-  const updateTranslation = (index: number, field: keyof CompanyInfoTranslationDto, value: string) => {
+  const updateTranslation = (index: number, field: keyof CompanyInfoTranslationDto, value: any) => {
     const newTranslations = [...formData.translations];
     newTranslations[index] = { ...newTranslations[index], [field]: value };
+    setFormData(prev => ({ ...prev, translations: newTranslations }));
+  };
+
+  const addItem = (translationIndex: number, type: 'missions' | 'visions' | 'values') => {
+    const newTranslations = [...formData.translations];
+    const items = newTranslations[translationIndex][type];
+    const newItem: MissionVisionValueItemDto = {
+      title: '',
+      description: '',
+      displayOrder: items.length + 1
+    };
+    newTranslations[translationIndex] = {
+      ...newTranslations[translationIndex],
+      [type]: [...items, newItem]
+    };
+    setFormData(prev => ({ ...prev, translations: newTranslations }));
+  };
+
+  const removeItem = (translationIndex: number, type: 'missions' | 'visions' | 'values', itemIndex: number) => {
+    const newTranslations = [...formData.translations];
+    const items = [...newTranslations[translationIndex][type]];
+    items.splice(itemIndex, 1);
+    newTranslations[translationIndex] = {
+      ...newTranslations[translationIndex],
+      [type]: items
+    };
+    setFormData(prev => ({ ...prev, translations: newTranslations }));
+  };
+
+  const updateItem = (translationIndex: number, type: 'missions' | 'visions' | 'values', itemIndex: number, field: keyof MissionVisionValueItemDto, value: string | number) => {
+    const newTranslations = [...formData.translations];
+    const items = [...newTranslations[translationIndex][type]];
+    items[itemIndex] = { ...items[itemIndex], [field]: value };
+    newTranslations[translationIndex] = {
+      ...newTranslations[translationIndex],
+      [type]: items
+    };
     setFormData(prev => ({ ...prev, translations: newTranslations }));
   };
 
@@ -109,9 +173,36 @@ export default function CompanyInfoPage() {
         logoUrl: '',
         foundedYear: '',
         translations: [
-          { languageCode: 'az', companyName: '', address: '', mission: '', vision: '', description: '', history: '', values: '' },
-          { languageCode: 'en', companyName: '', address: '', mission: '', vision: '', description: '', history: '', values: '' },
-          { languageCode: 'ru', companyName: '', address: '', mission: '', vision: '', description: '', history: '', values: '' },
+          { 
+            languageCode: 'az', 
+            companyName: '', 
+            address: '', 
+            description: '', 
+            history: '',
+            missions: [{ title: '', description: '', displayOrder: 1 }],
+            visions: [{ title: '', description: '', displayOrder: 1 }],
+            values: [{ title: '', description: '', displayOrder: 1 }],
+          },
+          { 
+            languageCode: 'en', 
+            companyName: '', 
+            address: '', 
+            description: '', 
+            history: '',
+            missions: [{ title: '', description: '', displayOrder: 1 }],
+            visions: [{ title: '', description: '', displayOrder: 1 }],
+            values: [{ title: '', description: '', displayOrder: 1 }],
+          },
+          { 
+            languageCode: 'ru', 
+            companyName: '', 
+            address: '', 
+            description: '', 
+            history: '',
+            missions: [{ title: '', description: '', displayOrder: 1 }],
+            visions: [{ title: '', description: '', displayOrder: 1 }],
+            values: [{ title: '', description: '', displayOrder: 1 }],
+          },
         ]
       });
     } catch (err: any) {
@@ -276,35 +367,151 @@ export default function CompanyInfoPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Mission *</label>
-                <textarea
-                  value={translation.mission}
-                  onChange={(e) => updateTranslation(index, 'mission', e.target.value)}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                  placeholder={`Company mission statement in ${translation.languageCode.toUpperCase()}`}
-                  required={translation.languageCode === 'az'}
-                  minLength={10}
-                  maxLength={1000}
-                />
+              {/* Mission Items */}
+              <div className="mt-6">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="block text-sm font-medium text-gray-700">Mission Items *</label>
+                  <button
+                    type="button"
+                    onClick={() => addItem(index, 'missions')}
+                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                    + Add Mission
+                  </button>
+                </div>
+                {translation.missions.map((item, iIndex) => (
+                  <div key={iIndex} className="border border-gray-200 rounded-lg p-4 mb-3 bg-blue-50">
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-600">Mission #{iIndex + 1}</span>
+                      {translation.missions.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeItem(index, 'missions', iIndex)}
+                          className="text-red-600 text-sm hover:text-red-700"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <input
+                        type="text"
+                        placeholder="Title"
+                        value={item.title}
+                        onChange={(e) => updateItem(index, 'missions', iIndex, 'title', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                        required
+                      />
+                      <textarea
+                        placeholder="Description"
+                        value={item.description}
+                        onChange={(e) => updateItem(index, 'missions', iIndex, 'description', e.target.value)}
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                        required
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Vision *</label>
-                <textarea
-                  value={translation.vision}
-                  onChange={(e) => updateTranslation(index, 'vision', e.target.value)}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                  placeholder={`Company vision in ${translation.languageCode.toUpperCase()}`}
-                  required={translation.languageCode === 'az'}
-                  minLength={10}
-                  maxLength={1000}
-                />
+              {/* Vision Items */}
+              <div className="mt-6">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="block text-sm font-medium text-gray-700">Vision Items *</label>
+                  <button
+                    type="button"
+                    onClick={() => addItem(index, 'visions')}
+                    className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                  >
+                    + Add Vision
+                  </button>
+                </div>
+                {translation.visions.map((item, iIndex) => (
+                  <div key={iIndex} className="border border-gray-200 rounded-lg p-4 mb-3 bg-green-50">
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-600">Vision #{iIndex + 1}</span>
+                      {translation.visions.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeItem(index, 'visions', iIndex)}
+                          className="text-red-600 text-sm hover:text-red-700"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <input
+                        type="text"
+                        placeholder="Title"
+                        value={item.title}
+                        onChange={(e) => updateItem(index, 'visions', iIndex, 'title', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
+                        required
+                      />
+                      <textarea
+                        placeholder="Description"
+                        value={item.description}
+                        onChange={(e) => updateItem(index, 'visions', iIndex, 'description', e.target.value)}
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
+                        required
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              <div>
+              {/* Core Value Items */}
+              <div className="mt-6">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="block text-sm font-medium text-gray-700">Core Value Items *</label>
+                  <button
+                    type="button"
+                    onClick={() => addItem(index, 'values')}
+                    className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700"
+                  >
+                    + Add Value
+                  </button>
+                </div>
+                {translation.values.map((item, iIndex) => (
+                  <div key={iIndex} className="border border-gray-200 rounded-lg p-4 mb-3 bg-purple-50">
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-600">Value #{iIndex + 1}</span>
+                      {translation.values.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeItem(index, 'values', iIndex)}
+                          className="text-red-600 text-sm hover:text-red-700"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <input
+                        type="text"
+                        placeholder="Title"
+                        value={item.title}
+                        onChange={(e) => updateItem(index, 'values', iIndex, 'title', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
+                        required
+                      />
+                      <textarea
+                        placeholder="Description"
+                        value={item.description}
+                        onChange={(e) => updateItem(index, 'values', iIndex, 'description', e.target.value)}
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
+                        required
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">History</label>
                 <textarea
                   value={translation.history || ''}
@@ -312,18 +519,6 @@ export default function CompanyInfoPage() {
                   rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                   placeholder={`Company history in ${translation.languageCode.toUpperCase()}`}
-                  maxLength={1000}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Core Values</label>
-                <textarea
-                  value={translation.values || ''}
-                  onChange={(e) => updateTranslation(index, 'values', e.target.value)}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                  placeholder={`Company core values in ${translation.languageCode.toUpperCase()}`}
                   maxLength={1000}
                 />
               </div>

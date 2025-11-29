@@ -90,16 +90,23 @@ export interface HomeContentTranslationDto {
   vision: string;
 }
 
+export interface MissionVisionValueItemDto {
+  id?: number;
+  title: string;
+  description: string;
+  displayOrder?: number;
+}
+
 export interface CompanyInfoTranslationDto {
   id?: number;
   languageCode: LanguageCode;
   companyName: string;
   address: string;
   description?: string;
-  mission: string;
-  vision: string;
   history?: string;
-  values?: string;
+  missions: MissionVisionValueItemDto[];
+  visions: MissionVisionValueItemDto[];
+  values: MissionVisionValueItemDto[];
 }
 
 // Public DTOs
@@ -207,11 +214,12 @@ export interface CompanyInfoDto {
   id: number;
   languageCode: LanguageCode;
   companyName: string;
-  title: string;
-  content: string;
-  excerpt?: string;
-  mission: string;
-  vision: string;
+  logoUrl?: string;
+  description?: string;
+  history?: string;
+  missions: MissionVisionValueItemDto[];
+  visions: MissionVisionValueItemDto[];
+  values: MissionVisionValueItemDto[];
   address: string;
   phone: string;
   email: string;
@@ -330,6 +338,9 @@ export interface CompanyInfoAdminDto {
   phone: string;
   website?: string;
   linkedinUrl?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
+  teamSize?: string;
   translations: CompanyInfoTranslationDto[];
   createdAt?: string;
   updatedAt?: string;

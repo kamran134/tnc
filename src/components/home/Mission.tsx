@@ -51,11 +51,26 @@ export default function Mission({ lang }: MissionProps) {
           <h2 className={`text-3xl md:text-4xl font-bold text-gray-900 mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
             Our Mission
           </h2>
-          <div className={`prose prose-lg mx-auto transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-16'}`}>
-            <p className="text-xl text-gray-700 leading-relaxed">
-              {companyInfo?.mission || 'We are dedicated to delivering high-caliber services, grounded in a thorough understanding of our clients\' specific industries and operational needs. Our practice is driven by a commitment to excellence, innovative thinking, and continuous improvement. We prioritize achieving meaningful results and building lasting value for those we serve.'}
-            </p>
-          </div>
+          {companyInfo?.missions && companyInfo.missions.length > 0 ? (
+            <div className="space-y-6">
+              {companyInfo.missions.map((mission, index) => (
+                <div 
+                  key={mission.id || index}
+                  className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-16'}`}
+                  style={{ transitionDelay: `${index * 200}ms` }}
+                >
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{mission.title}</h3>
+                  <p className="text-lg text-gray-700 leading-relaxed">{mission.description}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={`prose prose-lg mx-auto transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-16'}`}>
+              <p className="text-xl text-gray-700 leading-relaxed">
+                We are dedicated to delivering high-caliber services, grounded in a thorough understanding of our clients&apos; specific industries and operational needs. Our practice is driven by a commitment to excellence, innovative thinking, and continuous improvement. We prioritize achieving meaningful results and building lasting value for those we serve.
+              </p>
+            </div>
+          )}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-16'}`} style={{ transitionDelay: '300ms' }}>
               <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
