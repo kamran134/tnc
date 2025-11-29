@@ -1,9 +1,48 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { companyInfoService } from '@/lib/api';
+import { CompanyInfoDto } from '@/types/api';
 
-export default function Mission() {
+interface MissionProps {
+  lang: string;
+}
+
+export default function Mission({ lang }: MissionProps) {
   const { ref, isVisible } = useScrollAnimation();
+  const [companyInfo, setCompanyInfo] = useState<CompanyInfoDto | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadCompanyInfo = async () => {
+      try {
+        const data = await companyInfoService.getCompanyInfo(lang);
+        setCompanyInfo(data);
+      } catch (error) {
+        console.error('Failed to load company info:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCompanyInfo();
+  }, [lang]);
+
+  if (loading) {
+    return (
+      <section className="snap-start section-padding bg-white flex items-center" style={{ minHeight: '100vh' }}>
+        <div className="container-max">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="animate-pulse">
+              <div className="h-10 bg-gray-200 rounded w-64 mx-auto mb-8"></div>
+              <div className="h-32 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section ref={ref as any} className="snap-start section-padding bg-white flex items-center" style={{ minHeight: '100vh' }}>
@@ -14,10 +53,7 @@ export default function Mission() {
           </h2>
           <div className={`prose prose-lg mx-auto transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-16'}`}>
             <p className="text-xl text-gray-700 leading-relaxed">
-              We are dedicated to delivering high-caliber services, grounded in a thorough understanding 
-              of our clients&apos; specific industries and operational needs. Our practice is driven by a 
-              commitment to excellence, innovative thinking, and continuous improvement. We prioritize 
-              achieving meaningful results and building lasting value for those we serve.
+              {companyInfo?.mission || 'We are dedicated to delivering high-caliber services, grounded in a thorough understanding of our clients\' specific industries and operational needs. Our practice is driven by a commitment to excellence, innovative thinking, and continuous improvement. We prioritize achieving meaningful results and building lasting value for those we serve.'}
             </p>
           </div>
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">

@@ -93,11 +93,13 @@ export interface HomeContentTranslationDto {
 export interface CompanyInfoTranslationDto {
   id?: number;
   languageCode: LanguageCode;
-  title: string;
-  content: string;
-  excerpt?: string;
+  companyName: string;
+  address: string;
+  description?: string;
   mission: string;
   vision: string;
+  history?: string;
+  values?: string;
 }
 
 // Public DTOs
@@ -322,12 +324,12 @@ export interface HomeContentAdminDto {
 
 export interface CompanyInfoAdminDto {
   id?: number;
-  address: string;
-  phone: string;
-  email: string;
-  website?: string;
+  logoUrl?: string;
   foundedYear?: string;
-  teamSize?: string;
+  email: string;
+  phone: string;
+  website?: string;
+  linkedinUrl?: string;
   translations: CompanyInfoTranslationDto[];
   createdAt?: string;
   updatedAt?: string;

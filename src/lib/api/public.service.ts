@@ -51,7 +51,7 @@ export const membershipsService = {
 
 export const companyInfoService = {
   // Get company information
-  async get(lang: LanguageCode = 'az'): Promise<CompanyInfoDto> {
+  async getCompanyInfo(lang: LanguageCode = 'az'): Promise<CompanyInfoDto> {
     try {
       const response = await apiClient.get<CompanyInfoDto>('/company-info', {
         params: { lang },
