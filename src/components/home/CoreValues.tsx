@@ -1,12 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { CoreValueDto } from '@/types/api'
+import { CoreValueDto, LanguageCode } from '@/types/api'
 import { coreValuesService } from '@/lib/api'
 import { LoadingSpinner, Alert } from '@/components/ui'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 
-export default function CoreValues() {
+interface CoreValuesProps {
+  lang?: string;
+}
+
+export default function CoreValues({ lang = 'az' }: CoreValuesProps) {
   const [values, setValues] = useState<CoreValueDto[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -14,13 +18,14 @@ export default function CoreValues() {
 
   useEffect(() => {
     loadCoreValues()
-  }, [])
+  }, [lang])
 
   const loadCoreValues = async () => {
     try {
       setLoading(true)
       setError(null)
-      const data = await coreValuesService.getAll('az')
+      const data = await coreValuesService.getAll(lang as LanguageCode)
+      console.log('CoreValues - Loaded data:', data)
       setValues(data)
     } catch (err) {
       console.error('Failed to load core values:', err)

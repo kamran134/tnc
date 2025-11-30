@@ -1,25 +1,85 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { companyInfoService } from '@/lib/api';
+import { CompanyInfoDto, LanguageCode } from '@/types/api';
 
-export default function Vision() {
+interface VisionProps {
+  lang?: string;
+}
+
+export default function Vision({ lang = 'az' }: VisionProps) {
   const { ref, isVisible } = useScrollAnimation();
+  const [companyInfo, setCompanyInfo] = useState<CompanyInfoDto | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadCompanyInfo = async () => {
+      try {
+        const data = await companyInfoService.getCompanyInfo(lang as LanguageCode);
+        console.log('Vision - Loaded company info:', data);
+        setCompanyInfo(data);
+      } catch (error) {
+        console.error('Failed to load company info for vision:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCompanyInfo();
+  }, [lang]);
+
+  if (loading) {
+    return (
+      <section className="snap-start section-padding bg-primary-50 flex items-center" style={{ minHeight: '100vh' }}>
+        <div className="container-max">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="animate-pulse">
+              <div className="h-10 bg-gray-200 rounded w-64 mx-auto mb-8"></div>
+              <div className="h-32 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section ref={ref as any} className="snap-start section-padding bg-primary-50 flex items-center" style={{ minHeight: '100vh' }}>
       <div className="container-max">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className={`text-3xl md:text-4xl font-bold text-gray-900 mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-90 -rotate-3'}`}>
-            Our Vision
+            {companyInfo?.visionTitle || 'Our Vision'}
           </h2>
-          <div className={`prose prose-lg mx-auto transition-all duration-1200 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-20'}`}>
-            <p className="text-xl text-gray-700 leading-relaxed">
-              Our aspiration is to consistently deliver exceptional outcomes that go beyond client 
-              expectations, contributing significant value to their businesses. We aim to establish 
-              ourselves as a leading firm on both the national and regional stages, upholding the 
-              highest standards of ethical integrity and expertise.
+          {companyInfo?.visionDescription && (
+            <p className={`text-lg text-gray-600 mb-6 transition-all duration-1000 delay-100 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+              {companyInfo.visionDescription}
             </p>
-          </div>
+          )}
+          {companyInfo?.visions && companyInfo.visions.length > 0 ? (
+            <div className="space-y-6">
+              {companyInfo.visions.map((vision, index) => (
+                <div 
+                  key={vision.id || index}
+                  className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-20'}`}
+                  style={{ transitionDelay: `${index * 200}ms` }}
+                >
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{vision.title}</h3>
+                  <p className="text-lg text-gray-700 leading-relaxed">{vision.description}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={`prose prose-lg mx-auto transition-all duration-1200 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-20'}`}>
+              <p className="text-xl text-gray-700 leading-relaxed">
+                Our aspiration is to consistently deliver exceptional outcomes that go beyond client 
+                expectations, contributing significant value to their businesses. We aim to establish 
+                ourselves as a leading firm on both the national and regional stages, upholding the 
+                highest standards of ethical integrity and expertise.
+              </p>
+            </div>
+          )}
           <div className={`mt-12 bg-white rounded-lg p-8 shadow-md transition-all duration-1200 delay-500 ${isVisible ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-75 rotate-6'}`}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div>

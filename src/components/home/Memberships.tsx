@@ -4,8 +4,13 @@ import { useState, useEffect } from 'react';
 import { membershipsService, MembershipDto } from '@/lib/api';
 import { LoadingSpinner, Alert } from '@/components/ui';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { LanguageCode } from '@/types/api';
 
-export default function Memberships() {
+interface MembershipsProps {
+  lang?: string;
+}
+
+export default function Memberships({ lang = 'az' }: MembershipsProps) {
   const [memberships, setMemberships] = useState<MembershipDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -13,12 +18,13 @@ export default function Memberships() {
 
   useEffect(() => {
     loadMemberships();
-  }, []);
+  }, [lang]);
 
   const loadMemberships = async () => {
     try {
       setIsLoading(true);
-      const data = await membershipsService.getAll('az');
+      const data = await membershipsService.getAll(lang as LanguageCode);
+      console.log('Memberships - Loaded data:', data);
       setMemberships(data);
       setError(null);
     } catch (err) {

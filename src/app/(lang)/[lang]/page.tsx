@@ -20,10 +20,10 @@ export default async function HomePage({ params }: HomePageProps) {
       <Header />
       <main className="snap-y snap-mandatory overflow-y-scroll" style={{ height: 'calc(100vh - 73px)' }}>
         <Hero />
-        <Memberships />
+        <Memberships lang={lang} />
         <Mission lang={lang} />
-        <Vision />
-        <CoreValues />
+        <Vision lang={lang} />
+        <CoreValues lang={lang} />
         <Footer />
       </main>
     </div>
