@@ -112,8 +112,27 @@ export default function CompanyInfoPage() {
     try {
       setIsLoading(true);
       
+      // Фильтруем переводы - оставляем только те, где есть хотя бы одно заполненное поле
+      const filteredData = {
+        ...formData,
+        translations: formData.translations.filter(t => 
+          t.address?.trim() || 
+          t.description?.trim() || 
+          t.history?.trim() ||
+          t.missionTitle?.trim() ||
+          t.missionDescription?.trim() ||
+          t.visionTitle?.trim() ||
+          t.visionDescription?.trim() ||
+          t.valuesTitle?.trim() ||
+          t.valuesDescription?.trim() ||
+          (t.missions && t.missions.length > 0 && t.missions.some(m => m.title?.trim() || m.description?.trim())) ||
+          (t.visions && t.visions.length > 0 && t.visions.some(v => v.title?.trim() || v.description?.trim())) ||
+          (t.values && t.values.length > 0 && t.values.some(v => v.title?.trim() || v.description?.trim()))
+        )
+      };
+      
       // Clean the form data before sending to backend
-      const cleanedData = removeEmptyFields(formData);
+      const cleanedData = removeEmptyFields(filteredData);
       
       if (exists) {
         await adminCompanyInfoService.update(cleanedData as CompanyInfoAdminDto);
