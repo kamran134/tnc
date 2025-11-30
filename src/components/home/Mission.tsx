@@ -18,9 +18,13 @@ export default function Mission({ lang }: MissionProps) {
     const loadCompanyInfo = async () => {
       try {
         const data = await companyInfoService.getCompanyInfo(lang as LanguageCode);
+        console.log('🔥🔥🔥 MISSION DATA:', JSON.stringify(data, null, 2));
+        console.log('🔥 missionTitle:', data.missionTitle);
+        console.log('🔥 missionDescription:', data.missionDescription);
+        console.log('🔥 missions:', data.missions);
         setCompanyInfo(data);
       } catch (error) {
-        console.error('Failed to load company info:', error);
+        console.error('❌ Failed to load company info:', error);
       } finally {
         setLoading(false);
       }
@@ -48,6 +52,10 @@ export default function Mission({ lang }: MissionProps) {
     <section ref={ref as any} className="snap-start section-padding bg-white flex items-center" style={{ minHeight: '100vh' }}>
       <div className="container-max">
         <div className="max-w-4xl mx-auto text-center">
+          {/* DEBUG INFO */}
+          <div className="bg-red-100 p-4 mb-4 text-left text-xs">
+            <pre>{JSON.stringify(companyInfo, null, 2)}</pre>
+          </div>
           <h2 className={`text-3xl md:text-4xl font-bold text-gray-900 mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
             {companyInfo?.missionTitle || 'Our Mission'}
           </h2>
