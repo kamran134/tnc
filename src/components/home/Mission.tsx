@@ -1,48 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
-import { companyInfoService } from '@/lib/api';
-import { CompanyInfoDto, LanguageCode } from '@/types/api';
+import { CompanyInfoDto } from '@/types/api';
 
 interface MissionProps {
   lang: string;
+  companyInfo: CompanyInfoDto | null;
 }
 
-export default function Mission({ lang }: MissionProps) {
+export default function Mission({ lang, companyInfo }: MissionProps) {
   const { ref, isVisible } = useScrollAnimation();
-  const [companyInfo, setCompanyInfo] = useState<CompanyInfoDto | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadCompanyInfo = async () => {
-      try {
-        const data = await companyInfoService.getCompanyInfo(lang as LanguageCode);
-        setCompanyInfo(data);
-      } catch (error) {
-        console.error('Failed to load company info:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadCompanyInfo();
-  }, [lang]);
-
-  if (loading) {
-    return (
-      <section className="snap-start section-padding bg-white flex items-center" style={{ minHeight: '100vh' }}>
-        <div className="container-max">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="animate-pulse">
-              <div className="h-10 bg-gray-200 rounded w-64 mx-auto mb-8"></div>
-              <div className="h-32 bg-gray-200 rounded"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section ref={ref as any} className="snap-start section-padding bg-white flex items-center" style={{ minHeight: '100vh' }}>
@@ -53,9 +20,23 @@ export default function Mission({ lang }: MissionProps) {
           </h2>
           <div className={`prose prose-lg mx-auto transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-16'}`}>
             <p className="text-xl text-gray-700 leading-relaxed">
-              {companyInfo?.missionDescription || 'We are dedicated to delivering high-caliber services, grounded in a thorough understanding of our clients\' specific industries and operational needs. Our practice is driven by a commitment to excellence, innovative thinking, and continuous improvement. We prioritize achieving meaningful results and building lasting value for those we serve.'}
+              {companyInfo?.missionDescription || 'We are dedicated to delivering high-caliber services, grounded in a thorough understanding of our clients\' specific industries and operational needs.'}
             </p>
           </div>
+          {companyInfo?.missions && companyInfo.missions.length > 0 && (
+            <div className="mt-8 space-y-6">
+              {companyInfo.missions.map((mission, index) => (
+                <div 
+                  key={mission.id || index}
+                  className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                  style={{ transitionDelay: `${(index + 3) * 150}ms` }}
+                >
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{mission.title}</h3>
+                  <p className="text-lg text-gray-700">{mission.description}</p>
+                </div>
+              ))}
+            </div>
+          )}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-16'}`} style={{ transitionDelay: '300ms' }}>
               <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
