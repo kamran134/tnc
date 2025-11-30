@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminCompanyInfoService, authService } from '@/lib/api';
 import { CompanyInfoAdminDto, CompanyInfoTranslationDto, MissionVisionValueItemDto } from '@/types/api';
+import { removeEmptyFields } from '@/lib/utils/cleanup';
 
 export default function CompanyInfoPage() {
   const router = useRouter();
@@ -111,11 +112,14 @@ export default function CompanyInfoPage() {
     try {
       setIsLoading(true);
       
+      // Clean the form data before sending to backend
+      const cleanedData = removeEmptyFields(formData);
+      
       if (exists) {
-        await adminCompanyInfoService.update(formData);
+        await adminCompanyInfoService.update(cleanedData as CompanyInfoAdminDto);
         alert('Company information updated successfully!');
       } else {
-        await adminCompanyInfoService.create(formData);
+        await adminCompanyInfoService.create(cleanedData as CompanyInfoAdminDto);
         alert('Company information created successfully!');
         setExists(true);
       }

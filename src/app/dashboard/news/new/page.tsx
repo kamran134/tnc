@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ImageUpload } from '@/components/ui';
+import { removeEmptyFields } from '@/lib/utils/cleanup';
 
 export default function CreateNewsPage() {
   const router = useRouter();
@@ -45,10 +46,13 @@ export default function CreateNewsPage() {
         translations: formData.translations.filter(t => t.title.trim() || t.content.trim())
       };
 
+      // Удаляем все пустые поля
+      const cleanedData = removeEmptyFields(filteredData);
+
       const response = await fetch('/api/admin/news', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(filteredData)
+        body: JSON.stringify(cleanedData)
       });
 
       if (response.ok) {

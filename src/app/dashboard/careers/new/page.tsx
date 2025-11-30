@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { removeEmptyFields } from '@/lib/utils/cleanup';
 
 export default function CreateCareerPage() {
   const router = useRouter();
@@ -46,10 +47,13 @@ export default function CreateCareerPage() {
         translations: formData.translations.filter(t => t.title.trim() || t.content.trim())
       };
 
+      // Удаляем все пустые поля
+      const cleanedData = removeEmptyFields(filteredData);
+
       const response = await fetch('/api/admin/careers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(filteredData)
+        body: JSON.stringify(cleanedData)
       });
 
       if (response.ok) {

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ImageUpload } from '@/components/ui';
+import { removeEmptyFields } from '@/lib/utils/cleanup';
 
 interface Translation {
   languageCode: string;
@@ -105,10 +106,13 @@ export default function EditServicePage() {
         translations: formData.translations.filter(t => t.title.trim() || t.content.trim())
       };
 
+      // Удаляем все пустые поля
+      const cleanedData = removeEmptyFields(filteredData);
+
       const response = await fetch(`/api/admin/services/${serviceId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(filteredData)
+        body: JSON.stringify(cleanedData)
       });
 
       if (response.ok) {

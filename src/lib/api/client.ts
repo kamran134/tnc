@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
+import { removeEmptyFields } from '../utils/cleanup';
 
 // API Configuration
 // В ЛЮБОМ случае используем полный URL к бекенду
@@ -94,7 +95,17 @@ apiClient.interceptors.request.use(
     console.log('🚀 ======================== API REQUEST START ========================');
     console.log('📍 URL:', (config.baseURL || '') + (config.url || ''));
     console.log('🔧 Method:', config.method?.toUpperCase());
-    console.log('📦 Data:', JSON.stringify(config.data, null, 2));
+    
+    // Clean empty fields from request data for POST, PUT, PATCH requests
+    if (config.data && ['post', 'put', 'patch'].includes(config.method?.toLowerCase() || '')) {
+      console.log('🧹 Cleaning empty fields from request data...');
+      console.log('📦 Original Data:', JSON.stringify(config.data, null, 2));
+      config.data = removeEmptyFields(config.data);
+      console.log('✨ Cleaned Data:', JSON.stringify(config.data, null, 2));
+    } else {
+      console.log('📦 Data:', JSON.stringify(config.data, null, 2));
+    }
+    
     console.log('🔑 Access Token:', token ? `EXISTS (${token.substring(0, 30)}...)` : 'MISSING');
     console.log('📋 Headers:', JSON.stringify(config.headers, null, 2));
     
