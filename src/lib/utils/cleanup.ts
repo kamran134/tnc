@@ -52,7 +52,11 @@ export function removeEmptyFields<T extends Record<string, any>>(obj: T): Partia
       else if (typeof value === 'object') {
         const cleanedObject = removeEmptyFields(value);
         // Only include object if it has properties after cleaning
-        if (Object.keys(cleanedObject).length > 0) {
+        // Special case: if object only has languageCode, skip it (for translations)
+        const keys = Object.keys(cleanedObject);
+        const hasOnlyLanguageCode = keys.length === 1 && keys[0] === 'languageCode';
+        
+        if (Object.keys(cleanedObject).length > 0 && !hasOnlyLanguageCode) {
           result[key] = cleanedObject;
         }
       }
