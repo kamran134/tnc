@@ -1,0 +1,221 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+
+export async function GET(request: NextRequest) {
+  try {
+    // Получаем токен из cookies
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get('access_token')?.value;
+
+    console.log('🔐 [Admin Home Content API] GET request received');
+    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
+
+    if (!accessToken) {
+      console.log('❌ No access token - returning 401');
+      return NextResponse.json(
+        { message: 'Not authenticated' },
+        { status: 401 }
+      );
+    }
+
+    // Проксируем запрос к Java бэкенду
+    const backendUrl = `${BACKEND_URL}/api/admin/home-content`;
+    console.log('🚀 Proxying to backend:', backendUrl);
+    
+    const response = await fetch(backendUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log('📥 Backend response status:', response.status);
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Failed to fetch home content' }));
+      console.log('❌ Backend returned error:', error);
+      return NextResponse.json(
+        { message: error.message || 'Failed to fetch home content' },
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+    console.log('✅ Home content fetched successfully');
+    return NextResponse.json(data, { status: 200 });
+
+  } catch (error) {
+    console.error('Home content fetch error:', error);
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    
+    // Получаем токен из cookies
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get('access_token')?.value;
+
+    console.log('🔐 [Admin Home Content API] POST request received');
+    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
+
+    if (!accessToken) {
+      console.log('❌ No access token - returning 401');
+      return NextResponse.json(
+        { message: 'Not authenticated' },
+        { status: 401 }
+      );
+    }
+    
+    // Проксируем запрос к Java бэкенду
+    const backendUrl = `${BACKEND_URL}/api/admin/home-content`;
+    console.log('🚀 Proxying to backend:', backendUrl);
+    
+    const response = await fetch(backendUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    console.log('📥 Backend response status:', response.status);
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Failed to create home content' }));
+      console.log('❌ Backend returned error:', error);
+      return NextResponse.json(
+        { message: error.message || 'Failed to create home content' },
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+    console.log('✅ Home content created successfully');
+    return NextResponse.json(data, { status: 201 });
+
+  } catch (error) {
+    console.error('Home content creation error:', error);
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    
+    // Получаем токен из cookies
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get('access_token')?.value;
+
+    console.log('🔐 [Admin Home Content API] PUT request received');
+    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
+
+    if (!accessToken) {
+      console.log('❌ No access token - returning 401');
+      return NextResponse.json(
+        { message: 'Not authenticated' },
+        { status: 401 }
+      );
+    }
+    
+    // Проксируем запрос к Java бэкенду
+    const backendUrl = `${BACKEND_URL}/api/admin/home-content`;
+    console.log('🚀 Proxying to backend:', backendUrl);
+    
+    const response = await fetch(backendUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    console.log('📥 Backend response status:', response.status);
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Failed to update home content' }));
+      console.log('❌ Backend returned error:', error);
+      return NextResponse.json(
+        { message: error.message || 'Failed to update home content' },
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+    console.log('✅ Home content updated successfully');
+    return NextResponse.json(data, { status: 200 });
+
+  } catch (error) {
+    console.error('Home content update error:', error);
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    // Получаем токен из cookies
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get('access_token')?.value;
+
+    console.log('🔐 [Admin Home Content API] DELETE request received');
+    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
+
+    if (!accessToken) {
+      console.log('❌ No access token - returning 401');
+      return NextResponse.json(
+        { message: 'Not authenticated' },
+        { status: 401 }
+      );
+    }
+    
+    // Проксируем запрос к Java бэкенду
+    const backendUrl = `${BACKEND_URL}/api/admin/home-content`;
+    console.log('🚀 Proxying to backend:', backendUrl);
+    
+    const response = await fetch(backendUrl, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log('📥 Backend response status:', response.status);
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Failed to delete home content' }));
+      console.log('❌ Backend returned error:', error);
+      return NextResponse.json(
+        { message: error.message || 'Failed to delete home content' },
+        { status: response.status }
+      );
+    }
+
+    console.log('✅ Home content deleted successfully');
+    return NextResponse.json({ message: 'Home content deleted successfully' }, { status: 200 });
+
+  } catch (error) {
+    console.error('Home content deletion error:', error);
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
