@@ -94,6 +94,7 @@ export interface MissionVisionValueItemDto {
   id?: number;
   title: string;
   description: string;
+  icon?: string;
   displayOrder?: number;
 }
 

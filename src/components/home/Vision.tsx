@@ -2,6 +2,7 @@
 
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { CompanyInfoDto } from '@/types/api';
+import { getIconByName } from '@/lib/icons/mission-vision-icons';
 
 interface VisionProps {
   lang: string;
@@ -24,37 +25,32 @@ export default function Vision({ lang, companyInfo }: VisionProps) {
             </p>
           </div>
           {companyInfo?.visions && companyInfo.visions.length > 0 && (
-            <div className="mt-8 space-y-6">
-              {companyInfo.visions.map((vision, index) => (
-                <div 
-                  key={vision.id || index}
-                  className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                  style={{ transitionDelay: `${(index + 3) * 150}ms` }}
-                >
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{vision.title}</h3>
-                  <p className="text-lg text-gray-700">{vision.description}</p>
-                </div>
-              ))}
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {companyInfo.visions.map((vision, index) => {
+                const Icon = getIconByName(vision.icon);
+                return (
+                  <div
+                    key={vision.id || index}
+                    className={`bg-white p-6 rounded-lg shadow-md transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                    style={{ transitionDelay: `${(index + 3) * 150}ms` }}
+                  >
+                    <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mb-4">
+                      {Icon ? (
+                        <Icon className="w-6 h-6 text-primary-600" />
+                      ) : (
+                        <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      )}
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{vision.title}</h3>
+                    <p className="text-gray-700">{vision.description}</p>
+                  </div>
+                );
+              })}
             </div>
           )}
-          <div className={`mt-12 bg-white rounded-lg p-8 shadow-md transition-all duration-1200 delay-500 ${isVisible ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-75 rotate-6'}`}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Leading the Industry</h3>
-                <p className="text-gray-600">
-                  Establishing ourselves as the premier choice for tax and consulting services 
-                  across Azerbaijan and the region.
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mx-auto">
-                  <svg className="w-12 h-12 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
