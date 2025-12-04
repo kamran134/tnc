@@ -27,6 +27,7 @@ export default function LanguageTabs({ children }: LanguageTabsProps) {
           {LANGUAGES.map((lang) => (
             <button
               key={lang.code}
+              type="button"
               onClick={() => setActiveLanguage(lang.code)}
               className={`
                 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
