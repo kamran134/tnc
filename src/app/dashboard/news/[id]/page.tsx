@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ImageUpload } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
+import LanguageTabs from '@/components/admin/LanguageTabs';
 
 interface Translation {
   languageCode: string;
@@ -268,61 +269,65 @@ export default function EditNewsPage() {
           </div>
 
           {/* Translations */}
-          {formData.translations.map((translation, index) => (
-            <div key={translation.languageCode} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                {translation.languageCode.toUpperCase()} Translation
-              </h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Article Title</label>
-                  <input
-                    type="text"
-                    value={translation.title}
-                    onChange={(e) => updateTranslation(index, 'title', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                    placeholder={`Article title in ${translation.languageCode.toUpperCase()}`}
-                    minLength={5}
-                    required={translation.languageCode === 'az'}
-                  />
-                </div>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Translations</h2>
+            <LanguageTabs>
+              {(activeLanguage, index) => {
+                const translation = formData.translations[index];
+                
+                return (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Article Title</label>
+                      <input
+                        type="text"
+                        value={translation.title}
+                        onChange={(e) => updateTranslation(index, 'title', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                        placeholder={`Article title in ${translation.languageCode.toUpperCase()}`}
+                        minLength={5}
+                        required={translation.languageCode === 'az'}
+                      />
+                    </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Slug (URL)</label>
-                  <input
-                    type="text"
-                    value={translation.slug}
-                    onChange={(e) => updateTranslation(index, 'slug', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                    placeholder={`article-url-${translation.languageCode}`}
-                  />
-                </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Slug (URL)</label>
+                      <input
+                        type="text"
+                        value={translation.slug}
+                        onChange={(e) => updateTranslation(index, 'slug', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                        placeholder={`article-url-${translation.languageCode}`}
+                      />
+                    </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Excerpt</label>
-                  <textarea
-                    value={translation.excerpt}
-                    onChange={(e) => updateTranslation(index, 'excerpt', e.target.value)}
-                    rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                    placeholder={`Brief article description in ${translation.languageCode.toUpperCase()}`}
-                  />
-                </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Excerpt</label>
+                      <textarea
+                        value={translation.excerpt}
+                        onChange={(e) => updateTranslation(index, 'excerpt', e.target.value)}
+                        rows={2}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                        placeholder={`Brief article description in ${translation.languageCode.toUpperCase()}`}
+                      />
+                    </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Article Content</label>
-                  <textarea
-                    value={translation.content}
-                    onChange={(e) => updateTranslation(index, 'content', e.target.value)}
-                    rows={12}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                    placeholder={`Full article content in ${translation.languageCode.toUpperCase()}`}
-                    required={translation.languageCode === 'az'}
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Article Content</label>
+                      <textarea
+                        value={translation.content}
+                        onChange={(e) => updateTranslation(index, 'content', e.target.value)}
+                        rows={12}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                        placeholder={`Full article content in ${translation.languageCode.toUpperCase()}`}
+                        required={translation.languageCode === 'az'}
+                      />
+                    </div>
+                  </div>
+                );
+              }}
+            </LanguageTabs>
+          </div>
 
           {/* Submit Button */}
           <div className="flex justify-end">

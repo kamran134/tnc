@@ -7,6 +7,7 @@ import { CompanyInfoAdminDto, CompanyInfoTranslationDto, MissionVisionValueItemD
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import IconSelector from '@/components/admin/IconSelector';
 import { getMissionIcons, getVisionIcons } from '@/lib/icons/mission-vision-icons';
+import LanguageTabs from '@/components/admin/LanguageTabs';
 
 export default function CompanyInfoPage() {
   const router = useRouter();
@@ -392,12 +393,14 @@ export default function CompanyInfoPage() {
         </div>
 
         {/* Translations */}
-        {formData.translations.map((translation, index) => (
-          <div key={translation.languageCode} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              {translation.languageCode.toUpperCase()} Translation
-            </h2>
-            <div className="space-y-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Translations</h2>
+          <LanguageTabs>
+            {(activeLanguage, index) => {
+              const translation = formData.translations[index];
+              
+              return (
+                <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Address {translation.languageCode === 'az' ? '*' : ''}
@@ -666,8 +669,10 @@ export default function CompanyInfoPage() {
                 />
               </div>
             </div>
-          </div>
-        ))}
+          );
+        }}
+      </LanguageTabs>
+    </div>
 
         {/* Submit Button */}
         <div className="flex justify-end">
