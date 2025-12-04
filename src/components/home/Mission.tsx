@@ -25,13 +25,13 @@ export default function Mission({ lang, companyInfo }: MissionProps) {
             </p>
           </div>
           {companyInfo?.missions && companyInfo.missions.length > 0 && (
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="mt-12 flex flex-wrap justify-center gap-8">
               {companyInfo.missions.map((mission, index) => {
                 const Icon = getIconByName(mission.icon);
                 return (
                   <div
                     key={mission.id || index}
-                    className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-16'}`}
+                    className={`text-center w-full md:w-64 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-16'}`}
                     style={{ transitionDelay: `${(index + 3) * 150}ms` }}
                   >
                     <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
