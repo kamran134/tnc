@@ -248,6 +248,21 @@ export default function CompanyInfoPage() {
 
   const updateItem = (translationIndex: number, type: 'missions' | 'visions' | 'values', itemIndex: number, field: keyof MissionVisionValueItemDto, value: string | number) => {
     const newTranslations = [...formData.translations];
+    
+    // Ensure all translations have the same array length
+    const maxLength = Math.max(...newTranslations.map(t => t[type]?.length || 0));
+    newTranslations.forEach((translation, idx) => {
+      if (!translation[type]) translation[type] = [];
+      while (translation[type].length < maxLength) {
+        translation[type].push({
+          title: '',
+          description: '',
+          displayOrder: translation[type].length + 1,
+          ...(type !== 'values' && idx === 0 ? { icon: '' } : {})
+        });
+      }
+    });
+    
     const items = [...newTranslations[translationIndex][type]];
     items[itemIndex] = { ...items[itemIndex], [field]: value };
     newTranslations[translationIndex] = {
@@ -580,8 +595,8 @@ export default function CompanyInfoPage() {
                 {/* Language tabs for title and description */}
                 <LanguageTabs>
                   {(activeLanguage, langIndex) => {
-                    const translation = formData.translations[langIndex];
-                    const item = translation?.missions?.[missionIndex] || { title: '', description: '', displayOrder: 1 };
+                    const translation = formData.translations[langIndex] || { languageCode: activeLanguage, missions: [] };
+                    const item = translation.missions?.[missionIndex] || { title: '', description: '', displayOrder: 1 };
                     
                     return (
                       <div className="space-y-3">
@@ -698,8 +713,8 @@ export default function CompanyInfoPage() {
                 {/* Language tabs for title and description */}
                 <LanguageTabs>
                   {(activeLanguage, langIndex) => {
-                    const translation = formData.translations[langIndex];
-                    const item = translation?.visions?.[visionIndex] || { title: '', description: '', displayOrder: 1 };
+                    const translation = formData.translations[langIndex] || { languageCode: activeLanguage, visions: [] };
+                    const item = translation.visions?.[visionIndex] || { title: '', description: '', displayOrder: 1 };
                     
                     return (
                       <div className="space-y-3">
@@ -801,8 +816,8 @@ export default function CompanyInfoPage() {
                 {/* Language tabs for title and description */}
                 <LanguageTabs>
                   {(activeLanguage, langIndex) => {
-                    const translation = formData.translations[langIndex];
-                    const item = translation?.values?.[valueIndex] || { title: '', description: '', displayOrder: 1 };
+                    const translation = formData.translations[langIndex] || { languageCode: activeLanguage, values: [] };
+                    const item = translation.values?.[valueIndex] || { title: '', description: '', displayOrder: 1 };
                     
                     return (
                       <div className="space-y-3">
