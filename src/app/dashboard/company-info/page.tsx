@@ -242,6 +242,21 @@ export default function CompanyInfoPage() {
 
   const updateItem = (translationIndex: number, type: 'missions' | 'visions' | 'values', itemIndex: number, field: keyof MissionVisionValueItemDto, value: string | number) => {
     const newTranslations = [...formData.translations];
+    
+    // Ensure the array exists
+    if (!newTranslations[translationIndex][type]) {
+      newTranslations[translationIndex][type] = [];
+    }
+    
+    // Ensure the item exists at the index
+    if (!newTranslations[translationIndex][type][itemIndex]) {
+      newTranslations[translationIndex][type][itemIndex] = {
+        title: '',
+        description: '',
+        displayOrder: itemIndex + 1
+      };
+    }
+    
     const items = [...newTranslations[translationIndex][type]];
     items[itemIndex] = { ...items[itemIndex], [field]: value };
     newTranslations[translationIndex] = {
