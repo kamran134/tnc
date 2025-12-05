@@ -157,16 +157,10 @@ export default function CompanyInfoPage() {
     try {
       setIsLoading(true);
       
-      // Фильтруем пустые элементы в missions/visions/values
+      // Фильтруем переводы - оставляем только те, где есть хотя бы одно заполненное поле
       const filteredData = {
         ...formData,
-        translations: formData.translations.map(t => ({
-          ...t,
-          missions: t.missions.filter(m => m.title?.trim() || m.description?.trim()),
-          visions: t.visions.filter(v => v.title?.trim() || v.description?.trim()),
-          values: t.values.filter(v => v.title?.trim() || v.description?.trim())
-        })).filter(t => 
-          // Оставляем перевод если есть хотя бы одно заполненное поле
+        translations: formData.translations.filter(t => 
           t.address?.trim() || 
           t.description?.trim() || 
           t.history?.trim() ||
@@ -176,9 +170,9 @@ export default function CompanyInfoPage() {
           t.visionDescription?.trim() ||
           t.valuesTitle?.trim() ||
           t.valuesDescription?.trim() ||
-          t.missions.length > 0 ||
-          t.visions.length > 0 ||
-          t.values.length > 0
+          (t.missions && t.missions.length > 0 && t.missions.some(m => m.title?.trim() || m.description?.trim())) ||
+          (t.visions && t.visions.length > 0 && t.visions.some(v => v.title?.trim() || v.description?.trim())) ||
+          (t.values && t.values.length > 0 && t.values.some(v => v.title?.trim() || v.description?.trim()))
         )
       };
       
@@ -247,31 +241,29 @@ export default function CompanyInfoPage() {
   };
 
   const updateItem = (translationIndex: number, type: 'missions' | 'visions' | 'values', itemIndex: number, field: keyof MissionVisionValueItemDto, value: string | number) => {
-    setFormData(prev => {
-      const newTranslations = [...prev.translations];
-      
-      // Ensure the array exists and has the item at the index
-      if (!newTranslations[translationIndex][type]) {
-        newTranslations[translationIndex][type] = [];
-      }
-      
-      if (!newTranslations[translationIndex][type][itemIndex]) {
-        newTranslations[translationIndex][type][itemIndex] = {
-          title: '',
-          description: '',
-          displayOrder: itemIndex + 1
-        };
-      }
-      
-      const items = [...newTranslations[translationIndex][type]];
-      items[itemIndex] = { ...items[itemIndex], [field]: value };
-      newTranslations[translationIndex] = {
-        ...newTranslations[translationIndex],
-        [type]: items
+    const newTranslations = [...formData.translations];
+    
+    // Ensure the array exists
+    if (!newTranslations[translationIndex][type]) {
+      newTranslations[translationIndex][type] = [];
+    }
+    
+    // Ensure the item exists at the index
+    if (!newTranslations[translationIndex][type][itemIndex]) {
+      newTranslations[translationIndex][type][itemIndex] = {
+        title: '',
+        description: '',
+        displayOrder: itemIndex + 1
       };
-      
-      return { ...prev, translations: newTranslations };
-    });
+    }
+    
+    const items = [...newTranslations[translationIndex][type]];
+    items[itemIndex] = { ...items[itemIndex], [field]: value };
+    newTranslations[translationIndex] = {
+      ...newTranslations[translationIndex],
+      [type]: items
+    };
+    setFormData(prev => ({ ...prev, translations: newTranslations }));
   };
 
   const handleDelete = async () => {
@@ -579,55 +571,50 @@ export default function CompanyInfoPage() {
                   )}
                 </div>
 
-                {/* Icon Selector - outside tabs */}
+                {/* Icon Selector */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Icon (shared across all languages)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Icon (for az language)</label>
                   <IconSelector
                     icons={getMissionIcons()}
                     selectedIcon={formData.translations[0].missions[missionIndex].icon || ''}
                     onSelect={(iconName) => {
-                      // Update icon for ALL languages
-                      formData.translations.forEach((_, langIdx) => {
-                        updateItem(langIdx, 'missions', missionIndex, 'icon', iconName);
-                      });
+                      updateItem(0, 'missions', missionIndex, 'icon', iconName);
                     }}
                   />
                 </div>
 
-                {/* Language tabs for title and description */}
-                <LanguageTabs>
-                  {(activeLanguage, langIndex) => {
-                    const translation = formData.translations[langIndex] || { languageCode: activeLanguage, missions: [] };
-                    const item = translation.missions?.[missionIndex] || { title: '', description: '', displayOrder: 1 };
-                    
-                    return (
-                      <div className="space-y-3">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                          <input
-                            type="text"
-                            placeholder="Title"
-                            value={item.title}
-                            onChange={(e) => updateItem(langIndex, 'missions', missionIndex, 'title', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-                            required={translation.languageCode === 'az'}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                          <textarea
-                            placeholder="Description"
-                            value={item.description}
-                            onChange={(e) => updateItem(langIndex, 'missions', missionIndex, 'description', e.target.value)}
-                            rows={3}
-                            className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-                            required={translation.languageCode === 'az'}
-                          />
-                        </div>
+                {/* Fields for each language */}
+                {formData.translations.map((translation, langIndex) => (
+                  <div key={translation.languageCode} className="mb-4 p-3 bg-white rounded border border-gray-200">
+                    <h5 className="text-sm font-semibold text-gray-700 mb-2">
+                      {translation.languageCode.toUpperCase()}
+                    </h5>
+                    <div className="space-y-2">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">Title</label>
+                        <input
+                          type="text"
+                          placeholder="Title"
+                          value={translation.missions?.[missionIndex]?.title || ''}
+                          onChange={(e) => updateItem(langIndex, 'missions', missionIndex, 'title', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
+                          required={translation.languageCode === 'az'}
+                        />
                       </div>
-                    );
-                  }}
-                </LanguageTabs>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
+                        <textarea
+                          placeholder="Description"
+                          value={translation.missions?.[missionIndex]?.description || ''}
+                          onChange={(e) => updateItem(langIndex, 'missions', missionIndex, 'description', e.target.value)}
+                          rows={3}
+                          className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
+                          required={translation.languageCode === 'az'}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ))}
           </div>
@@ -697,55 +684,50 @@ export default function CompanyInfoPage() {
                   )}
                 </div>
 
-                {/* Icon Selector - outside tabs */}
+                {/* Icon Selector */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Icon (shared across all languages)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Icon (for az language)</label>
                   <IconSelector
                     icons={getVisionIcons()}
                     selectedIcon={formData.translations[0].visions[visionIndex].icon || ''}
                     onSelect={(iconName) => {
-                      // Update icon for ALL languages
-                      formData.translations.forEach((_, langIdx) => {
-                        updateItem(langIdx, 'visions', visionIndex, 'icon', iconName);
-                      });
+                      updateItem(0, 'visions', visionIndex, 'icon', iconName);
                     }}
                   />
                 </div>
 
-                {/* Language tabs for title and description */}
-                <LanguageTabs>
-                  {(activeLanguage, langIndex) => {
-                    const translation = formData.translations[langIndex] || { languageCode: activeLanguage, visions: [] };
-                    const item = translation.visions?.[visionIndex] || { title: '', description: '', displayOrder: 1 };
-                    
-                    return (
-                      <div className="space-y-3">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                          <input
-                            type="text"
-                            placeholder="Title"
-                            value={item.title}
-                            onChange={(e) => updateItem(langIndex, 'visions', visionIndex, 'title', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
-                            required={translation.languageCode === 'az'}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                          <textarea
-                            placeholder="Description"
-                            value={item.description}
-                            onChange={(e) => updateItem(langIndex, 'visions', visionIndex, 'description', e.target.value)}
-                            rows={3}
-                            className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
-                            required={translation.languageCode === 'az'}
-                          />
-                        </div>
+                {/* Fields for each language */}
+                {formData.translations.map((translation, langIndex) => (
+                  <div key={translation.languageCode} className="mb-4 p-3 bg-white rounded border border-gray-200">
+                    <h5 className="text-sm font-semibold text-gray-700 mb-2">
+                      {translation.languageCode.toUpperCase()}
+                    </h5>
+                    <div className="space-y-2">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">Title</label>
+                        <input
+                          type="text"
+                          placeholder="Title"
+                          value={translation.visions?.[visionIndex]?.title || ''}
+                          onChange={(e) => updateItem(langIndex, 'visions', visionIndex, 'title', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-gray-50 text-gray-900"
+                          required={translation.languageCode === 'az'}
+                        />
                       </div>
-                    );
-                  }}
-                </LanguageTabs>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
+                        <textarea
+                          placeholder="Description"
+                          value={translation.visions?.[visionIndex]?.description || ''}
+                          onChange={(e) => updateItem(langIndex, 'visions', visionIndex, 'description', e.target.value)}
+                          rows={3}
+                          className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-gray-50 text-gray-900"
+                          required={translation.languageCode === 'az'}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ))}
           </div>
@@ -815,40 +797,38 @@ export default function CompanyInfoPage() {
                   )}
                 </div>
 
-                {/* Language tabs for title and description */}
-                <LanguageTabs>
-                  {(activeLanguage, langIndex) => {
-                    const translation = formData.translations[langIndex] || { languageCode: activeLanguage, values: [] };
-                    const item = translation.values?.[valueIndex] || { title: '', description: '', displayOrder: 1 };
-                    
-                    return (
-                      <div className="space-y-3">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                          <input
-                            type="text"
-                            placeholder="Title"
-                            value={item.title}
-                            onChange={(e) => updateItem(langIndex, 'values', valueIndex, 'title', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
-                            required={translation.languageCode === 'az'}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                          <textarea
-                            placeholder="Description"
-                            value={item.description}
-                            onChange={(e) => updateItem(langIndex, 'values', valueIndex, 'description', e.target.value)}
-                            rows={3}
-                            className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
-                            required={translation.languageCode === 'az'}
-                          />
-                        </div>
+                {/* Fields for each language */}
+                {formData.translations.map((translation, langIndex) => (
+                  <div key={translation.languageCode} className="mb-4 p-3 bg-white rounded border border-gray-200">
+                    <h5 className="text-sm font-semibold text-gray-700 mb-2">
+                      {translation.languageCode.toUpperCase()}
+                    </h5>
+                    <div className="space-y-2">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">Title</label>
+                        <input
+                          type="text"
+                          placeholder="Title"
+                          value={translation.values?.[valueIndex]?.title || ''}
+                          onChange={(e) => updateItem(langIndex, 'values', valueIndex, 'title', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-gray-50 text-gray-900"
+                          required={translation.languageCode === 'az'}
+                        />
                       </div>
-                    );
-                  }}
-                </LanguageTabs>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
+                        <textarea
+                          placeholder="Description"
+                          value={translation.values?.[valueIndex]?.description || ''}
+                          onChange={(e) => updateItem(langIndex, 'values', valueIndex, 'description', e.target.value)}
+                          rows={3}
+                          className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-gray-50 text-gray-900"
+                          required={translation.languageCode === 'az'}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ))}
           </div>
