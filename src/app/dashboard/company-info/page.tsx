@@ -31,10 +31,10 @@ export default function CompanyInfoPage() {
         history: '',
         missionTitle: '',
         missionDescription: '',
-        missions: [{ title: '', description: '', displayOrder: 1 }],
+        missions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
         visionTitle: '',
         visionDescription: '',
-        visions: [{ title: '', description: '', displayOrder: 1 }],
+        visions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
         valuesTitle: '',
         valuesDescription: '',
         values: [{ title: '', description: '', displayOrder: 1 }],
@@ -46,13 +46,13 @@ export default function CompanyInfoPage() {
         history: '',
         missionTitle: '',
         missionDescription: '',
-        missions: [],
+        missions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
         visionTitle: '',
         visionDescription: '',
-        visions: [],
+        visions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
         valuesTitle: '',
         valuesDescription: '',
-        values: [],
+        values: [{ title: '', description: '', displayOrder: 1 }],
       },
       { 
         languageCode: 'ru', 
@@ -61,13 +61,13 @@ export default function CompanyInfoPage() {
         history: '',
         missionTitle: '',
         missionDescription: '',
-        missions: [],
+        missions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
         visionTitle: '',
         visionDescription: '',
-        visions: [],
+        visions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
         valuesTitle: '',
         valuesDescription: '',
-        values: [],
+        values: [{ title: '', description: '', displayOrder: 1 }],
       },
     ]
   });
@@ -99,6 +99,48 @@ export default function CompanyInfoPage() {
       setIsLoadingData(true);
       const data = await adminCompanyInfoService.get();
       console.log('Loaded company info:', data);
+      
+      // Синхронизируем длины массивов missions/visions/values для всех языков
+      if (data.translations && data.translations.length > 0) {
+        const maxMissions = Math.max(...data.translations.map(t => t.missions?.length || 0));
+        const maxVisions = Math.max(...data.translations.map(t => t.visions?.length || 0));
+        const maxValues = Math.max(...data.translations.map(t => t.values?.length || 0));
+        
+        data.translations.forEach((translation, index) => {
+          // Дополняем missions до максимальной длины
+          while ((translation.missions?.length || 0) < maxMissions) {
+            if (!translation.missions) translation.missions = [];
+            translation.missions.push({
+              title: '',
+              description: '',
+              displayOrder: translation.missions.length + 1,
+              ...(index === 0 ? { icon: '' } : {})
+            });
+          }
+          
+          // Дополняем visions до максимальной длины
+          while ((translation.visions?.length || 0) < maxVisions) {
+            if (!translation.visions) translation.visions = [];
+            translation.visions.push({
+              title: '',
+              description: '',
+              displayOrder: translation.visions.length + 1,
+              ...(index === 0 ? { icon: '' } : {})
+            });
+          }
+          
+          // Дополняем values до максимальной длины
+          while ((translation.values?.length || 0) < maxValues) {
+            if (!translation.values) translation.values = [];
+            translation.values.push({
+              title: '',
+              description: '',
+              displayOrder: translation.values.length + 1
+            });
+          }
+        });
+      }
+      
       setExists(true);
       setFormData(data);
     } catch (err: any) {
