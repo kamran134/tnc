@@ -584,7 +584,9 @@ export default function CompanyInfoPage() {
                 </div>
 
                 {/* Fields for each language */}
-                {formData.translations.map((translation, langIndex) => (
+                {formData.translations.map((translation, langIndex) => {
+                  console.log(`Mission ${missionIndex}, Lang ${translation.languageCode}:`, translation.missions?.[missionIndex]);
+                  return (
                   <div key={translation.languageCode} className="mb-4 p-3 bg-white rounded border border-gray-200">
                     <h5 className="text-sm font-semibold text-gray-700 mb-2">
                       {translation.languageCode.toUpperCase()}
@@ -614,7 +616,8 @@ export default function CompanyInfoPage() {
                       </div>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             ))}
           </div>
