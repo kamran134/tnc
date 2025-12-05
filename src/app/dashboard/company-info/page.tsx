@@ -575,7 +575,6 @@ export default function CompanyInfoPage() {
                 <LanguageTabs>
                   {(activeLanguage, langIndex) => {
                     const translation = formData.translations[langIndex];
-                    if (!translation || !translation.missions[missionIndex]) return null;
                     const item = translation.missions[missionIndex];
                     
                     return (
@@ -694,7 +693,6 @@ export default function CompanyInfoPage() {
                 <LanguageTabs>
                   {(activeLanguage, langIndex) => {
                     const translation = formData.translations[langIndex];
-                    if (!translation || !translation.visions[visionIndex]) return null;
                     const item = translation.visions[visionIndex];
                     
                     return (
@@ -798,7 +796,6 @@ export default function CompanyInfoPage() {
                 <LanguageTabs>
                   {(activeLanguage, langIndex) => {
                     const translation = formData.translations[langIndex];
-                    if (!translation || !translation.values[valueIndex]) return null;
                     const item = translation.values[valueIndex];
                     
                     return (
