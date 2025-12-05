@@ -163,27 +163,38 @@ export default function CompanyInfoPage() {
 
   const addItem = (translationIndex: number, type: 'missions' | 'visions' | 'values') => {
     const newTranslations = [...formData.translations];
-    const items = newTranslations[translationIndex][type];
-    const newItem: MissionVisionValueItemDto = {
-      title: '',
-      description: '',
-      displayOrder: items.length + 1
-    };
-    newTranslations[translationIndex] = {
-      ...newTranslations[translationIndex],
-      [type]: [...items, newItem]
-    };
+    const itemsLength = newTranslations[0][type].length;
+    
+    // Add item to ALL languages
+    newTranslations.forEach((translation, index) => {
+      const newItem: MissionVisionValueItemDto = {
+        title: '',
+        description: '',
+        displayOrder: itemsLength + 1,
+        ...(type !== 'values' && index === 0 ? { icon: '' } : {})
+      };
+      newTranslations[index] = {
+        ...newTranslations[index],
+        [type]: [...newTranslations[index][type], newItem]
+      };
+    });
+    
     setFormData(prev => ({ ...prev, translations: newTranslations }));
   };
 
   const removeItem = (translationIndex: number, type: 'missions' | 'visions' | 'values', itemIndex: number) => {
     const newTranslations = [...formData.translations];
-    const items = [...newTranslations[translationIndex][type]];
-    items.splice(itemIndex, 1);
-    newTranslations[translationIndex] = {
-      ...newTranslations[translationIndex],
-      [type]: items
-    };
+    
+    // Remove item from ALL languages
+    newTranslations.forEach((translation, index) => {
+      const items = [...newTranslations[index][type]];
+      items.splice(itemIndex, 1);
+      newTranslations[index] = {
+        ...newTranslations[index],
+        [type]: items
+      };
+    });
+    
     setFormData(prev => ({ ...prev, translations: newTranslations }));
   };
 
