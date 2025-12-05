@@ -157,10 +157,16 @@ export default function CompanyInfoPage() {
     try {
       setIsLoading(true);
       
-      // Фильтруем переводы - оставляем только те, где есть хотя бы одно заполненное поле
+      // Фильтруем пустые элементы в missions/visions/values
       const filteredData = {
         ...formData,
-        translations: formData.translations.filter(t => 
+        translations: formData.translations.map(t => ({
+          ...t,
+          missions: t.missions.filter(m => m.title?.trim() || m.description?.trim()),
+          visions: t.visions.filter(v => v.title?.trim() || v.description?.trim()),
+          values: t.values.filter(v => v.title?.trim() || v.description?.trim())
+        })).filter(t => 
+          // Оставляем перевод если есть хотя бы одно заполненное поле
           t.address?.trim() || 
           t.description?.trim() || 
           t.history?.trim() ||
@@ -170,9 +176,9 @@ export default function CompanyInfoPage() {
           t.visionDescription?.trim() ||
           t.valuesTitle?.trim() ||
           t.valuesDescription?.trim() ||
-          (t.missions && t.missions.length > 0 && t.missions.some(m => m.title?.trim() || m.description?.trim())) ||
-          (t.visions && t.visions.length > 0 && t.visions.some(v => v.title?.trim() || v.description?.trim())) ||
-          (t.values && t.values.length > 0 && t.values.some(v => v.title?.trim() || v.description?.trim()))
+          t.missions.length > 0 ||
+          t.visions.length > 0 ||
+          t.values.length > 0
         )
       };
       
@@ -242,21 +248,6 @@ export default function CompanyInfoPage() {
 
   const updateItem = (translationIndex: number, type: 'missions' | 'visions' | 'values', itemIndex: number, field: keyof MissionVisionValueItemDto, value: string | number) => {
     const newTranslations = [...formData.translations];
-    
-    // Ensure the array exists
-    if (!newTranslations[translationIndex][type]) {
-      newTranslations[translationIndex][type] = [];
-    }
-    
-    // Ensure the item exists at the index
-    if (!newTranslations[translationIndex][type][itemIndex]) {
-      newTranslations[translationIndex][type][itemIndex] = {
-        title: '',
-        description: '',
-        displayOrder: itemIndex + 1
-      };
-    }
-    
     const items = [...newTranslations[translationIndex][type]];
     items[itemIndex] = { ...items[itemIndex], [field]: value };
     newTranslations[translationIndex] = {
@@ -590,7 +581,7 @@ export default function CompanyInfoPage() {
                 <LanguageTabs>
                   {(activeLanguage, langIndex) => {
                     const translation = formData.translations[langIndex];
-                    const item = translation?.missions?.[missionIndex] || { title: '', description: '', displayOrder: 1 };
+                    const item = translation.missions[missionIndex];
                     
                     return (
                       <div className="space-y-3">
@@ -708,7 +699,7 @@ export default function CompanyInfoPage() {
                 <LanguageTabs>
                   {(activeLanguage, langIndex) => {
                     const translation = formData.translations[langIndex];
-                    const item = translation?.visions?.[visionIndex] || { title: '', description: '', displayOrder: 1 };
+                    const item = translation.visions[visionIndex];
                     
                     return (
                       <div className="space-y-3">
@@ -811,7 +802,7 @@ export default function CompanyInfoPage() {
                 <LanguageTabs>
                   {(activeLanguage, langIndex) => {
                     const translation = formData.translations[langIndex];
-                    const item = translation?.values?.[valueIndex] || { title: '', description: '', displayOrder: 1 };
+                    const item = translation.values[valueIndex];
                     
                     return (
                       <div className="space-y-3">
