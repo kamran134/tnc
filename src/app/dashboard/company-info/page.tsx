@@ -581,7 +581,7 @@ export default function CompanyInfoPage() {
                 <LanguageTabs>
                   {(activeLanguage, langIndex) => {
                     const translation = formData.translations[langIndex];
-                    const item = translation.missions[missionIndex];
+                    const item = translation?.missions?.[missionIndex] || { title: '', description: '', displayOrder: 1 };
                     
                     return (
                       <div className="space-y-3">
@@ -699,7 +699,7 @@ export default function CompanyInfoPage() {
                 <LanguageTabs>
                   {(activeLanguage, langIndex) => {
                     const translation = formData.translations[langIndex];
-                    const item = translation.visions[visionIndex];
+                    const item = translation?.visions?.[visionIndex] || { title: '', description: '', displayOrder: 1 };
                     
                     return (
                       <div className="space-y-3">
@@ -802,7 +802,7 @@ export default function CompanyInfoPage() {
                 <LanguageTabs>
                   {(activeLanguage, langIndex) => {
                     const translation = formData.translations[langIndex];
-                    const item = translation.values[valueIndex];
+                    const item = translation?.values?.[valueIndex] || { title: '', description: '', displayOrder: 1 };
                     
                     return (
                       <div className="space-y-3">
