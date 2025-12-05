@@ -424,245 +424,6 @@ export default function CompanyInfoPage() {
                 />
               </div>
 
-              {/* Mission Section */}
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <div className="mb-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Mission Section Title {translation.languageCode === 'az' ? '*' : ''}
-                  </label>
-                  <input
-                    type="text"
-                    value={translation.missionTitle}
-                    onChange={(e) => updateTranslation(index, 'missionTitle', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-                    placeholder="e.g., Our Mission"
-                    required={translation.languageCode === 'az'}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Mission Section Description</label>
-                  <textarea
-                    value={translation.missionDescription || ''}
-                    onChange={(e) => updateTranslation(index, 'missionDescription', e.target.value)}
-                    rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-                    placeholder="Brief description of mission section"
-                  />
-                </div>
-                <div className="flex justify-between items-center mb-3">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Mission Items {translation.languageCode === 'az' ? '*' : ''}
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => addItem(index, 'missions')}
-                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
-                  >
-                    + Add Mission
-                  </button>
-                </div>
-                {translation.missions.map((item, iIndex) => (
-                  <div key={iIndex} className="border border-gray-200 rounded-lg p-4 mb-3 bg-white">
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-600">Mission #{iIndex + 1}</span>
-                      {translation.missions.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeItem(index, 'missions', iIndex)}
-                          className="text-red-600 text-sm hover:text-red-700"
-                        >
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <input
-                        type="text"
-                        placeholder="Title"
-                        value={item.title}
-                        onChange={(e) => updateItem(index, 'missions', iIndex, 'title', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
-                        required={translation.languageCode === 'az'}
-                      />
-                      <textarea
-                        placeholder="Description"
-                        value={item.description}
-                        onChange={(e) => updateItem(index, 'missions', iIndex, 'description', e.target.value)}
-                        rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
-                        required={translation.languageCode === 'az'}
-                      />
-                      {translation.languageCode === 'az' && (
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Icon (shared across all languages)</label>
-                          <IconSelector
-                            icons={getMissionIcons()}
-                            selectedIcon={item.icon || ''}
-                            onSelect={(iconName) => updateItem(index, 'missions', iIndex, 'icon', iconName)}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Vision Section */}
-              <div className="mt-6 p-4 bg-green-50 rounded-lg">
-                <div className="mb-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Vision Section Title {translation.languageCode === 'az' ? '*' : ''}
-                  </label>
-                  <input
-                    type="text"
-                    value={translation.visionTitle}
-                    onChange={(e) => updateTranslation(index, 'visionTitle', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
-                    placeholder="e.g., Our Vision"
-                    required={translation.languageCode === 'az'}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Vision Section Description</label>
-                  <textarea
-                    value={translation.visionDescription || ''}
-                    onChange={(e) => updateTranslation(index, 'visionDescription', e.target.value)}
-                    rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
-                    placeholder="Brief description of vision section"
-                  />
-                </div>
-                <div className="flex justify-between items-center mb-3">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Vision Items {translation.languageCode === 'az' ? '*' : ''}
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => addItem(index, 'visions')}
-                    className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
-                  >
-                    + Add Vision
-                  </button>
-                </div>
-                {translation.visions.map((item, iIndex) => (
-                  <div key={iIndex} className="border border-gray-200 rounded-lg p-4 mb-3 bg-white">
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-600">Vision #{iIndex + 1}</span>
-                      {translation.visions.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeItem(index, 'visions', iIndex)}
-                          className="text-red-600 text-sm hover:text-red-700"
-                        >
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <input
-                        type="text"
-                        placeholder="Title"
-                        value={item.title}
-                        onChange={(e) => updateItem(index, 'visions', iIndex, 'title', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-gray-50 text-gray-900"
-                        required={translation.languageCode === 'az'}
-                      />
-                      <textarea
-                        placeholder="Description"
-                        value={item.description}
-                        onChange={(e) => updateItem(index, 'visions', iIndex, 'description', e.target.value)}
-                        rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-gray-50 text-gray-900"
-                        required={translation.languageCode === 'az'}
-                      />
-                      {translation.languageCode === 'az' && (
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Icon (shared across all languages)</label>
-                          <IconSelector
-                            icons={getVisionIcons()}
-                            selectedIcon={item.icon || ''}
-                            onSelect={(iconName) => updateItem(index, 'visions', iIndex, 'icon', iconName)}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Values Section */}
-              <div className="mt-6 p-4 bg-purple-50 rounded-lg">
-                <div className="mb-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Values Section Title {translation.languageCode === 'az' ? '*' : ''}
-                  </label>
-                  <input
-                    type="text"
-                    value={translation.valuesTitle}
-                    onChange={(e) => updateTranslation(index, 'valuesTitle', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
-                    placeholder="e.g., Our Core Values"
-                    required={translation.languageCode === 'az'}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Values Section Description</label>
-                  <textarea
-                    value={translation.valuesDescription || ''}
-                    onChange={(e) => updateTranslation(index, 'valuesDescription', e.target.value)}
-                    rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
-                    placeholder="Brief description of values section"
-                  />
-                </div>
-                <div className="flex justify-between items-center mb-3">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Value Items {translation.languageCode === 'az' ? '*' : ''}
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => addItem(index, 'values')}
-                    className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700"
-                  >
-                    + Add Value
-                  </button>
-                </div>
-                {translation.values.map((item, iIndex) => (
-                  <div key={iIndex} className="border border-gray-200 rounded-lg p-4 mb-3 bg-white">
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-600">Value #{iIndex + 1}</span>
-                      {translation.values.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeItem(index, 'values', iIndex)}
-                          className="text-red-600 text-sm hover:text-red-700"
-                        >
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <input
-                        type="text"
-                        placeholder="Title"
-                        value={item.title}
-                        onChange={(e) => updateItem(index, 'values', iIndex, 'title', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-gray-50 text-gray-900"
-                        required={translation.languageCode === 'az'}
-                      />
-                      <textarea
-                        placeholder="Description"
-                        value={item.description}
-                        onChange={(e) => updateItem(index, 'values', iIndex, 'description', e.target.value)}
-                        rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-gray-50 text-gray-900"
-                        required={translation.languageCode === 'az'}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
               <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">History</label>
                 <textarea
@@ -677,6 +438,345 @@ export default function CompanyInfoPage() {
         }}
       </LanguageTabs>
     </div>
+
+        {/* Mission Section */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Mission Section</h2>
+          
+          <LanguageTabs>
+            {(activeLanguage, langIndex) => {
+              const translation = formData.translations[langIndex];
+              return (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Section Title {translation.languageCode === 'az' ? '*' : ''}
+                    </label>
+                    <input
+                      type="text"
+                      value={translation.missionTitle}
+                      onChange={(e) => updateTranslation(langIndex, 'missionTitle', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
+                      placeholder="e.g., Our Mission"
+                      required={translation.languageCode === 'az'}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
+                    <textarea
+                      value={translation.missionDescription || ''}
+                      onChange={(e) => updateTranslation(langIndex, 'missionDescription', e.target.value)}
+                      rows={2}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
+                      placeholder="Brief description"
+                    />
+                  </div>
+                </div>
+              );
+            }}
+          </LanguageTabs>
+
+          <div className="mt-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Mission Items</h3>
+              <button
+                type="button"
+                onClick={() => addItem(0, 'missions')}
+                className="px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                + Add Mission
+              </button>
+            </div>
+
+            {formData.translations[0].missions.map((_, missionIndex) => (
+              <div key={missionIndex} className="border border-gray-200 rounded-lg p-4 mb-4 bg-blue-50">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="font-semibold text-gray-900">Mission #{missionIndex + 1}</h4>
+                  {formData.translations[0].missions.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeItem(0, 'missions', missionIndex)}
+                      className="text-red-600 text-sm hover:text-red-700 font-medium"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                {/* Icon Selector - outside tabs */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Icon (shared across all languages)</label>
+                  <IconSelector
+                    icons={getMissionIcons()}
+                    selectedIcon={formData.translations[0].missions[missionIndex].icon || ''}
+                    onSelect={(iconName) => {
+                      // Update icon for ALL languages
+                      formData.translations.forEach((_, langIdx) => {
+                        updateItem(langIdx, 'missions', missionIndex, 'icon', iconName);
+                      });
+                    }}
+                  />
+                </div>
+
+                {/* Language tabs for title and description */}
+                <LanguageTabs>
+                  {(activeLanguage, langIndex) => {
+                    const translation = formData.translations[langIndex];
+                    const item = translation.missions[missionIndex];
+                    
+                    return (
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                          <input
+                            type="text"
+                            placeholder="Title"
+                            value={item.title}
+                            onChange={(e) => updateItem(langIndex, 'missions', missionIndex, 'title', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                            required={translation.languageCode === 'az'}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                          <textarea
+                            placeholder="Description"
+                            value={item.description}
+                            onChange={(e) => updateItem(langIndex, 'missions', missionIndex, 'description', e.target.value)}
+                            rows={3}
+                            className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                            required={translation.languageCode === 'az'}
+                          />
+                        </div>
+                      </div>
+                    );
+                  }}
+                </LanguageTabs>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Vision Section */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Vision Section</h2>
+          
+          <LanguageTabs>
+            {(activeLanguage, langIndex) => {
+              const translation = formData.translations[langIndex];
+              return (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Section Title {translation.languageCode === 'az' ? '*' : ''}
+                    </label>
+                    <input
+                      type="text"
+                      value={translation.visionTitle}
+                      onChange={(e) => updateTranslation(langIndex, 'visionTitle', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 bg-gray-50 text-gray-900"
+                      placeholder="e.g., Our Vision"
+                      required={translation.languageCode === 'az'}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
+                    <textarea
+                      value={translation.visionDescription || ''}
+                      onChange={(e) => updateTranslation(langIndex, 'visionDescription', e.target.value)}
+                      rows={2}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 bg-gray-50 text-gray-900"
+                      placeholder="Brief description"
+                    />
+                  </div>
+                </div>
+              );
+            }}
+          </LanguageTabs>
+
+          <div className="mt-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Vision Items</h3>
+              <button
+                type="button"
+                onClick={() => addItem(0, 'visions')}
+                className="px-3 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                + Add Vision
+              </button>
+            </div>
+
+            {formData.translations[0].visions.map((_, visionIndex) => (
+              <div key={visionIndex} className="border border-gray-200 rounded-lg p-4 mb-4 bg-green-50">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="font-semibold text-gray-900">Vision #{visionIndex + 1}</h4>
+                  {formData.translations[0].visions.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeItem(0, 'visions', visionIndex)}
+                      className="text-red-600 text-sm hover:text-red-700 font-medium"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                {/* Icon Selector - outside tabs */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Icon (shared across all languages)</label>
+                  <IconSelector
+                    icons={getVisionIcons()}
+                    selectedIcon={formData.translations[0].visions[visionIndex].icon || ''}
+                    onSelect={(iconName) => {
+                      // Update icon for ALL languages
+                      formData.translations.forEach((_, langIdx) => {
+                        updateItem(langIdx, 'visions', visionIndex, 'icon', iconName);
+                      });
+                    }}
+                  />
+                </div>
+
+                {/* Language tabs for title and description */}
+                <LanguageTabs>
+                  {(activeLanguage, langIndex) => {
+                    const translation = formData.translations[langIndex];
+                    const item = translation.visions[visionIndex];
+                    
+                    return (
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                          <input
+                            type="text"
+                            placeholder="Title"
+                            value={item.title}
+                            onChange={(e) => updateItem(langIndex, 'visions', visionIndex, 'title', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
+                            required={translation.languageCode === 'az'}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                          <textarea
+                            placeholder="Description"
+                            value={item.description}
+                            onChange={(e) => updateItem(langIndex, 'visions', visionIndex, 'description', e.target.value)}
+                            rows={3}
+                            className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
+                            required={translation.languageCode === 'az'}
+                          />
+                        </div>
+                      </div>
+                    );
+                  }}
+                </LanguageTabs>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Values Section */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Values Section</h2>
+          
+          <LanguageTabs>
+            {(activeLanguage, langIndex) => {
+              const translation = formData.translations[langIndex];
+              return (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Section Title {translation.languageCode === 'az' ? '*' : ''}
+                    </label>
+                    <input
+                      type="text"
+                      value={translation.valuesTitle}
+                      onChange={(e) => updateTranslation(langIndex, 'valuesTitle', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 bg-gray-50 text-gray-900"
+                      placeholder="e.g., Our Core Values"
+                      required={translation.languageCode === 'az'}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
+                    <textarea
+                      value={translation.valuesDescription || ''}
+                      onChange={(e) => updateTranslation(langIndex, 'valuesDescription', e.target.value)}
+                      rows={2}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 bg-gray-50 text-gray-900"
+                      placeholder="Brief description"
+                    />
+                  </div>
+                </div>
+              );
+            }}
+          </LanguageTabs>
+
+          <div className="mt-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Value Items</h3>
+              <button
+                type="button"
+                onClick={() => addItem(0, 'values')}
+                className="px-3 py-2 text-sm bg-purple-600 text-white rounded hover:bg-purple-700"
+              >
+                + Add Value
+              </button>
+            </div>
+
+            {formData.translations[0].values.map((_, valueIndex) => (
+              <div key={valueIndex} className="border border-gray-200 rounded-lg p-4 mb-4 bg-purple-50">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="font-semibold text-gray-900">Value #{valueIndex + 1}</h4>
+                  {formData.translations[0].values.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeItem(0, 'values', valueIndex)}
+                      className="text-red-600 text-sm hover:text-red-700 font-medium"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                {/* Language tabs for title and description */}
+                <LanguageTabs>
+                  {(activeLanguage, langIndex) => {
+                    const translation = formData.translations[langIndex];
+                    const item = translation.values[valueIndex];
+                    
+                    return (
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                          <input
+                            type="text"
+                            placeholder="Title"
+                            value={item.title}
+                            onChange={(e) => updateItem(langIndex, 'values', valueIndex, 'title', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
+                            required={translation.languageCode === 'az'}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                          <textarea
+                            placeholder="Description"
+                            value={item.description}
+                            onChange={(e) => updateItem(langIndex, 'values', valueIndex, 'description', e.target.value)}
+                            rows={3}
+                            className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
+                            required={translation.languageCode === 'az'}
+                          />
+                        </div>
+                      </div>
+                    );
+                  }}
+                </LanguageTabs>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Submit Button */}
         <div className="flex justify-end">
