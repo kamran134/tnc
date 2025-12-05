@@ -247,29 +247,31 @@ export default function CompanyInfoPage() {
   };
 
   const updateItem = (translationIndex: number, type: 'missions' | 'visions' | 'values', itemIndex: number, field: keyof MissionVisionValueItemDto, value: string | number) => {
-    const newTranslations = [...formData.translations];
-    
-    // Ensure all translations have the same array length
-    const maxLength = Math.max(...newTranslations.map(t => t[type]?.length || 0));
-    newTranslations.forEach((translation, idx) => {
-      if (!translation[type]) translation[type] = [];
-      while (translation[type].length < maxLength) {
-        translation[type].push({
+    setFormData(prev => {
+      const newTranslations = [...prev.translations];
+      
+      // Ensure the array exists and has the item at the index
+      if (!newTranslations[translationIndex][type]) {
+        newTranslations[translationIndex][type] = [];
+      }
+      
+      if (!newTranslations[translationIndex][type][itemIndex]) {
+        newTranslations[translationIndex][type][itemIndex] = {
           title: '',
           description: '',
-          displayOrder: translation[type].length + 1,
-          ...(type !== 'values' && idx === 0 ? { icon: '' } : {})
-        });
+          displayOrder: itemIndex + 1
+        };
       }
+      
+      const items = [...newTranslations[translationIndex][type]];
+      items[itemIndex] = { ...items[itemIndex], [field]: value };
+      newTranslations[translationIndex] = {
+        ...newTranslations[translationIndex],
+        [type]: items
+      };
+      
+      return { ...prev, translations: newTranslations };
     });
-    
-    const items = [...newTranslations[translationIndex][type]];
-    items[itemIndex] = { ...items[itemIndex], [field]: value };
-    newTranslations[translationIndex] = {
-      ...newTranslations[translationIndex],
-      [type]: items
-    };
-    setFormData(prev => ({ ...prev, translations: newTranslations }));
   };
 
   const handleDelete = async () => {
