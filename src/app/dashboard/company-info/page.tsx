@@ -100,6 +100,36 @@ export default function CompanyInfoPage() {
       const data = await adminCompanyInfoService.get();
       console.log('Loaded company info:', data);
       
+      // Ensure all 3 languages exist
+      const allLanguages: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
+      if (data.translations) {
+        allLanguages.forEach(langCode => {
+          if (!data.translations.find(t => t.languageCode === langCode)) {
+            data.translations.push({
+              languageCode: langCode,
+              address: '',
+              description: '',
+              history: '',
+              missionTitle: '',
+              missionDescription: '',
+              missions: [],
+              visionTitle: '',
+              visionDescription: '',
+              visions: [],
+              valuesTitle: '',
+              valuesDescription: '',
+              values: []
+            });
+          }
+        });
+        
+        // Sort to ensure correct order: az, en, ru
+        data.translations.sort((a, b) => {
+          const order = { az: 0, en: 1, ru: 2 };
+          return order[a.languageCode] - order[b.languageCode];
+        });
+      }
+      
       // Синхронизируем длины массивов missions/visions/values для всех языков
       if (data.translations && data.translations.length > 0) {
         const maxMissions = Math.max(...data.translations.map(t => t.missions?.length || 0));
