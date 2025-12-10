@@ -42,7 +42,7 @@ export default function Vision({ lang, companyInfo }: VisionProps) {
                       <div className="text-center">
                         <div className="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mx-auto">
                           {Icon ? (
-                            <Icon className="w-12 h-12 text-primary-600" />
+                            <Icon className="w-10 h-10 text-primary-600" />
                           ) : (
                             <svg className="w-12 h-12 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
