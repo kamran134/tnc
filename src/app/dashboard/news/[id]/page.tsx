@@ -150,6 +150,28 @@ export default function EditNewsPage() {
     }
   };
 
+  const handleTogglePublish = async () => {
+    try {
+      const endpoint = formData.published ? 'unpublish' : 'publish';
+      const response = await fetch(`/api/admin/news/${newsId}/${endpoint}`, {
+        method: 'PATCH',
+      });
+
+      if (response.ok) {
+        // Update local state
+        setFormData(prev => ({ ...prev, published: !prev.published }));
+        alert(`Article ${formData.published ? 'unpublished' : 'published'} successfully!`);
+      } else {
+        const error = await response.json();
+        console.error(`Failed to ${endpoint} news:`, error);
+        alert(`Failed to ${endpoint} article. Please try again.`);
+      }
+    } catch (error) {
+      console.error('Error toggling publish status:', error);
+      alert('An error occurred. Please try again.');
+    }
+  };
+
   const updateTranslation = (langIndex: number, field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
@@ -330,7 +352,18 @@ export default function EditNewsPage() {
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-end">
+          <div className="flex justify-between items-center">
+            <button
+              type="button"
+              onClick={handleTogglePublish}
+              className={`px-6 py-3 rounded-lg transition-colors ${
+                formData.published
+                  ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
+            >
+              {formData.published ? 'Unpublish Article' : 'Publish Article'}
+            </button>
             <button
               type="submit"
               disabled={isLoading}

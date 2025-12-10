@@ -45,6 +45,28 @@ export default function NewsPage() {
     }
   };
 
+  const handleTogglePublish = async (article: NewsAdminDto) => {
+    try {
+      const endpoint = article.published ? 'unpublish' : 'publish';
+      const response = await fetch(`/api/admin/news/${article.id}/${endpoint}`, {
+        method: 'PATCH',
+      });
+
+      if (response.ok) {
+        // Reload news list to reflect the change
+        await loadNews();
+      } else if (response.status === 401) {
+        router.push('/dashboard/login');
+      } else {
+        console.error(`Failed to ${endpoint} news:`, response.status, response.statusText);
+        alert(`Failed to ${endpoint} article. Please try again.`);
+      }
+    } catch (error) {
+      console.error('Error toggling publish status:', error);
+      alert('An error occurred. Please try again.');
+    }
+  };
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       loadNews();
@@ -215,10 +237,7 @@ export default function NewsPage() {
                             Edit
                           </button>
                           <button
-                            onClick={() => {
-                              // Toggle publish status
-                              // Implementation needed
-                            }}
+                            onClick={() => handleTogglePublish(article)}
                             className="text-blue-600 hover:text-blue-900"
                           >
                             {article.published ? 'Unpublish' : 'Publish'}
