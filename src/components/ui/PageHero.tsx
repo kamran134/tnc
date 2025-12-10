@@ -34,7 +34,6 @@ export default function PageHero({
 
   useEffect(() => {
     const fetchHeroData = async () => {
-      setIsLoading(false); // Убираем loader сразу, показываем fallback
       try {
         const response = await fetch(`/api/page-hero/${pageTag}?lang=${lang}`);
         if (response.ok) {
@@ -45,6 +44,8 @@ export default function PageHero({
         }
       } catch (error) {
         console.log('Error fetching page hero, using fallback:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -55,6 +56,19 @@ export default function PageHero({
 
   const title = heroData?.title || fallbackTitle;
   const description = heroData?.heroDescription || heroData?.subtitle || fallbackDescription;
+
+  if (isLoading) {
+    return (
+      <section className={`${bgClass} text-white section-padding`}>
+        <div className="container-max">
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="h-14 bg-white/10 rounded-lg animate-pulse mb-6 mx-auto max-w-2xl"></div>
+            <div className="h-8 bg-white/10 rounded-lg animate-pulse mx-auto max-w-3xl"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={`${bgClass} text-white section-padding`}>
