@@ -382,6 +382,27 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          <div 
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => router.push('/dashboard/page-hero')}
+          >
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Page Hero Sections</h3>
+            </div>
+            <p className="text-gray-600 mb-4">Manage hero sections for all website pages</p>
+            <div className="flex items-center text-sm text-pink-600 font-medium">
+              <span>Manage Page Heroes</span>
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
             <div className="flex items-center mb-4">
               <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">

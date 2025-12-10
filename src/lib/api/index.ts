@@ -23,6 +23,7 @@ export {
 } from './admin-content.service';
 export { adminFilesService } from './files.service';
 export { adminDashboardService } from './admin-dashboard.service';
+export { adminPageHeroService } from './admin-page-hero.service';
 
 // Export all types
 export * from '@/types/api';

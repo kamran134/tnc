@@ -3,6 +3,7 @@ export type LanguageCode = 'az' | 'en' | 'ru';
 export type UserRole = 'ADMIN' | 'MODERATOR';
 export type ContactStatus = 'NEW' | 'READ' | 'REPLIED' | 'CLOSED';
 export type FileType = 'NEWS_IMAGE' | 'CAREER_IMAGE' | 'SERVICE_IMAGE' | 'COMPANY_LOGO' | 'USER_AVATAR' | 'DOCUMENT' | 'OTHER';
+export type PageTag = 'HOME' | 'ABOUT' | 'SERVICES' | 'CAREER' | 'NEWS' | 'CONTACT' | 'TEAM' | 'MEMBERSHIP';
 
 // Pagination
 export interface PageableObject {
@@ -96,6 +97,44 @@ export interface MissionVisionValueItemDto {
   description: string;
   icon?: string;
   displayOrder?: number;
+}
+
+// Page Hero DTOs
+export interface PageHeroTranslationDto {
+  id?: number;
+  languageCode: LanguageCode;
+  title: string;
+  subtitle?: string;
+  heroDescription?: string;
+  buttonText?: string;
+  buttonUrl?: string;
+  backgroundImageUrl?: string;
+  heroImageUrl?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PageHeroAdminDto {
+  id?: number;
+  pageTag: PageTag;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  translations: PageHeroTranslationDto[];
+}
+
+export interface CreatePageHeroRequest {
+  pageTag: PageTag;
+  isActive?: boolean;
+  translations: PageHeroTranslationDto[];
+}
+
+export interface UpdatePageHeroRequest {
+  pageTag?: PageTag;
+  isActive?: boolean;
+  translations: PageHeroTranslationDto[];
 }
 
 export interface CompanyInfoTranslationDto {
