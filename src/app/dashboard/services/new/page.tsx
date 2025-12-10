@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ImageUpload } from '@/components/ui';
+import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 
 export default function CreateServicePage() {
   const router = useRouter();
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     category: '',
@@ -57,15 +58,16 @@ export default function CreateServicePage() {
       });
 
       if (response.ok) {
+        toast.success('Service created successfully!');
         router.push('/dashboard/services');
       } else {
         const error = await response.json();
         console.error('Failed to create service:', error);
-        alert('Failed to create service: ' + (error.message || 'Unknown error'));
+        toast.error('Failed to create service: ' + (error.message || 'Unknown error'));
       }
     } catch (error) {
       console.error('Error creating service:', error);
-      alert('Error creating service');
+      toast.error('Error creating service');
     } finally {
       setIsLoading(false);
     }

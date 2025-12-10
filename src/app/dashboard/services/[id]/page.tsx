@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ImageUpload } from '@/components/ui';
+import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 
@@ -17,6 +17,7 @@ export default function EditServicePage() {
   const router = useRouter();
   const params = useParams();
   const serviceId = params.id as string;
+  const toast = useToast();
   
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -79,12 +80,12 @@ export default function EditServicePage() {
         } else {
           const error = await response.json();
           console.error('Failed to load service:', error);
-          alert('Failed to load service: ' + (error.message || 'Unknown error'));
+          toast.error('Failed to load service: ' + (error.message || 'Unknown error'));
           router.push('/dashboard/services');
         }
       } catch (error) {
         console.error('Error loading service:', error);
-        alert('Error loading service');
+        toast.error('Error loading service');
         router.push('/dashboard/services');
       } finally {
         setIsLoadingData(false);
@@ -117,16 +118,16 @@ export default function EditServicePage() {
       });
 
       if (response.ok) {
-        alert('Service updated successfully!');
+        toast.success('Service updated successfully!');
         router.push('/dashboard/services');
       } else {
         const error = await response.json();
         console.error('Failed to update service:', error);
-        alert('Failed to update service: ' + (error.message || 'Unknown error'));
+        toast.error('Failed to update service: ' + (error.message || 'Unknown error'));
       }
     } catch (error) {
       console.error('Error updating service:', error);
-      alert('Network error. Please check your connection and try again.');
+      toast.error('Network error. Please check your connection and try again.');
     } finally {
       setIsLoading(false);
     }

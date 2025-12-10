@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 
 export default function CreateCareerPage() {
   const router = useRouter();
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     location: '',
@@ -58,15 +60,16 @@ export default function CreateCareerPage() {
       });
 
       if (response.ok) {
+        toast.success('Job posting created successfully!');
         router.push('/dashboard/careers');
       } else {
         const error = await response.json();
         console.error('Failed to create career:', error);
-        alert('Failed to create job posting: ' + (error.message || 'Unknown error'));
+        toast.error('Failed to create job posting: ' + (error.message || 'Unknown error'));
       }
     } catch (error) {
       console.error('Error creating career:', error);
-      alert('Error creating job posting');
+      toast.error('Error creating job posting');
     } finally {
       setIsLoading(false);
     }

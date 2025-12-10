@@ -8,9 +8,11 @@ import { removeEmptyFields } from '@/lib/utils/cleanup';
 import IconSelector from '@/components/admin/IconSelector';
 import { getMissionIcons, getVisionIcons } from '@/lib/icons/mission-vision-icons';
 import LanguageTabs from '@/components/admin/LanguageTabs';
+import { useToast } from '@/components/ui';
 
 export default function CompanyInfoPage() {
   const router = useRouter();
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [exists, setExists] = useState(false);
@@ -211,17 +213,17 @@ export default function CompanyInfoPage() {
       
       if (exists) {
         await adminCompanyInfoService.update(cleanedData as CompanyInfoAdminDto);
-        alert('Company information updated successfully!');
+        toast.success('Company information updated successfully!');
       } else {
         await adminCompanyInfoService.create(cleanedData as CompanyInfoAdminDto);
-        alert('Company information created successfully!');
+        toast.success('Company information created successfully!');
         setExists(true);
       }
       
       await loadCompanyInfo();
     } catch (err: any) {
       console.error('Failed to save company info:', err);
-      alert(err.message || 'Failed to save company information');
+      toast.error(err.message || 'Failed to save company information');
     } finally {
       setIsLoading(false);
     }
@@ -304,7 +306,7 @@ export default function CompanyInfoPage() {
     try {
       setIsLoading(true);
       await adminCompanyInfoService.delete();
-      alert('Company information deleted successfully!');
+      toast.success('Company information deleted successfully!');
       setExists(false);
       setFormData({
         companyName: '',
@@ -365,7 +367,7 @@ export default function CompanyInfoPage() {
       });
     } catch (err: any) {
       console.error('Failed to delete company info:', err);
-      alert(err.message || 'Failed to delete company information');
+      toast.error(err.message || 'Failed to delete company information');
     } finally {
       setIsLoading(false);
     }

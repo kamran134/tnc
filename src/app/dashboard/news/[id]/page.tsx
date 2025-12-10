@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ImageUpload } from '@/components/ui';
+import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 
@@ -18,6 +18,7 @@ export default function EditNewsPage() {
   const router = useRouter();
   const params = useParams();
   const newsId = params.id as string;
+  const toast = useToast();
   
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -87,12 +88,12 @@ export default function EditNewsPage() {
         } else {
           const error = await response.json();
           console.error('Failed to load news:', error);
-          alert('Failed to load news: ' + (error.message || 'Unknown error'));
+          toast.error('Failed to load news: ' + (error.message || 'Unknown error'));
           router.push('/dashboard/news');
         }
       } catch (error) {
         console.error('Error loading news:', error);
-        alert('Error loading news');
+        toast.error('Error loading news');
         router.push('/dashboard/news');
       } finally {
         setIsLoadingData(false);
@@ -125,7 +126,7 @@ export default function EditNewsPage() {
       });
 
       if (response.ok) {
-        alert('News article updated successfully!');
+        toast.success('News article updated successfully!');
         router.push('/dashboard/news');
       } else {
         const error = await response.json();
@@ -140,11 +141,11 @@ export default function EditNewsPage() {
           }
         }
         
-        alert(errorMessage);
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.error('Error updating news:', error);
-      alert('Network error. Please check your connection and try again.');
+      toast.error('Network error. Please check your connection and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -160,15 +161,15 @@ export default function EditNewsPage() {
       if (response.ok) {
         // Update local state
         setFormData(prev => ({ ...prev, published: !prev.published }));
-        alert(`Article ${formData.published ? 'unpublished' : 'published'} successfully!`);
+        toast.success(`Article ${formData.published ? 'unpublished' : 'published'} successfully!`);
       } else {
         const error = await response.json();
         console.error(`Failed to ${endpoint} news:`, error);
-        alert(`Failed to ${endpoint} article. Please try again.`);
+        toast.error(`Failed to ${endpoint} article. Please try again.`);
       }
     } catch (error) {
       console.error('Error toggling publish status:', error);
-      alert('An error occurred. Please try again.');
+      toast.error('An error occurred. Please try again.');
     }
   };
 

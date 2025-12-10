@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { NewsAdminDto, PageNewsAdminDto } from '@/types/api';
+import { useToast } from '@/components/ui';
 
 export default function NewsPage() {
   const router = useRouter();
+  const toast = useToast();
   const [news, setNews] = useState<NewsAdminDto[]>([]);
   const [pagination, setPagination] = useState({ page: 0, size: 10, totalElements: 0, totalPages: 0 });
   const [isLoading, setIsLoading] = useState(true);
@@ -61,15 +63,16 @@ export default function NewsPage() {
               : item
           )
         );
+        toast.success(`Article ${article.published ? 'unpublished' : 'published'} successfully!`);
       } else if (response.status === 401) {
         router.push('/dashboard/login');
       } else {
         console.error(`Failed to ${endpoint} news:`, response.status, response.statusText);
-        alert(`Failed to ${endpoint} article. Please try again.`);
+        toast.error(`Failed to ${endpoint} article. Please try again.`);
       }
     } catch (error) {
       console.error('Error toggling publish status:', error);
-      alert('An error occurred. Please try again.');
+      toast.error('An error occurred. Please try again.');
     }
   };
 

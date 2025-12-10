@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ImageUpload } from '@/components/ui';
+import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 
 export default function CreateNewsPage() {
   const router = useRouter();
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     published: false,
@@ -57,7 +58,7 @@ export default function CreateNewsPage() {
       });
 
       if (response.ok) {
-        alert('News article created successfully!');
+        toast.success('News article created successfully!');
         router.push('/dashboard/news');
       } else {
         const error = await response.json();
@@ -72,11 +73,11 @@ export default function CreateNewsPage() {
           }
         }
         
-        alert(errorMessage);
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.error('Error creating news:', error);
-      alert('Network error. Please check your connection and try again.');
+      toast.error('Network error. Please check your connection and try again.');
     } finally {
       setIsLoading(false);
     }
