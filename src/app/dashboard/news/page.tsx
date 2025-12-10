@@ -53,8 +53,14 @@ export default function NewsPage() {
       });
 
       if (response.ok) {
-        // Reload news list to reflect the change
-        await loadNews();
+        // Update only the specific article in the state
+        setNews(prevNews => 
+          prevNews.map(item => 
+            item.id === article.id 
+              ? { ...item, published: !item.published }
+              : item
+          )
+        );
       } else if (response.status === 401) {
         router.push('/dashboard/login');
       } else {
