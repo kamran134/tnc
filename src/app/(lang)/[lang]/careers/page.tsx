@@ -54,8 +54,9 @@ export default function CareersPage() {
       <main>
         {/* Hero Section - Refactored to use PageHero component */}
         <PageHero 
-          title="Working at TnC"
-          description="At TnC each of us strives for better in everything we do. It's how we approach our work with each other and with our clients."
+          pageTag="CAREER"
+          fallbackTitle="Working at TnC"
+          fallbackDescription="At TnC each of us strives for better in everything we do. It's how we approach our work with each other and with our clients."
         />
 
         {/* Why Work With Us */}

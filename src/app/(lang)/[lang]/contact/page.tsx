@@ -72,8 +72,9 @@ export default function ContactPage() {
       <main>
         {/* Hero Section - Refactored to use PageHero component */}
         <PageHero 
-          title="Contact Us"
-          description="Get in touch with our experts for professional consultation"
+          pageTag="CONTACT"
+          fallbackTitle="Contact Us"
+          fallbackDescription="Get in touch with our experts for professional consultation"
         />
 
         {/* Contact Form & Info */}

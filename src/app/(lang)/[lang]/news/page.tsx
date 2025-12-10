@@ -73,8 +73,9 @@ export default function NewsPage() {
       <Header />
       <main>
         <PageHero 
-          title="Latest News & Updates"
-          description="Stay informed with the latest news, insights, and updates from TnC Tax & Consulting"
+          pageTag="NEWS"
+          fallbackTitle="Latest News & Updates"
+          fallbackDescription="Stay informed with the latest news, insights, and updates from TnC Tax & Consulting"
         />
 
         <section className="section-padding">
