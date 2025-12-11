@@ -2,26 +2,28 @@
 
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslations } from '@/hooks/useTranslations'
 
 export default function Footer() {
+  const { t } = useTranslations();
   const currentYear = new Date().getFullYear()
   const params = useParams();
   const lang = (params.lang as string) || 'az';
 
   const services = [
-    'Accounting & Finance',
-    'Tax Compliance',
-    'Tax Advisory',
-    'Legal Services',
-    'HR Compliance'
+    t('footer.services.accounting'),
+    t('footer.services.taxCompliance'),
+    t('footer.services.taxAdvisory'),
+    t('footer.services.legal'),
+    t('footer.services.hr')
   ]
 
   const quickLinks = [
-    { name: 'About Us', href: `/${lang}/about` },
-    { name: 'Services', href: `/${lang}/services` },
-    { name: 'News', href: `/${lang}/news` },
-    { name: 'Careers', href: `/${lang}/careers` },
-    { name: 'Contact', href: `/${lang}/contact` }
+    { name: t('nav.about'), href: `/${lang}/about` },
+    { name: t('nav.services'), href: `/${lang}/services` },
+    { name: t('nav.news'), href: `/${lang}/news` },
+    { name: t('nav.careers'), href: `/${lang}/careers` },
+    { name: t('nav.contact'), href: `/${lang}/contact` }
   ]
 
   return (
@@ -32,7 +34,7 @@ export default function Footer() {
           <div>
             <h3 className="text-2xl font-bold mb-4">TnC</h3>
             <p className="text-gray-300 mb-4">
-              Professional tax, legal, and consulting services delivering excellence with integrity.
+              {t('footer.description')}
             </p>
             <div className="flex space-x-4">
               {/* Social Media Icons */}
@@ -51,7 +53,7 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <h4 className="font-semibold mb-4">Our Services</h4>
+            <h4 className="font-semibold mb-4">{t('footer.ourServices')}</h4>
             <ul className="space-y-2">
               {services.map((service) => (
                 <li key={service}>
@@ -65,7 +67,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold mb-4">Quick Links</h4>
+            <h4 className="font-semibold mb-4">{t('footer.quickLinks')}</h4>
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.name}>
@@ -79,17 +81,17 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="font-semibold mb-4">Contact Info</h4>
+            <h4 className="font-semibold mb-4">{t('footer.contactInfo')}</h4>
             <div className="space-y-2 text-gray-300">
-              <p>Baku, Azerbaijan</p>
-              <p>Phone: +994 XX XXX XX XX</p>
-              <p>Email: info@tnc.az</p>
+              <p>{t('footer.location')}</p>
+              <p>{t('footer.phone')}: +994 XX XXX XX XX</p>
+              <p>{t('footer.email')}: info@tnc.az</p>
             </div>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {currentYear} TnC Tax & Consulting. All rights reserved.</p>
+          <p>&copy; {currentYear} TnC Tax & Consulting. {t('footer.allRightsReserved')}</p>
         </div>
       </div>
     </footer>

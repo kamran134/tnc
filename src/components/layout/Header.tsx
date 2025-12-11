@@ -4,18 +4,20 @@ import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import LanguageSwitcher from './LanguageSwitcher'
+import { useTranslations } from '@/hooks/useTranslations'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const params = useParams();
   const lang = (params.lang as string) || 'az';
+  const { t } = useTranslations();
 
   const navigation = [
-    { name: 'Home', href: `/${lang}` },
-    { name: 'Services', href: `/${lang}/services` },
-    { name: 'News', href: `/${lang}/news` },
-    { name: 'Careers', href: `/${lang}/careers` },
-    { name: 'Contact', href: `/${lang}/contact` },
+    { name: t('nav.home'), href: `/${lang}` },
+    { name: t('nav.services'), href: `/${lang}/services` },
+    { name: t('nav.news'), href: `/${lang}/news` },
+    { name: t('nav.careers'), href: `/${lang}/careers` },
+    { name: t('nav.contact'), href: `/${lang}/contact` },
     // Dashboard скрыт - доступ только через прямой URL /dashboard
   ]
 

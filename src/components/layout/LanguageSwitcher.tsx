@@ -4,10 +4,24 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useState, useRef, useEffect } from 'react';
 
 const languages = [
-  { code: 'az' as const, name: 'AZ', flag: '🇦🇿' },
-  { code: 'en' as const, name: 'EN', flag: '🇬🇧' },
-  { code: 'ru' as const, name: 'RU', flag: '🇷🇺' },
+  { code: 'az' as const, name: 'AZ', flag: 'AZ', flagEmoji: '🇦🇿' },
+  { code: 'en' as const, name: 'EN', flag: 'GB', flagEmoji: '🇬🇧' },
+  { code: 'ru' as const, name: 'RU', flag: 'RU', flagEmoji: '🇷🇺' },
 ];
+
+// Flag component using circle-flags CDN
+const FlagIcon = ({ code, className = "w-5 h-5" }: { code: string; className?: string }) => (
+  <img
+    src={`https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/${code.toLowerCase()}.svg`}
+    alt={code}
+    className={`${className} rounded-sm object-cover`}
+    onError={(e) => {
+      // Fallback to emoji if image fails to load
+      e.currentTarget.style.display = 'none';
+      e.currentTarget.nextElementSibling?.classList.remove('hidden');
+    }}
+  />
+);
 
 export default function LanguageSwitcher() {
   const { locale, setLocale } = useLanguage();
@@ -34,7 +48,8 @@ export default function LanguageSwitcher() {
         className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
         aria-label="Change language"
       >
-        <span className="text-lg">{currentLang.flag}</span>
+        <FlagIcon code={currentLang.flag} className="w-5 h-5" />
+        <span className="text-lg hidden">{currentLang.flagEmoji}</span>
         <span className="font-medium text-gray-700">{currentLang.name}</span>
         <svg
           className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}
@@ -59,7 +74,8 @@ export default function LanguageSwitcher() {
                 locale === lang.code ? 'bg-green-50 text-green-700' : 'text-gray-700'
               }`}
             >
-              <span className="text-lg">{lang.flag}</span>
+              <FlagIcon code={lang.flag} className="w-5 h-5" />
+              <span className="text-lg hidden">{lang.flagEmoji}</span>
               <span className="font-medium">{lang.name}</span>
               {locale === lang.code && (
                 <svg className="w-4 h-4 ml-auto text-green-600" fill="currentColor" viewBox="0 0 20 20">

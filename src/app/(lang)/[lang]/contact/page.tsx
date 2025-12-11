@@ -6,8 +6,10 @@ import Footer from '@/components/layout/Footer'
 import { PageHero, Alert, Button, Card } from '@/components/ui'
 import { contactService } from '@/lib/api'
 import { ContactDto } from '@/types/api'
+import { useTranslations } from '@/hooks/useTranslations'
 
 export default function ContactPage() {
+  const { t } = useTranslations();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -53,7 +55,7 @@ export default function ContactPage() {
       }, 5000)
     } catch (err) {
       console.error('Failed to submit contact form:', err)
-      setSubmitError('Failed to send your message. Please try again.')
+      setSubmitError(t('contact.errorMessage'))
     } finally {
       setSubmitting(false)
     }
@@ -73,8 +75,8 @@ export default function ContactPage() {
         {/* Hero Section - Refactored to use PageHero component */}
         <PageHero 
           pageTag="CONTACT"
-          fallbackTitle="Contact Us"
-          fallbackDescription="Get in touch with our experts for professional consultation"
+          fallbackTitle={t('contact.title')}
+          fallbackDescription={t('contact.getInTouch')}
         />
 
         {/* Contact Form & Info */}
@@ -84,14 +86,14 @@ export default function ContactPage() {
               {/* Contact Form */}
               <Card>
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  Send us a Message
+                  {t('contact.sendMessage')}
                 </h2>
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                        Full Name *
+                        {t('contact.fullName')} *
                       </label>
                       <input
                         type="text"
@@ -106,7 +108,7 @@ export default function ContactPage() {
                     
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                        Email Address *
+                        {t('contact.email')} *
                       </label>
                       <input
                         type="email"
@@ -123,7 +125,7 @@ export default function ContactPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                        Phone Number
+                        {t('contact.phone')}
                       </label>
                       <input
                         type="tel"
@@ -137,7 +139,7 @@ export default function ContactPage() {
                     
                     <div>
                       <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
-                        Company
+                        {t('contact.company')}
                       </label>
                       <input
                         type="text"
@@ -152,7 +154,7 @@ export default function ContactPage() {
                   
                   <div>
                     <label htmlFor="service" className="block text-sm font-medium text-gray-700 mb-1">
-                      Service of Interest
+                      {t('contact.serviceOfInterest')}
                     </label>
                     <select
                       id="service"
@@ -161,19 +163,19 @@ export default function ContactPage() {
                       onChange={handleChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 text-gray-900"
                     >
-                      <option value="">Select a service</option>
-                      <option value="accounting">Accounting & Finance</option>
-                      <option value="tax-compliance">Tax Compliance</option>
-                      <option value="tax-advisory">Tax Advisory</option>
-                      <option value="legal">Legal Services</option>
-                      <option value="hr">HR Compliance</option>
-                      <option value="other">Other</option>
+                      <option value="">{t('contact.selectService')}</option>
+                      <option value="accounting">{t('footer.services.accounting')}</option>
+                      <option value="tax-compliance">{t('footer.services.taxCompliance')}</option>
+                      <option value="tax-advisory">{t('footer.services.taxAdvisory')}</option>
+                      <option value="legal">{t('footer.services.legal')}</option>
+                      <option value="hr">{t('footer.services.hr')}</option>
+                      <option value="other">{t('contact.other')}</option>
                     </select>
                   </div>
                   
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                      Message *
+                      {t('contact.message')} *
                     </label>
                     <textarea
                       id="message"
@@ -183,12 +185,12 @@ export default function ContactPage() {
                       value={formData.message}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 text-gray-900"
-                      placeholder="Please describe how we can help you..."
+                      placeholder={t('contact.messagePlaceholder')}
                     ></textarea>
                   </div>
                   
                   {submitSuccess && (
-                    <Alert type="success" message="Thank you for your message! We will get back to you soon." />
+                    <Alert type="success" message={t('contact.successMessage')} />
                   )}
                   
                   {submitError && (
@@ -200,7 +202,7 @@ export default function ContactPage() {
                     disabled={submitting}
                     fullWidth
                   >
-                    {submitting ? 'Sending...' : 'Send Message'}
+                    {submitting ? t('contact.sending') : t('contact.send')}
                   </Button>
                 </form>
               </Card>
@@ -209,7 +211,7 @@ export default function ContactPage() {
               <div className="space-y-8">
                 <Card>
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                    Contact Information
+                    {t('contact.contactInformation')}
                   </h2>
                   
                   <div className="space-y-4">
@@ -219,10 +221,10 @@ export default function ContactPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
                       <div>
-                        <h3 className="font-semibold text-gray-900">Address</h3>
+                        <h3 className="font-semibold text-gray-900">{t('contact.address')}</h3>
                         <p className="text-gray-600">
-                          [Office Address]<br />
-                          Baku, Azerbaijan
+                          {t('contact.officeAddress')}<br />
+                          {t('footer.location')}
                         </p>
                       </div>
                     </div>
@@ -232,7 +234,7 @@ export default function ContactPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
                       <div>
-                        <h3 className="font-semibold text-gray-900">Phone</h3>
+                        <h3 className="font-semibold text-gray-900">{t('footer.phone')}</h3>
                         <p className="text-gray-600">+994 XX XXX XX XX</p>
                       </div>
                     </div>
@@ -242,7 +244,7 @@ export default function ContactPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                       <div>
-                        <h3 className="font-semibold text-gray-900">Email</h3>
+                        <h3 className="font-semibold text-gray-900">{t('footer.email')}</h3>
                         <p className="text-gray-600">info@tnc.az</p>
                       </div>
                     </div>
@@ -252,10 +254,10 @@ export default function ContactPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <div>
-                        <h3 className="font-semibold text-gray-900">Business Hours</h3>
+                        <h3 className="font-semibold text-gray-900">{t('contact.businessHours')}</h3>
                         <p className="text-gray-600">
-                          Monday - Friday: 9:00 AM - 6:00 PM<br />
-                          Saturday: 10:00 AM - 2:00 PM
+                          {t('contact.mondayFriday')}: 9:00 AM - 6:00 PM<br />
+                          {t('contact.saturday')}: 10:00 AM - 2:00 PM
                         </p>
                       </div>
                     </div>
@@ -264,13 +266,13 @@ export default function ContactPage() {
                 
                 <div className="bg-primary-50 p-8 rounded-lg">
                   <h3 className="text-xl font-bold text-gray-900 mb-4">
-                    Schedule a Consultation
+                    {t('contact.scheduleConsultation')}
                   </h3>
                   <p className="text-gray-700 mb-6">
-                    Ready to discuss your specific needs? Schedule a consultation with one of our experts.
+                    {t('contact.consultationDescription')}
                   </p>
                   <Button>
-                    Book Consultation
+                    {t('contact.bookConsultation')}
                   </Button>
                 </div>
               </div>

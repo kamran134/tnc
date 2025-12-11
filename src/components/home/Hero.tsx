@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
+import { useTranslations } from '@/hooks/useTranslations'
 import { useEffect, useState } from 'react'
 
 interface HeroData {
@@ -17,6 +18,7 @@ export default function Hero() {
   const params = useParams();
   const lang = (params.lang as string) || 'az';
   const { ref, isVisible } = useScrollAnimation();
+  const { t } = useTranslations();
   const [heroData, setHeroData] = useState<HeroData | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -86,7 +88,7 @@ export default function Hero() {
                 href={`/${lang}/contact`}
                 className="border-2 border-white text-white font-semibold py-4 px-10 rounded-lg hover:bg-white hover:text-primary-700 transition-colors duration-200 text-lg"
               >
-                Get in Touch
+                {t('home.hero.getInTouch')}
               </Link>
             </div>
           </div>

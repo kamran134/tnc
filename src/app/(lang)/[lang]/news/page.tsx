@@ -9,8 +9,10 @@ import Footer from '@/components/layout/Footer'
 import { PageHero, LoadingSpinner, Alert, Button, Card, EmptyState } from '@/components/ui'
 import { NewsDto, LanguageCode } from '@/types/api'
 import { newsService } from '@/lib/api'
+import { useTranslations } from '@/hooks/useTranslations'
 
 export default function NewsPage() {
+  const { t } = useTranslations();
   const params = useParams();
   const lang = (params.lang as LanguageCode) || 'az';
 
@@ -41,7 +43,7 @@ export default function NewsPage() {
       setHasMore(!response.last)
     } catch (err) {
       console.error('Failed to load news:', err)
-      setError('Failed to load news articles')
+      setError(t('news.errorLoading'))
     } finally {
       setLoading(false)
     }
@@ -74,8 +76,8 @@ export default function NewsPage() {
       <main>
         <PageHero 
           pageTag="NEWS"
-          fallbackTitle="Latest News & Updates"
-          fallbackDescription="Stay informed with the latest news, insights, and updates from TnC Tax & Consulting"
+          fallbackTitle={t('news.latestNews')}
+          fallbackDescription={t('news.description')}
         />
 
         <section className="section-padding">
@@ -87,7 +89,7 @@ export default function NewsPage() {
             ) : error ? (
               <Alert type="error" message={error} className="mb-6" />
             ) : newsArticles.length === 0 ? (
-              <EmptyState message="No news articles found. Check back later for updates and announcements." />
+              <EmptyState message={t('news.noArticles')} />
             ) : (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -126,7 +128,7 @@ export default function NewsPage() {
                         )}
                         <Link href={`/${lang}/news/${article.slug}`}>
                           <Button variant="outline" size="sm" fullWidth>
-                            Read More
+                            {t('common.readMore')}
                           </Button>
                         </Link>
                       </div>
@@ -141,14 +143,14 @@ export default function NewsPage() {
                       disabled={loading}
                       size="lg"
                     >
-                      {loading ? 'Loading...' : 'Load More'}
+                      {loading ? t('common.loading') : t('news.loadMore')}
                     </Button>
                   </div>
                 )}
 
                 {!hasMore && newsArticles.length > 0 && (
                   <p className="text-center text-gray-500 mt-8">
-                    You&apos;ve reached the end of the news
+                    {t('news.endOfNews')}
                   </p>
                 )}
               </>
