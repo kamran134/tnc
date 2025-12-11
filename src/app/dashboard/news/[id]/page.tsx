@@ -116,8 +116,13 @@ export default function EditNewsPage() {
         translations: formData.translations.filter(t => t.title.trim() || t.content.trim())
       };
 
-      // Удаляем все пустые поля
+      // Удаляем все пустые поля, НО сохраняем imageUrl даже если пустой
       const cleanedData = removeEmptyFields(filteredData);
+      
+      // Если imageUrl был пустым (удален пользователем), явно отправляем null
+      if (!formData.imageUrl || formData.imageUrl.trim() === '') {
+        cleanedData.imageUrl = null;
+      }
 
       const response = await fetch(`/api/admin/news/${newsId}`, {
         method: 'PUT',

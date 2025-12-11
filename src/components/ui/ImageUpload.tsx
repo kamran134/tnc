@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 
 interface ImageUploadProps {
@@ -25,6 +25,11 @@ export default function ImageUpload({
   const [preview, setPreview] = useState<string>(value || '');
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Синхронизируем preview с внешним value
+  useEffect(() => {
+    setPreview(value || '');
+  }, [value]);
 
   const handleFileSelect = async (file: File) => {
     if (!file) return;
