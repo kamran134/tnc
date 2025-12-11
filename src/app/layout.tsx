@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
 import './globals.css'
 import { LanguageProvider } from '@/contexts/LanguageContext'
+import { QueryProvider } from '@/lib/providers/QueryProvider'
 
 const montserrat = Montserrat({
   subsets: ['latin', 'cyrillic'],
@@ -24,9 +25,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.variable} font-sans antialiased`}>
-        <LanguageProvider>
-          {children}
-        </LanguageProvider>
+        <QueryProvider>
+          <LanguageProvider>
+            {children}
+          </LanguageProvider>
+        </QueryProvider>
       </body>
     </html>
   )

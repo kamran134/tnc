@@ -1,76 +1,25 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { DashboardDataDto } from '@/types/api';
-import { authService, adminDashboardService } from '@/lib/api';
-
-interface User {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  role: string;
-}
+import { useCurrentUserQuery, useLogoutMutation, useDashboardStatsQuery } from '@/hooks/queries';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [statistics, setStatistics] = useState<DashboardDataDto | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [statsLoading, setStatsLoading] = useState(true);
+  const { data: user, isLoading, error } = useCurrentUserQuery();
+  const { data: statistics, isLoading: statsLoading } = useDashboardStatsQuery();
+  const logoutMutation = useLogoutMutation();
 
   useEffect(() => {
-    console.log('📊 ======================== DASHBOARD PAGE MOUNTED ========================');
-    console.log('⏰ Time:', new Date().toISOString());
-    console.log('🌐 Current URL:', window.location.href);
-    console.log('🍪 Current cookies:', document.cookie);
-    console.log('💾 LocalStorage access_token:', localStorage.getItem('access_token') ? 'EXISTS' : 'MISSING');
-    console.log('💾 LocalStorage refresh_token:', localStorage.getItem('refresh_token') ? 'EXISTS' : 'MISSING');
-    
-    async function loadUser() {
-      console.log('🔄 ======================== LOADING USER ========================');
-      try {
-        console.log('� Calling authService.getCurrentUser()...');
-        const userData = await authService.getCurrentUser();
-        console.log('✅ User loaded successfully:', userData);
-        setUser(userData);
-        // Загружаем статистику после успешной аутентификации
-        console.log('📊 User authenticated - loading statistics...');
-        loadStatistics();
-      } catch (error) {
-        console.error('❌ ======================== ERROR LOADING USER ========================');
-        console.error('💥 Error:', error);
-        console.error('🔀 Redirecting to login page...');
-        router.push('/dashboard/login');
-      } finally {
-        setIsLoading(false);
-        console.log('🔄 ======================== LOADING USER END ========================\n');
-      }
+    if (error) {
+      console.error('❌ Authentication error, redirecting to login...');
+      router.push('/dashboard/login');
     }
-
-    async function loadStatistics() {
-      console.log('📊 ======================== LOADING STATISTICS ========================');
-      try {
-        console.log('� Calling adminDashboardService.getStatistics()...');
-        const statsData = await adminDashboardService.getStatistics();
-        console.log('✅ Statistics loaded successfully:', statsData);
-        setStatistics(statsData);
-      } catch (error) {
-        console.error('❌ Error loading statistics:', error);
-      } finally {
-        setStatsLoading(false);
-        console.log('📊 ======================== LOADING STATISTICS END ========================\n');
-      }
-    }
-
-    loadUser();
-  }, [router]);
+  }, [error, router]);
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      await logoutMutation.mutateAsync();
       router.push('/dashboard/login');
     } catch (error) {
       console.error('Logout error:', error);

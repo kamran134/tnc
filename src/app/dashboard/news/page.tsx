@@ -1,89 +1,52 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { NewsAdminDto, PageNewsAdminDto } from '@/types/api';
+import { NewsAdminDto } from '@/types/api';
 import { useToast } from '@/components/ui';
+import { useAdminNewsListQuery, usePublishNewsMutation, useUnpublishNewsMutation } from '@/hooks/queries';
 
 export default function NewsPage() {
   const router = useRouter();
   const toast = useToast();
-  const [news, setNews] = useState<NewsAdminDto[]>([]);
-  const [pagination, setPagination] = useState({ page: 0, size: 10, totalElements: 0, totalPages: 0 });
-  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
-  const [publishedFilter, setPublishedFilter] = useState('');
+  const [publishedFilter, setPublishedFilter] = useState<boolean | undefined>(undefined);
 
-  const loadNews = async () => {
-    setIsLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: pagination.page.toString(),
-        size: pagination.size.toString(),
-        sort: 'createdAt,desc',
-        ...(searchTerm && { title: searchTerm }),
-        ...(publishedFilter && { published: publishedFilter }),
-      });
+  const { data, isLoading, error } = useAdminNewsListQuery({
+    page,
+    size: 10,
+    published: publishedFilter
+  });
+  
+  const publishMutation = usePublishNewsMutation();
+  const unpublishMutation = useUnpublishNewsMutation();
 
-      const response = await fetch(`/api/admin/news?${params}`);
-      if (response.ok) {
-        const data: PageNewsAdminDto = await response.json();
-        setNews(data.content);
-        setPagination(prev => ({
-          ...prev,
-          totalElements: data.totalElements,
-          totalPages: data.totalPages
-        }));
-      } else if (response.status === 401) {
-        router.push('/dashboard/login');
-      } else {
-        console.error('Failed to load news:', response.status, response.statusText);
-      }
-    } catch (error) {
-      console.error('Error loading news:', error);
-    } finally {
-      setIsLoading(false);
-    }
+  const news = data?.content || [];
+  const pagination = {
+    page,
+    size: 10,
+    totalElements: data?.totalElements || 0,
+    totalPages: data?.totalPages || 0
   };
 
   const handleTogglePublish = async (article: NewsAdminDto) => {
+    if (!article.id) return;
+    
     try {
-      const endpoint = article.published ? 'unpublish' : 'publish';
-      const response = await fetch(`/api/admin/news/${article.id}/${endpoint}`, {
-        method: 'PATCH',
-      });
-
-      if (response.ok) {
-        // Update only the specific article in the state
-        setNews(prevNews => 
-          prevNews.map(item => 
-            item.id === article.id 
-              ? { ...item, published: !item.published }
-              : item
-          )
-        );
-        toast.success(`Article ${article.published ? 'unpublished' : 'published'} successfully!`);
-      } else if (response.status === 401) {
-        router.push('/dashboard/login');
+      if (article.published) {
+        await unpublishMutation.mutateAsync(article.id);
+        toast.success('Article unpublished successfully!');
       } else {
-        console.error(`Failed to ${endpoint} news:`, response.status, response.statusText);
-        toast.error(`Failed to ${endpoint} article. Please try again.`);
+        await publishMutation.mutateAsync(article.id);
+        toast.success('Article published successfully!');
       }
     } catch (error) {
       console.error('Error toggling publish status:', error);
       toast.error('An error occurred. Please try again.');
     }
   };
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      loadNews();
-    }, searchTerm ? 500 : 0); // Debounce поиска на 500ms
-
-    return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page, searchTerm, publishedFilter]);
 
   const getTranslation = (article: NewsAdminDto, lang: string = 'az') => {
     return article.translations?.find(t => t.languageCode === lang) || article.translations?.[0];
@@ -95,7 +58,7 @@ export default function NewsPage() {
   };
 
   const handlePageChange = (newPage: number) => {
-    setPagination(prev => ({ ...prev, page: newPage }));
+    setPage(newPage);
   };
 
   if (isLoading) {
@@ -158,8 +121,8 @@ export default function NewsPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Publication Status</label>
               <select
-                value={publishedFilter}
-                onChange={(e) => setPublishedFilter(e.target.value)}
+                value={publishedFilter === undefined ? '' : String(publishedFilter)}
+                onChange={(e) => setPublishedFilter(e.target.value === '' ? undefined : e.target.value === 'true')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900"
               >
                 <option value="">All Articles</option>
@@ -169,7 +132,7 @@ export default function NewsPage() {
             </div>
             <div className="flex items-end">
               <button
-                onClick={() => { setSearchTerm(''); setPublishedFilter(''); }}
+                onClick={() => { setSearchTerm(''); setPublishedFilter(undefined); }}
                 className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
               >
                 Clear Filters
