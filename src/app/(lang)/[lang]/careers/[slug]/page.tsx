@@ -1,55 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { LoadingSpinner, Alert } from '@/components/ui';
-import { CareerDto } from '@/types/api';
+import { LanguageCode } from '@/types/api';
+import { useCareerBySlugQuery } from '@/hooks/queries';
 
 export default function CareerDetail() {
   const params = useParams();
   const router = useRouter();
-  const lang = params.lang as string;
+  const lang = params.lang as LanguageCode;
   const slug = params.slug as string;
   
-  const [career, setCareer] = useState<CareerDto | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadCareer = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        const response = await fetch(`/api/careers/${slug}?lang=${lang}`);
-        
-        if (response.ok) {
-          const data = await response.json();
-          setCareer(data);
-          // Сохраняем ID вакансии для смены языка
-          if (data.id) {
-            sessionStorage.setItem('currentCareerId', data.id.toString());
-          }
-        } else if (response.status === 404) {
-          setError('Job posting not found');
-        } else {
-          setError('Failed to load job posting');
-        }
-      } catch (err) {
-        console.error('Error loading career:', err);
-        setError('Network error. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (slug && lang) {
-      loadCareer();
-    }
-  }, [slug, lang]);
+  const { data: career, isLoading: loading, error } = useCareerBySlugQuery(slug, lang);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -89,7 +54,7 @@ export default function CareerDetail() {
         <Header />
         <main className="section-padding">
           <div className="container-max">
-            <Alert type="error" message={error || 'Job posting not found'} />
+            <Alert type="error" message={(error instanceof Error ? error.message : error) || 'Job posting not found'} />
             <button
               onClick={() => router.push(`/${lang}/careers`)}
               className="mt-6 text-primary-600 hover:text-primary-700 font-medium"

@@ -1,59 +1,27 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ContactAdminDto, PageContactAdminDto } from '@/types/api';
+import { ContactAdminDto } from '@/types/api';
+import { useAdminContactsListQuery } from '@/hooks/queries';
 
 export default function ContactsPage() {
   const router = useRouter();
-  const [contacts, setContacts] = useState<ContactAdminDto[]>([]);
-  const [pagination, setPagination] = useState({ page: 0, size: 10, totalElements: 0, totalPages: 0 });
-  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
-  const loadContacts = async () => {
-    setIsLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: pagination.page.toString(),
-        size: pagination.size.toString(),
-        sort: 'createdAt,desc',
-        ...(searchTerm && { 
-          search: searchTerm 
-        }),
-        ...(statusFilter && { status: statusFilter }),
-      });
-
-      const response = await fetch(`/api/admin/contacts?${params}`);
-      if (response.ok) {
-        const data: PageContactAdminDto = await response.json();
-        setContacts(data.content);
-        setPagination(prev => ({
-          ...prev,
-          totalElements: data.totalElements,
-          totalPages: data.totalPages
-        }));
-      } else if (response.status === 401) {
-        router.push('/dashboard/login');
-      } else {
-        console.error('Failed to load contacts:', response.status, response.statusText);
-      }
-    } catch (error) {
-      console.error('Error loading contacts:', error);
-    } finally {
-      setIsLoading(false);
-    }
+  const { data, isLoading } = useAdminContactsListQuery({ page, size: 10 });
+  
+  const contacts = data?.content || [];
+  const pagination = {
+    page,
+    size: 10,
+    totalElements: data?.totalElements || 0,
+    totalPages: data?.totalPages || 0
   };
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      loadContacts();
-    }, searchTerm ? 500 : 0); // Debounce поиска на 500ms
 
-    return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page, searchTerm, statusFilter]);
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return '-';
@@ -76,7 +44,7 @@ export default function ContactsPage() {
   };
 
   const handlePageChange = (newPage: number) => {
-    setPagination(prev => ({ ...prev, page: newPage }));
+    setPage(newPage);
   };
 
   const updateContactStatus = async (contactId: string, newStatus: string) => {
@@ -88,8 +56,7 @@ export default function ContactsPage() {
       });
 
       if (response.ok) {
-        // Reload contacts to reflect the change
-        loadContacts();
+        // TODO: Use mutation for cache invalidation
       }
     } catch (error) {
       console.error('Error updating contact status:', error);

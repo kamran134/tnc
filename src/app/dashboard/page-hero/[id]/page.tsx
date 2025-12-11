@@ -6,6 +6,7 @@ import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 import { PageHeroAdminDto, PageTag } from '@/types/api';
+import { useAdminPageHeroDetailQuery, useUpdatePageHeroMutation } from '@/hooks/queries';
 
 const PAGE_TAG_LABELS: Record<PageTag, string> = {
   HOME: 'Home Page',
@@ -37,8 +38,10 @@ export default function EditPageHeroPage() {
   const heroId = params.id as string;
   const toast = useToast();
   
+  const { data: heroData, isLoading: isLoadingData } = useAdminPageHeroDetailQuery(heroId);
+  const updateMutation = useUpdatePageHeroMutation();
+  
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingData, setIsLoadingData] = useState(true);
   const [formData, setFormData] = useState({
     pageTag: 'HOME' as PageTag,
     isActive: true,
@@ -50,75 +53,51 @@ export default function EditPageHeroPage() {
   });
 
   useEffect(() => {
-    const loadPageHero = async () => {
-      try {
-        setIsLoadingData(true);
-        const response = await fetch(`/api/admin/page-hero/${heroId}`);
-        
-        if (response.ok) {
-          const data: PageHeroAdminDto = await response.json();
-          
-          setFormData({
-            pageTag: data.pageTag,
-            isActive: data.isActive,
-            translations: [
-              {
-                languageCode: 'az',
-                title: data.translations?.find((t: any) => t.languageCode === 'az')?.title || '',
-                subtitle: data.translations?.find((t: any) => t.languageCode === 'az')?.subtitle || '',
-                heroDescription: data.translations?.find((t: any) => t.languageCode === 'az')?.heroDescription || '',
-                buttonText: data.translations?.find((t: any) => t.languageCode === 'az')?.buttonText || '',
-                buttonUrl: data.translations?.find((t: any) => t.languageCode === 'az')?.buttonUrl || '',
-                backgroundImageUrl: data.translations?.find((t: any) => t.languageCode === 'az')?.backgroundImageUrl || '',
-                heroImageUrl: data.translations?.find((t: any) => t.languageCode === 'az')?.heroImageUrl || '',
-                metaTitle: data.translations?.find((t: any) => t.languageCode === 'az')?.metaTitle || '',
-                metaDescription: data.translations?.find((t: any) => t.languageCode === 'az')?.metaDescription || ''
-              },
-              {
-                languageCode: 'en',
-                title: data.translations?.find((t: any) => t.languageCode === 'en')?.title || '',
-                subtitle: data.translations?.find((t: any) => t.languageCode === 'en')?.subtitle || '',
-                heroDescription: data.translations?.find((t: any) => t.languageCode === 'en')?.heroDescription || '',
-                buttonText: data.translations?.find((t: any) => t.languageCode === 'en')?.buttonText || '',
-                buttonUrl: data.translations?.find((t: any) => t.languageCode === 'en')?.buttonUrl || '',
-                backgroundImageUrl: data.translations?.find((t: any) => t.languageCode === 'en')?.backgroundImageUrl || '',
-                heroImageUrl: data.translations?.find((t: any) => t.languageCode === 'en')?.heroImageUrl || '',
-                metaTitle: data.translations?.find((t: any) => t.languageCode === 'en')?.metaTitle || '',
-                metaDescription: data.translations?.find((t: any) => t.languageCode === 'en')?.metaDescription || ''
-              },
-              {
-                languageCode: 'ru',
-                title: data.translations?.find((t: any) => t.languageCode === 'ru')?.title || '',
-                subtitle: data.translations?.find((t: any) => t.languageCode === 'ru')?.subtitle || '',
-                heroDescription: data.translations?.find((t: any) => t.languageCode === 'ru')?.heroDescription || '',
-                buttonText: data.translations?.find((t: any) => t.languageCode === 'ru')?.buttonText || '',
-                buttonUrl: data.translations?.find((t: any) => t.languageCode === 'ru')?.buttonUrl || '',
-                backgroundImageUrl: data.translations?.find((t: any) => t.languageCode === 'ru')?.backgroundImageUrl || '',
-                heroImageUrl: data.translations?.find((t: any) => t.languageCode === 'ru')?.heroImageUrl || '',
-                metaTitle: data.translations?.find((t: any) => t.languageCode === 'ru')?.metaTitle || '',
-                metaDescription: data.translations?.find((t: any) => t.languageCode === 'ru')?.metaDescription || ''
-              }
-            ]
-          });
-        } else {
-          const error = await response.json();
-          console.error('Failed to load page hero:', error);
-          toast.error('Failed to load page hero: ' + (error.message || 'Unknown error'));
-          router.push('/dashboard/page-hero');
-        }
-      } catch (error) {
-        console.error('Error loading page hero:', error);
-        toast.error('Error loading page hero');
-        router.push('/dashboard/page-hero');
-      } finally {
-        setIsLoadingData(false);
-      }
-    };
-
-    if (heroId) {
-      loadPageHero();
+    if (heroData) {
+      setFormData({
+        pageTag: heroData.pageTag,
+        isActive: heroData.isActive,
+        translations: [
+          {
+            languageCode: 'az',
+            title: heroData.translations?.find((t: any) => t.languageCode === 'az')?.title || '',
+            subtitle: heroData.translations?.find((t: any) => t.languageCode === 'az')?.subtitle || '',
+            heroDescription: heroData.translations?.find((t: any) => t.languageCode === 'az')?.heroDescription || '',
+            buttonText: heroData.translations?.find((t: any) => t.languageCode === 'az')?.buttonText || '',
+            buttonUrl: heroData.translations?.find((t: any) => t.languageCode === 'az')?.buttonUrl || '',
+            backgroundImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'az')?.backgroundImageUrl || '',
+            heroImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'az')?.heroImageUrl || '',
+            metaTitle: heroData.translations?.find((t: any) => t.languageCode === 'az')?.metaTitle || '',
+            metaDescription: heroData.translations?.find((t: any) => t.languageCode === 'az')?.metaDescription || ''
+          },
+          {
+            languageCode: 'en',
+            title: heroData.translations?.find((t: any) => t.languageCode === 'en')?.title || '',
+            subtitle: heroData.translations?.find((t: any) => t.languageCode === 'en')?.subtitle || '',
+            heroDescription: heroData.translations?.find((t: any) => t.languageCode === 'en')?.heroDescription || '',
+            buttonText: heroData.translations?.find((t: any) => t.languageCode === 'en')?.buttonText || '',
+            buttonUrl: heroData.translations?.find((t: any) => t.languageCode === 'en')?.buttonUrl || '',
+            backgroundImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'en')?.backgroundImageUrl || '',
+            heroImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'en')?.heroImageUrl || '',
+            metaTitle: heroData.translations?.find((t: any) => t.languageCode === 'en')?.metaTitle || '',
+            metaDescription: heroData.translations?.find((t: any) => t.languageCode === 'en')?.metaDescription || ''
+          },
+          {
+            languageCode: 'ru',
+            title: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.title || '',
+            subtitle: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.subtitle || '',
+            heroDescription: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.heroDescription || '',
+            buttonText: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.buttonText || '',
+            buttonUrl: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.buttonUrl || '',
+            backgroundImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.backgroundImageUrl || '',
+            heroImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.heroImageUrl || '',
+            metaTitle: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.metaTitle || '',
+            metaDescription: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.metaDescription || ''
+          }
+        ]
+      });
     }
-  }, [heroId, router, toast]);
+  }, [heroData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,23 +111,16 @@ export default function EditPageHeroPage() {
 
       const cleanedData = removeEmptyFields(filteredData);
 
-      const response = await fetch(`/api/admin/page-hero/${heroId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cleanedData)
+      await updateMutation.mutateAsync({ 
+        id: Number(heroId), 
+        data: cleanedData 
       });
-
-      if (response.ok) {
-        toast.success('Page hero updated successfully!');
-        router.push('/dashboard/page-hero');
-      } else {
-        const error = await response.json();
-        console.error('Failed to update page hero:', error);
-        toast.error(error.message || 'Failed to update page hero');
-      }
+      
+      toast.success('Page hero updated successfully!');
+      router.push('/dashboard/page-hero');
     } catch (error) {
       console.error('Error updating page hero:', error);
-      toast.error('Network error. Please check your connection and try again.');
+      toast.error('Failed to update page hero');
     } finally {
       setIsLoading(false);
     }

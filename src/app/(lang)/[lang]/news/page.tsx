@@ -1,60 +1,29 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { PageHero, LoadingSpinner, Alert, Button, Card, EmptyState } from '@/components/ui'
-import { NewsDto, LanguageCode } from '@/types/api'
-import { newsService } from '@/lib/api'
+import { LanguageCode } from '@/types/api'
 import { useTranslations } from '@/hooks/useTranslations'
+import { useNewsListQuery } from '@/hooks/queries'
 
 export default function NewsPage() {
   const { t } = useTranslations();
   const params = useParams();
   const lang = (params.lang as LanguageCode) || 'az';
+  const [currentPage, setCurrentPage] = useState(0);
 
-  const [newsArticles, setNewsArticles] = useState<NewsDto[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [currentPage, setCurrentPage] = useState(0)
-  const [totalPages, setTotalPages] = useState(0)
-  const [hasMore, setHasMore] = useState(false)
+  const { data, isLoading: loading, error } = useNewsListQuery({ lang, page: currentPage, size: 10 });
+  
+  const newsArticles = data?.content || [];
+  const totalPages = data?.totalPages || 0;
+  const hasMore = !data?.last;
 
-  const loadNews = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      const response = await newsService.getAll({
-        lang,
-        page: currentPage,
-        size: 10
-      })
-      
-      if (currentPage === 0) {
-        setNewsArticles(response.content)
-      } else {
-        setNewsArticles(prev => [...prev, ...response.content])
-      }
-      
-      setTotalPages(response.totalPages)
-      setHasMore(!response.last)
-    } catch (err) {
-      console.error('Failed to load news:', err)
-      setError(t('news.errorLoading'))
-    } finally {
-      setLoading(false)
-    }
-  }
 
-  useEffect(() => {
-    if (lang) {
-      loadNews()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, lang])
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -87,7 +56,7 @@ export default function NewsPage() {
                 <LoadingSpinner size="lg" />
               </div>
             ) : error ? (
-              <Alert type="error" message={error} className="mb-6" />
+              <Alert type="error" message={error instanceof Error ? error.message : String(error)} className="mb-6" />
             ) : newsArticles.length === 0 ? (
               <EmptyState message={t('news.noArticles')} />
             ) : (

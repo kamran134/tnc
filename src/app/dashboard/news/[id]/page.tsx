@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
+import { useAdminNewsDetailQuery, useUpdateNewsMutation, usePublishNewsMutation, useUnpublishNewsMutation } from '@/hooks/queries';
 
 interface Translation {
   languageCode: string;
@@ -20,8 +21,12 @@ export default function EditNewsPage() {
   const newsId = params.id as string;
   const toast = useToast();
   
+  const { data: newsData, isLoading: isLoadingData } = useAdminNewsDetailQuery(newsId);
+  const updateMutation = useUpdateNewsMutation();
+  const publishMutation = usePublishNewsMutation();
+  const unpublishMutation = useUnpublishNewsMutation();
+  
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingData, setIsLoadingData] = useState(true);
   const [formData, setFormData] = useState({
     published: false,
     author: '',
@@ -36,72 +41,47 @@ export default function EditNewsPage() {
     ] as Translation[]
   });
 
-  // Load news data
+  // Load news data with React Query
   useEffect(() => {
-    const loadNews = async () => {
-      try {
-        setIsLoadingData(true);
-        const response = await fetch(`/api/admin/news/${newsId}`);
-        
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Loaded news data:', data);
-          
-          // Конвертируем imageUrl из /api/files/ в /uploads/
-          let imageUrl = data.imageUrl || '';
-          if (imageUrl && imageUrl.includes('/api/files/')) {
-            imageUrl = imageUrl.replace(/^https?:\/\/[^\/]+/, '').replace('/api/files/', '/uploads/');
-          }
-          
-          // Transform backend data to form format
-          setFormData({
-            published: data.published || false,
-            author: data.author || '',
-            imageUrl: imageUrl,
-            category: data.category || '',
-            readTimeMinutes: data.readTimeMinutes || 5,
-            tags: data.tags || '',
-            translations: [
-              {
-                languageCode: 'az',
-                title: data.translations?.find((t: any) => t.languageCode === 'az')?.title || '',
-                slug: data.translations?.find((t: any) => t.languageCode === 'az')?.slug || '',
-                content: data.translations?.find((t: any) => t.languageCode === 'az')?.content || '',
-                excerpt: data.translations?.find((t: any) => t.languageCode === 'az')?.excerpt || ''
-              },
-              {
-                languageCode: 'en',
-                title: data.translations?.find((t: any) => t.languageCode === 'en')?.title || '',
-                slug: data.translations?.find((t: any) => t.languageCode === 'en')?.slug || '',
-                content: data.translations?.find((t: any) => t.languageCode === 'en')?.content || '',
-                excerpt: data.translations?.find((t: any) => t.languageCode === 'en')?.excerpt || ''
-              },
-              {
-                languageCode: 'ru',
-                title: data.translations?.find((t: any) => t.languageCode === 'ru')?.title || '',
-                slug: data.translations?.find((t: any) => t.languageCode === 'ru')?.slug || '',
-                content: data.translations?.find((t: any) => t.languageCode === 'ru')?.content || '',
-                excerpt: data.translations?.find((t: any) => t.languageCode === 'ru')?.excerpt || ''
-              }
-            ]
-          });
-        } else {
-          const error = await response.json();
-          console.error('Failed to load news:', error);
-          toast.error('Failed to load news: ' + (error.message || 'Unknown error'));
-          router.push('/dashboard/news');
-        }
-      } catch (error) {
-        console.error('Error loading news:', error);
-        toast.error('Error loading news');
-        router.push('/dashboard/news');
-      } finally {
-        setIsLoadingData(false);
+    if (newsData) {
+      // Конвертируем imageUrl из /api/files/ в /uploads/
+      let imageUrl = newsData.imageUrl || '';
+      if (imageUrl && imageUrl.includes('/api/files/')) {
+        imageUrl = imageUrl.replace(/^https?:\/\/[^\/]+/, '').replace('/api/files/', '/uploads/');
       }
-    };
-
-    if (newsId) {
-      loadNews();
+      
+      // Transform backend data to form format
+      setFormData({
+        published: newsData.published || false,
+        author: newsData.author || '',
+        imageUrl: imageUrl,
+        category: newsData.category || '',
+        readTimeMinutes: newsData.readTimeMinutes || 5,
+        tags: newsData.tags || '',
+        translations: [
+          {
+            languageCode: 'az',
+            title: newsData.translations?.find((t: any) => t.languageCode === 'az')?.title || '',
+            slug: newsData.translations?.find((t: any) => t.languageCode === 'az')?.slug || '',
+            content: newsData.translations?.find((t: any) => t.languageCode === 'az')?.content || '',
+            excerpt: newsData.translations?.find((t: any) => t.languageCode === 'az')?.excerpt || ''
+          },
+          {
+            languageCode: 'en',
+            title: newsData.translations?.find((t: any) => t.languageCode === 'en')?.title || '',
+            slug: newsData.translations?.find((t: any) => t.languageCode === 'en')?.slug || '',
+            content: newsData.translations?.find((t: any) => t.languageCode === 'en')?.content || '',
+            excerpt: newsData.translations?.find((t: any) => t.languageCode === 'en')?.excerpt || ''
+          },
+          {
+            languageCode: 'ru',
+            title: newsData.translations?.find((t: any) => t.languageCode === 'ru')?.title || '',
+            slug: newsData.translations?.find((t: any) => t.languageCode === 'ru')?.slug || '',
+            content: newsData.translations?.find((t: any) => t.languageCode === 'ru')?.content || '',
+            excerpt: newsData.translations?.find((t: any) => t.languageCode === 'ru')?.excerpt || ''
+          }
+        ]
+      });
     }
   }, [newsId, router]);
 
@@ -124,30 +104,9 @@ export default function EditNewsPage() {
         cleanedData.imageUrl = null;
       }
 
-      const response = await fetch(`/api/admin/news/${newsId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cleanedData)
-      });
-
-      if (response.ok) {
-        toast.success('News article updated successfully!');
-        router.push('/dashboard/news');
-      } else {
-        const error = await response.json();
-        console.error('Failed to update news:', error);
-        
-        let errorMessage = 'Failed to update news';
-        if (error.message) {
-          if (error.message.includes('cache')) {
-            errorMessage = 'Server configuration issue. The news may have been updated but cache needs to be refreshed. Please check the news list.';
-          } else {
-            errorMessage = error.message;
-          }
-        }
-        
-        toast.error(errorMessage);
-      }
+      await updateMutation.mutateAsync({ id: Number(newsId), data: cleanedData });
+      toast.success('News article updated successfully!');
+      router.push('/dashboard/news');
     } catch (error) {
       console.error('Error updating news:', error);
       toast.error('Network error. Please check your connection and try again.');
@@ -158,20 +117,14 @@ export default function EditNewsPage() {
 
   const handleTogglePublish = async () => {
     try {
-      const endpoint = formData.published ? 'unpublish' : 'publish';
-      const response = await fetch(`/api/admin/news/${newsId}/${endpoint}`, {
-        method: 'PATCH',
-      });
-
-      if (response.ok) {
-        // Update local state
-        setFormData(prev => ({ ...prev, published: !prev.published }));
-        toast.success(`Article ${formData.published ? 'unpublished' : 'published'} successfully!`);
+      if (formData.published) {
+        await unpublishMutation.mutateAsync(Number(newsId));
+        toast.success('Article unpublished successfully!');
       } else {
-        const error = await response.json();
-        console.error(`Failed to ${endpoint} news:`, error);
-        toast.error(`Failed to ${endpoint} article. Please try again.`);
+        await publishMutation.mutateAsync(Number(newsId));
+        toast.success('Article published successfully!');
       }
+      setFormData(prev => ({ ...prev, published: !prev.published }));
     } catch (error) {
       console.error('Error toggling publish status:', error);
       toast.error('An error occurred. Please try again.');

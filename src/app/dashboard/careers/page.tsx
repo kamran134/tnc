@@ -1,59 +1,29 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CareerAdminDto, PageCareerAdminDto } from '@/types/api';
+import { CareerAdminDto } from '@/types/api';
+import { useAdminCareersListQuery, useDeleteCareerMutation } from '@/hooks/queries';
 
 export default function CareersPage() {
   const router = useRouter();
-  const [careers, setCareers] = useState<CareerAdminDto[]>([]);
-  const [pagination, setPagination] = useState({ page: 0, size: 10, totalElements: 0, totalPages: 0 });
-  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
   const [employmentTypeFilter, setEmploymentTypeFilter] = useState('');
-
-  const loadCareers = async () => {
-    setIsLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: pagination.page.toString(),
-        size: pagination.size.toString(),
-        sort: 'createdAt,desc',
-        ...(searchTerm && { title: searchTerm }),
-        ...(locationFilter && { location: locationFilter }),
-        ...(employmentTypeFilter && { employmentType: employmentTypeFilter }),
-      });
-
-      const response = await fetch(`/api/admin/careers?${params}`);
-      if (response.ok) {
-        const data: PageCareerAdminDto = await response.json();
-        setCareers(data.content);
-        setPagination(prev => ({
-          ...prev,
-          totalElements: data.totalElements,
-          totalPages: data.totalPages
-        }));
-      } else if (response.status === 401) {
-        router.push('/dashboard/login');
-      } else {
-        console.error('Failed to load careers:', response.status, response.statusText);
-      }
-    } catch (error) {
-      console.error('Error loading careers:', error);
-    } finally {
-      setIsLoading(false);
-    }
+  
+  const { data, isLoading } = useAdminCareersListQuery({ page, size: 10 });
+  const deleteCareerMutation = useDeleteCareerMutation();
+  
+  const careers = data?.content || [];
+  const pagination = {
+    page,
+    size: 10,
+    totalElements: data?.totalElements || 0,
+    totalPages: data?.totalPages || 0
   };
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      loadCareers();
-    }, searchTerm || locationFilter ? 500 : 0); // Debounce поиска на 500ms
 
-    return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page, searchTerm, locationFilter, employmentTypeFilter]);
 
   const getTranslation = (job: CareerAdminDto, lang: string = 'az') => {
     return job.translations?.find(t => t.languageCode === lang) || job.translations?.[0];
@@ -80,25 +50,20 @@ export default function CareersPage() {
   };
 
   const handlePageChange = (newPage: number) => {
-    setPagination(prev => ({ ...prev, page: newPage }));
+    setPage(newPage);
   };
 
-  const toggleJobActive = async (jobId: number, currentActive: boolean) => {
+  const handleDelete = async (jobId: number) => {
+    if (!confirm('Are you sure you want to delete this job?')) return;
+    
     try {
-      const response = await fetch(`/api/admin/careers/${jobId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ active: !currentActive })
-      });
-
-      if (response.ok) {
-        // Reload careers to reflect the change
-        loadCareers();
-      }
+      await deleteCareerMutation.mutateAsync(jobId);
     } catch (error) {
-      console.error('Error updating job status:', error);
+      console.error('Error deleting job:', error);
     }
   };
+
+
 
   if (isLoading) {
     return (
@@ -248,12 +213,6 @@ export default function CareersPage() {
                             className="text-purple-600 hover:text-purple-900"
                           >
                             Edit
-                          </button>
-                          <button
-                            onClick={() => toggleJobActive(job.id!, job.active || false)}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            {job.active ? 'Deactivate' : 'Activate'}
                           </button>
                           <button
                             onClick={() => router.push(`/dashboard/careers/${job.id}/applications`)}

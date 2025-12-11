@@ -1,57 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ServiceAdminDto, PageServiceAdminDto } from '@/types/api';
+import { ServiceAdminDto } from '@/types/api';
+import { useAdminServicesListQuery, useDeleteServiceMutation } from '@/hooks/queries';
 
 export default function ServicesPage() {
   const router = useRouter();
-  const [services, setServices] = useState<ServiceAdminDto[]>([]);
-  const [pagination, setPagination] = useState({ page: 0, size: 10, totalElements: 0, totalPages: 0 });
-  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
 
-  const loadServices = async () => {
-    setIsLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: pagination.page.toString(),
-        size: pagination.size.toString(),
-        ...(searchTerm && { search: searchTerm }),
-        ...(categoryFilter && { category: categoryFilter }),
-      });
-
-      const response = await fetch(`/api/admin/services?${params}`);
-      
-      if (response.ok) {
-        const data: PageServiceAdminDto = await response.json();
-        setServices(data.content);
-        setPagination(prev => ({
-          ...prev,
-          totalElements: data.totalElements,
-          totalPages: data.totalPages
-        }));
-      } else if (response.status === 401) {
-        router.push('/dashboard/login');
-      } else {
-        console.error('Failed to load services:', response.status, response.statusText);
-      }
-    } catch (error) {
-      console.error('Error loading services:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      loadServices();
-    }, searchTerm ? 500 : 0); // Debounce поиска на 500ms
-
-    return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page, searchTerm, categoryFilter]);
+  const { data: services, isLoading } = useAdminServicesListQuery();
+  const deleteServiceMutation = useDeleteServiceMutation();
 
   const getTranslation = (service: ServiceAdminDto, lang: string = 'az') => {
     return service.translations?.find(t => t.languageCode === lang) || service.translations?.[0];
@@ -62,8 +22,14 @@ export default function ServicesPage() {
     return new Date(dateString).toLocaleDateString();
   };
 
-  const handlePageChange = (newPage: number) => {
-    setPagination(prev => ({ ...prev, page: newPage }));
+  const handleDelete = async (serviceId: number) => {
+    if (!confirm('Are you sure you want to delete this service?')) return;
+    
+    try {
+      await deleteServiceMutation.mutateAsync(serviceId);
+    } catch (error) {
+      console.error('Error deleting service:', error);
+    }
   };
 
   if (isLoading) {
@@ -164,7 +130,7 @@ export default function ServicesPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {services.map((service) => {
+                {services?.content?.map((service) => {
                   const translation = getTranslation(service);
                   return (
                     <tr key={service.id} className="hover:bg-gray-50">
@@ -223,59 +189,9 @@ export default function ServicesPage() {
               </tbody>
             </table>
           </div>
-
-          {/* Pagination */}
-          {pagination.totalPages > 1 && (
-            <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-              <div className="flex-1 flex justify-between sm:hidden">
-                <button
-                  onClick={() => handlePageChange(pagination.page - 1)}
-                  disabled={pagination.page === 0}
-                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() => handlePageChange(pagination.page + 1)}
-                  disabled={pagination.page >= pagination.totalPages - 1}
-                  className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Next
-                </button>
-              </div>
-              <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm text-gray-700">
-                    Showing <span className="font-medium">{pagination.page * pagination.size + 1}</span> to{' '}
-                    <span className="font-medium">
-                      {Math.min((pagination.page + 1) * pagination.size, pagination.totalElements)}
-                    </span>{' '}
-                    of <span className="font-medium">{pagination.totalElements}</span> results
-                  </p>
-                </div>
-                <div>
-                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                    {Array.from({ length: pagination.totalPages }, (_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => handlePageChange(i)}
-                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                          i === pagination.page
-                            ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                            : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                        } ${i === 0 ? 'rounded-l-md' : ''} ${i === pagination.totalPages - 1 ? 'rounded-r-md' : ''}`}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
-                  </nav>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
-        {services.length === 0 && !isLoading && (
+        {services?.content?.length === 0 && !isLoading && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

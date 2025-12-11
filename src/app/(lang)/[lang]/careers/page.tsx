@@ -1,46 +1,22 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { PageHero, LoadingSpinner, Alert, Button, Card, EmptyState } from '@/components/ui'
-import { CareerDto, LanguageCode } from '@/types/api'
-import { careersService } from '@/lib/api'
+import { LanguageCode } from '@/types/api'
 import { useTranslations } from '@/hooks/useTranslations'
+import { useCareersListQuery } from '@/hooks/queries'
 
 export default function CareersPage() {
   const { t } = useTranslations();
   const params = useParams();
   const lang = (params.lang as LanguageCode) || 'az';
   
-  const [jobOpenings, setJobOpenings] = useState<CareerDto[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (lang) {
-      loadJobs()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lang])
-
-  const loadJobs = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      const response = await careersService.getAll({
-        lang
-      })
-      setJobOpenings(response.content)
-    } catch (err) {
-      console.error('Failed to load job openings:', err)
-      setError(t('careers.errorLoading'))
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { data, isLoading: loading, error } = useCareersListQuery(lang);
+  
+  const jobOpenings = data?.content || [];
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -125,7 +101,7 @@ export default function CareersPage() {
             {loading ? (
               <LoadingSpinner />
             ) : error ? (
-              <Alert type="error" message={error} />
+              <Alert type="error" message={error instanceof Error ? error.message : String(error)} />
             ) : jobOpenings.length === 0 ? (
               <EmptyState message={t('careers.noOpenings')} />
             ) : (

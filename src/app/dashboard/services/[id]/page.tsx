@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
+import { useAdminServiceDetailQuery, useUpdateServiceMutation } from '@/hooks/queries';
 
 interface Translation {
   languageCode: string;
@@ -19,8 +20,10 @@ export default function EditServicePage() {
   const serviceId = params.id as string;
   const toast = useToast();
   
+  const { data: serviceData, isLoading: isLoadingData } = useAdminServiceDetailQuery(serviceId);
+  const updateMutation = useUpdateServiceMutation();
+  
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingData, setIsLoadingData] = useState(true);
   const [formData, setFormData] = useState({
     category: '',
     iconUrl: '',
@@ -33,69 +36,43 @@ export default function EditServicePage() {
     ] as Translation[]
   });
 
-  // Load service data
+  // Transform service data to form format
   useEffect(() => {
-    const loadService = async () => {
-      try {
-        setIsLoadingData(true);
-        const response = await fetch(`/api/admin/services/${serviceId}`);
-        
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Loaded service data:', data);
-          
-          // Конвертируем iconUrl из /api/files/ в /uploads/
-          let iconUrl = data.iconUrl || '';
-          if (iconUrl && iconUrl.includes('/api/files/')) {
-            iconUrl = iconUrl.replace(/^https?:\/\/[^\/]+/, '').replace('/api/files/', '/uploads/');
-          }
-          
-          // Transform backend data to form format
-          setFormData({
-            category: data.category || '',
-            iconUrl: iconUrl,
-            sortOrder: data.sortOrder || 0,
-            active: data.active !== false,
-            translations: [
-              {
-                languageCode: 'az',
-                title: data.translations?.find((t: any) => t.languageCode === 'az')?.title || '',
-                content: data.translations?.find((t: any) => t.languageCode === 'az')?.content || '',
-                excerpt: data.translations?.find((t: any) => t.languageCode === 'az')?.excerpt || ''
-              },
-              {
-                languageCode: 'en',
-                title: data.translations?.find((t: any) => t.languageCode === 'en')?.title || '',
-                content: data.translations?.find((t: any) => t.languageCode === 'en')?.content || '',
-                excerpt: data.translations?.find((t: any) => t.languageCode === 'en')?.excerpt || ''
-              },
-              {
-                languageCode: 'ru',
-                title: data.translations?.find((t: any) => t.languageCode === 'ru')?.title || '',
-                content: data.translations?.find((t: any) => t.languageCode === 'ru')?.content || '',
-                excerpt: data.translations?.find((t: any) => t.languageCode === 'ru')?.excerpt || ''
-              }
-            ]
-          });
-        } else {
-          const error = await response.json();
-          console.error('Failed to load service:', error);
-          toast.error('Failed to load service: ' + (error.message || 'Unknown error'));
-          router.push('/dashboard/services');
-        }
-      } catch (error) {
-        console.error('Error loading service:', error);
-        toast.error('Error loading service');
-        router.push('/dashboard/services');
-      } finally {
-        setIsLoadingData(false);
+    if (serviceData) {
+      // Конвертируем iconUrl из /api/files/ в /uploads/
+      let iconUrl = serviceData.iconUrl || '';
+      if (iconUrl && iconUrl.includes('/api/files/')) {
+        iconUrl = iconUrl.replace(/^https?:\/\/[^\/]+/, '').replace('/api/files/', '/uploads/');
       }
-    };
-
-    if (serviceId) {
-      loadService();
+      
+      setFormData({
+        category: serviceData.category || '',
+        iconUrl: iconUrl,
+        sortOrder: serviceData.sortOrder || 0,
+        active: serviceData.active !== false,
+        translations: [
+          {
+            languageCode: 'az',
+            title: serviceData.translations?.find((t: any) => t.languageCode === 'az')?.title || '',
+            content: serviceData.translations?.find((t: any) => t.languageCode === 'az')?.content || '',
+            excerpt: serviceData.translations?.find((t: any) => t.languageCode === 'az')?.excerpt || ''
+          },
+          {
+            languageCode: 'en',
+            title: serviceData.translations?.find((t: any) => t.languageCode === 'en')?.title || '',
+            content: serviceData.translations?.find((t: any) => t.languageCode === 'en')?.content || '',
+            excerpt: serviceData.translations?.find((t: any) => t.languageCode === 'en')?.excerpt || ''
+          },
+          {
+            languageCode: 'ru',
+            title: serviceData.translations?.find((t: any) => t.languageCode === 'ru')?.title || '',
+            content: serviceData.translations?.find((t: any) => t.languageCode === 'ru')?.content || '',
+            excerpt: serviceData.translations?.find((t: any) => t.languageCode === 'ru')?.excerpt || ''
+          }
+        ]
+      });
     }
-  }, [serviceId, router]);
+  }, [serviceData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,23 +88,16 @@ export default function EditServicePage() {
       // Удаляем все пустые поля
       const cleanedData = removeEmptyFields(filteredData);
 
-      const response = await fetch(`/api/admin/services/${serviceId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cleanedData)
+      await updateMutation.mutateAsync({ 
+        id: Number(serviceId), 
+        data: cleanedData 
       });
-
-      if (response.ok) {
-        toast.success('Service updated successfully!');
-        router.push('/dashboard/services');
-      } else {
-        const error = await response.json();
-        console.error('Failed to update service:', error);
-        toast.error('Failed to update service: ' + (error.message || 'Unknown error'));
-      }
+      
+      toast.success('Service updated successfully!');
+      router.push('/dashboard/services');
     } catch (error) {
       console.error('Error updating service:', error);
-      toast.error('Network error. Please check your connection and try again.');
+      toast.error('Failed to update service');
     } finally {
       setIsLoading(false);
     }

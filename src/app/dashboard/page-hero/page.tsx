@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PageHeroAdminDto, PageTag } from '@/types/api';
 import { useToast } from '@/components/ui';
+import { useAdminPageHeroListQuery, useActivatePageHeroMutation, useDeactivatePageHeroMutation } from '@/hooks/queries';
 
 const PAGE_TAG_LABELS: Record<PageTag, string> = {
   HOME: 'Home Page',
@@ -19,51 +20,16 @@ const PAGE_TAG_LABELS: Record<PageTag, string> = {
 export default function PageHeroManagementPage() {
   const router = useRouter();
   const toast = useToast();
-  const [pageHeroes, setPageHeroes] = useState<PageHeroAdminDto[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const loadPageHeroes = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch('/api/admin/page-hero');
-      if (response.ok) {
-        const data: PageHeroAdminDto[] = await response.json();
-        setPageHeroes(data);
-      } else if (response.status === 401) {
-        router.push('/dashboard/login');
-      } else {
-        console.error('Failed to load page heroes:', response.status);
-        toast.error('Failed to load page heroes');
-      }
-    } catch (error) {
-      console.error('Error loading page heroes:', error);
-      toast.error('Error loading page heroes');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [router, toast]);
-
-  useEffect(() => {
-    loadPageHeroes();
-  }, [loadPageHeroes]);
+  
+  const { data: pageHeroes = [], isLoading } = useAdminPageHeroListQuery();
+  const activateMutation = useActivatePageHeroMutation();
+  const deactivateMutation = useDeactivatePageHeroMutation();
 
   const handleToggleActive = async (hero: PageHeroAdminDto) => {
     try {
-      const endpoint = hero.isActive ? 'deactivate' : 'activate';
-      const response = await fetch(`/api/admin/page-hero/${hero.id}/${endpoint}`, {
-        method: 'PATCH',
-      });
-
-      if (response.ok) {
-        setPageHeroes(prevHeroes =>
-          prevHeroes.map(h =>
-            h.id === hero.id ? { ...h, isActive: !h.isActive } : h
-          )
-        );
-        toast.success(`Page hero ${hero.isActive ? 'deactivated' : 'activated'} successfully!`);
-      } else {
-        toast.error(`Failed to ${endpoint} page hero`);
-      }
+      const mutation = hero.isActive ? deactivateMutation : activateMutation;
+      await mutation.mutateAsync(hero.id!);
+      toast.success(`Page hero ${hero.isActive ? 'deactivated' : 'activated'} successfully!`);
     } catch (error) {
       console.error('Error toggling page hero:', error);
       toast.error('An error occurred');

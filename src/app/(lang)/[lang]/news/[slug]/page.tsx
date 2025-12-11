@@ -1,56 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { LoadingSpinner, Alert } from '@/components/ui';
-import { NewsDto } from '@/types/api';
+import { LanguageCode } from '@/types/api';
+import { useNewsBySlugQuery } from '@/hooks/queries';
 
 export default function NewsDetail() {
   const params = useParams();
   const router = useRouter();
-  const lang = params.lang as string;
+  const lang = params.lang as LanguageCode;
   const slug = params.slug as string;
   
-  const [news, setNews] = useState<NewsDto | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadNews = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        const response = await fetch(`/api/news/${slug}?lang=${lang}`);
-        
-        if (response.ok) {
-          const data = await response.json();
-          setNews(data);
-          // Сохраняем ID новости для смены языка
-          if (data.id) {
-            sessionStorage.setItem('currentNewsId', data.id.toString());
-          }
-        } else if (response.status === 404) {
-          setError('News article not found');
-        } else {
-          setError('Failed to load news article');
-        }
-      } catch (err) {
-        console.error('Error loading news:', err);
-        setError('Network error. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (slug && lang) {
-      loadNews();
-    }
-  }, [slug, lang]);
+  const { data: news, isLoading: loading, error } = useNewsBySlugQuery(slug, lang);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -80,7 +45,7 @@ export default function NewsDetail() {
         <Header />
         <main className="section-padding">
           <div className="container-max">
-            <Alert type="error" message={error || 'News not found'} />
+            <Alert type="error" message={(error instanceof Error ? error.message : error) || 'News not found'} />
             <button
               onClick={() => router.push(`/${lang}/news`)}
               className="mt-6 text-primary-600 hover:text-primary-700 font-medium"
