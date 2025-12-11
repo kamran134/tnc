@@ -117,7 +117,7 @@ export default function EditNewsPage() {
       };
 
       // Удаляем все пустые поля, НО сохраняем imageUrl даже если пустой
-      const cleanedData = removeEmptyFields(filteredData);
+      const cleanedData: any = removeEmptyFields(filteredData);
       
       // Если imageUrl был пустым (удален пользователем), явно отправляем null
       if (!formData.imageUrl || formData.imageUrl.trim() === '') {
