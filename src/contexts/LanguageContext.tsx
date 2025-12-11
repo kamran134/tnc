@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 type Locale = 'az' | 'en' | 'ru';
@@ -61,30 +61,32 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   }, [pathname, locale]);
 
-  const setLocale = (newLocale: Locale) => {
-    // Простая замена языка в URL без fetch запросов
-    let newPath = pathname;
+  // Мемоизированная функция смены языка
+  const setLocale = useCallback((newLocale: Locale) => {
+    // Получаем путь без языка
+    // /az/news/article -> /news/article
+    // /en -> /
+    const pathWithoutLocale = pathname.replace(/^\/(az|en|ru)(\/|$)/, '$2');
     
-    // Убираем текущий язык с начала пути
-    const currentLocaleMatch = pathname.match(/^\/(az|en|ru)(\/|$)/);
-    if (currentLocaleMatch) {
-      newPath = pathname.substring(currentLocaleMatch[1].length + 1) || '/';
-    }
-
     // Добавляем новый язык
-    const finalPath = newPath === '/' ? `/${newLocale}` : `/${newLocale}${newPath}`;
+    // /news/article -> /en/news/article
+    // / -> /en
+    const finalPath = pathWithoutLocale 
+      ? `/${newLocale}${pathWithoutLocale}` 
+      : `/${newLocale}`;
     
     setLocaleState(newLocale);
     router.push(finalPath);
-  };
+  }, [pathname, router]);
 
-  const t = (key: string): string => {
+  // Мемоизированная функция перевода
+  const t = useCallback((key: string): string => {
     return translations[locale][key] || key;
-  };
+  }, [locale]);
 
   const contextValue = useMemo(
     () => ({ locale, setLocale, t }),
-    [locale]
+    [locale, setLocale, t]
   );
 
   return (
