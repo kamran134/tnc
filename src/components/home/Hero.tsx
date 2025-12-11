@@ -19,6 +19,8 @@ export default function Hero() {
   const { ref, isVisible } = useScrollAnimation();
   const [heroData, setHeroData] = useState<HeroData | null>(null);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const fetchHeroData = async () => {
       try {
@@ -29,6 +31,8 @@ export default function Hero() {
         }
       } catch (error) {
         console.error('Error fetching hero data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -40,6 +44,20 @@ export default function Hero() {
   const description = heroData?.heroDescription || 'Delivering excellence with integrity. Expert guidance for your business growth and compliance needs.';
   const buttonText = heroData?.buttonText || 'Our Services';
   const buttonUrl = heroData?.buttonUrl || `/${lang}/services`;
+
+  if (isLoading) {
+    return (
+      <section ref={ref as any} className="snap-start relative bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white flex items-center justify-center overflow-hidden" style={{ height: 'calc(100vh - 73px)' }}>
+        <div className="container-max relative z-20">
+          <div className="text-center max-w-6xl mx-auto">
+            <div className="h-16 bg-white/10 rounded-lg animate-pulse mb-12 mx-auto max-w-3xl"></div>
+            <div className="h-10 bg-white/10 rounded-lg animate-pulse mb-8 mx-auto max-w-2xl"></div>
+            <div className="h-8 bg-white/10 rounded-lg animate-pulse mb-12 mx-auto max-w-2xl"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section ref={ref as any} className="snap-start relative bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white flex items-center justify-center overflow-hidden" style={{ height: 'calc(100vh - 73px)' }}>
