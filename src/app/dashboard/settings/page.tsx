@@ -23,25 +23,10 @@ export default function SettingsPage() {
   const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    checkAuth();
+    // Middleware уже проверил cookies - просто грузим данные
+    loadUserInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const checkAuth = async () => {
-    try {
-      const isAuthenticated = authService.isAuthenticated();
-      
-      if (!isAuthenticated) {
-        router.push('/dashboard/login');
-        return;
-      }
-
-      await loadUserInfo();
-    } catch (err) {
-      console.error('Auth check failed:', err);
-      router.push('/dashboard/login');
-    }
-  };
 
   const loadUserInfo = async () => {
     try {
@@ -52,6 +37,10 @@ export default function SettingsPage() {
     } catch (err: any) {
       console.error('Failed to load user info:', err);
       setError(err.message || 'Failed to load user information');
+      // Если не удалось загрузить - возможно токен истёк
+      if (err.status === 401) {
+        router.push('/dashboard/login');
+      }
     } finally {
       setLoading(false);
     }

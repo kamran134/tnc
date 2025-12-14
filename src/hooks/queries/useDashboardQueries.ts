@@ -12,9 +12,9 @@ export function useDashboardStatsQuery() {
   return useQuery({
     queryKey: dashboardKeys.stats(),
     queryFn: async (): Promise<DashboardDataDto> => {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
-      
-      const response = await fetch(`${apiUrl}/admin/dashboard/stats`, {
+      // Используем относительный URL - запрос пойдет через Next.js API route
+      // который проксирует на бэкенд
+      const response = await fetch('/api/admin/dashboard/statistics', {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',

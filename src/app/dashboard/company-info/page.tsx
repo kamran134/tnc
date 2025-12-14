@@ -76,25 +76,10 @@ export default function CompanyInfoPage() {
 
   // Load company info data
   useEffect(() => {
-    checkAuthAndLoad();
+    // Middleware уже проверил cookies - просто грузим данные
+    loadCompanyInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const checkAuthAndLoad = async () => {
-    try {
-      const isAuthenticated = authService.isAuthenticated();
-      
-      if (!isAuthenticated) {
-        router.push('/dashboard/login');
-        return;
-      }
-
-      await loadCompanyInfo();
-    } catch (err) {
-      console.error('Auth check failed:', err);
-      router.push('/dashboard/login');
-    }
-  };
 
   const loadCompanyInfo = async () => {
     try {
