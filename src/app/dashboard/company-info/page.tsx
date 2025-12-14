@@ -82,7 +82,7 @@ export default function CompanyInfoPage() {
 
   const checkAuthAndLoad = async () => {
     try {
-      const isAuthenticated = await authService.isAuthenticated();
+      const isAuthenticated = authService.isAuthenticated();
       
       if (!isAuthenticated) {
         router.push('/dashboard/login');

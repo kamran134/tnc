@@ -29,7 +29,7 @@ export default function SettingsPage() {
 
   const checkAuth = async () => {
     try {
-      const isAuthenticated = await authService.isAuthenticated();
+      const isAuthenticated = authService.isAuthenticated();
       
       if (!isAuthenticated) {
         router.push('/dashboard/login');

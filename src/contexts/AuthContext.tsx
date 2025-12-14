@@ -37,8 +37,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const loadUser = async () => {
     try {
-      const isAuth = await authService.isAuthenticated();
-      if (isAuth) {
+      // Быстрая проверка наличия токена (без API запроса)
+      if (authService.isAuthenticated()) {
+        // Токен есть - загружаем данные пользователя
         const currentUser = await authService.getCurrentUser();
         setUser(currentUser);
       } else {
@@ -81,8 +82,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const refreshUser = async () => {
     try {
-      const isAuth = await authService.isAuthenticated();
-      if (isAuth) {
+      // Быстрая проверка наличия токена (без API запроса)
+      if (authService.isAuthenticated()) {
         const currentUser = await authService.getCurrentUser();
         setUser(currentUser);
       } else {

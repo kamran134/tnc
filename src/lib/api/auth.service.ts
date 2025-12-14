@@ -159,13 +159,11 @@ export const authService = {
     }
   },
 
-  // Check if user is authenticated
-  async isAuthenticated(): Promise<boolean> {
-    try {
-      await this.getCurrentUser();
-      return true;
-    } catch {
-      return false;
-    }
+  // Check if user is authenticated (just checks token presence, no API call)
+  isAuthenticated(): boolean {
+    // Проверяем наличие access_token в localStorage
+    // Если его нет - пользователь не авторизован
+    // Валидность токена проверится автоматически при первом API запросе
+    return !!tokenManager.getAccessToken();
   },
 };
