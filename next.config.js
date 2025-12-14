@@ -44,9 +44,7 @@ const nextConfig = {
     optimizePackageImports: ['@heroicons/react'],
   },
   compiler: {
-    // 🔧 ВРЕМЕННО ВКЛЮЧИЛИ ЛОГИ НА ПРОДЕ ДЛЯ ОТЛАДКИ
-    // TODO: Вернуть обратно после проверки: removeConsole: process.env.NODE_ENV === 'production',
-    removeConsole: false,
+    removeConsole: process.env.NODE_ENV === 'production',
   },
   // Отключаем source maps в проде для ускорения сборки
   productionBrowserSourceMaps: false,
