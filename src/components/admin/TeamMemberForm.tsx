@@ -53,6 +53,28 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
   // Sync formData when initialData changes (for edit mode)
   useEffect(() => {
     if (initialData && isEdit) {
+      // Ensure all 3 languages exist
+      const allLanguages: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
+      const translations = [...(initialData.translations || [])];
+      
+      allLanguages.forEach(langCode => {
+        if (!translations.find(t => t.languageCode === langCode)) {
+          translations.push({
+            languageCode: langCode,
+            fullName: '',
+            position: '',
+            bio: '',
+            positionDescription: '',
+          });
+        }
+      });
+      
+      // Sort to ensure correct order: az, en, ru
+      translations.sort((a, b) => {
+        const order = { az: 0, en: 1, ru: 2 };
+        return order[a.languageCode] - order[b.languageCode];
+      });
+
       setFormData({
         email: initialData.email || '',
         phone: initialData.phone || '',
@@ -61,29 +83,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
         twitterUrl: initialData.twitterUrl || '',
         active: initialData.active ?? true,
         sortOrder: initialData.sortOrder ?? 0,
-        translations: initialData.translations || [
-          {
-            languageCode: 'az',
-            fullName: '',
-            position: '',
-            bio: '',
-            positionDescription: '',
-          },
-          {
-            languageCode: 'en',
-            fullName: '',
-            position: '',
-            bio: '',
-            positionDescription: '',
-          },
-          {
-            languageCode: 'ru',
-            fullName: '',
-            position: '',
-            bio: '',
-            positionDescription: '',
-          },
-        ],
+        translations,
       });
       setImagePreview(initialData.imageUrl || '');
     }
@@ -193,14 +193,15 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                 )}
               </div>
               <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Upload Photo</label>
                 <ImageUpload
-                  value={formData.imageUrl}
+                  value=""
                   onChange={(imageUrl: string) => {
                     setFormData(prev => ({ ...prev, imageUrl }));
                     setImagePreview(imageUrl);
                   }}
                   fileType="USER_AVATAR"
-                  label="Upload Photo"
+                  label=""
                   description="Recommended: Square image, at least 400x400px, JPG or PNG"
                 />
               </div>
@@ -305,6 +306,9 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
             <LanguageTabs>
               {(activeLanguage, languageIndex) => {
                 const translation = formData.translations[languageIndex];
+                if (!translation) {
+                  return <div className="text-gray-500">Loading translation...</div>;
+                }
                 return (
                   <div className="space-y-6">
                     <div>
@@ -313,7 +317,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                       </label>
                       <input
                         type="text"
-                        value={translation.fullName}
+                        value={translation.fullName || ''}
                         onChange={(e) => updateTranslation(languageIndex, 'fullName', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder="Enter full name"
@@ -325,7 +329,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                       <label className="block text-sm font-medium text-gray-700 mb-2">Position/Title</label>
                       <input
                         type="text"
-                        value={translation.position}
+                        value={translation.position || ''}
                         onChange={(e) => updateTranslation(languageIndex, 'position', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder="e.g., Senior Accountant"
@@ -335,7 +339,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Position Description</label>
                       <textarea
-                        value={translation.positionDescription}
+                        value={translation.positionDescription || ''}
                         onChange={(e) => updateTranslation(languageIndex, 'positionDescription', e.target.value)}
                         rows={3}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
@@ -350,7 +354,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Biography</label>
                       <textarea
-                        value={translation.bio}
+                        value={translation.bio || ''}
                         onChange={(e) => updateTranslation(languageIndex, 'bio', e.target.value)}
                         rows={6}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
