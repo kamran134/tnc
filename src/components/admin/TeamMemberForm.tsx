@@ -320,7 +320,14 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Team Member Information (Multilingual)</h2>
             <LanguageTabs>
               {(activeLanguage, languageIndex) => {
-                const translation = formData.translations[languageIndex];
+                // Map languageIndex to actual languageCode
+                const languageCodes: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
+                const currentLangCode = languageCodes[languageIndex];
+                
+                // Find translation by languageCode instead of array index
+                const translationIndex = formData.translations.findIndex(t => t.languageCode === currentLangCode);
+                const translation = translationIndex >= 0 ? formData.translations[translationIndex] : null;
+                
                 if (!translation) {
                   return <div className="text-gray-500">Loading translation...</div>;
                 }
@@ -333,7 +340,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                       <input
                         type="text"
                         value={translation.fullName || ''}
-                        onChange={(e) => updateTranslation(languageIndex, 'fullName', e.target.value)}
+                        onChange={(e) => updateTranslation(translationIndex, 'fullName', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder="Enter full name"
                         required={languageIndex === 0}
@@ -345,7 +352,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                       <input
                         type="text"
                         value={translation.position || ''}
-                        onChange={(e) => updateTranslation(languageIndex, 'position', e.target.value)}
+                        onChange={(e) => updateTranslation(translationIndex, 'position', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder="e.g., Senior Accountant"
                       />
@@ -355,7 +362,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                       <label className="block text-sm font-medium text-gray-700 mb-2">Position Description</label>
                       <textarea
                         value={translation.positionDescription || ''}
-                        onChange={(e) => updateTranslation(languageIndex, 'positionDescription', e.target.value)}
+                        onChange={(e) => updateTranslation(translationIndex, 'positionDescription', e.target.value)}
                         rows={3}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder="Brief description of the role"
@@ -370,7 +377,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                       <label className="block text-sm font-medium text-gray-700 mb-2">Biography</label>
                       <textarea
                         value={translation.bio || ''}
-                        onChange={(e) => updateTranslation(languageIndex, 'bio', e.target.value)}
+                        onChange={(e) => updateTranslation(translationIndex, 'bio', e.target.value)}
                         rows={6}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder="Tell us about this team member..."
