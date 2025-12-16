@@ -15,7 +15,7 @@ interface TeamMemberFormProps {
 export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemberFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>('');
   
   const [formData, setFormData] = useState<TeamMemberAdminDto>({
     email: initialData?.email || '',
@@ -85,6 +85,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
           },
         ],
       });
+      setImagePreview(initialData.imageUrl || '');
     }
   }, [initialData, isEdit]);
 
@@ -174,13 +175,36 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Image Upload */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <ImageUpload
-              value={formData.imageUrl}
-              onChange={(imageUrl: string) => setFormData(prev => ({ ...prev, imageUrl }))}
-              fileType="USER_AVATAR"
-              label="Profile Photo"
-              description="Team member profile photo (recommended: square image, at least 400x400px)"
-            />
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Profile Photo</h2>
+            <div className="flex items-start gap-6">
+              <div className="flex-shrink-0">
+                {imagePreview || formData.imageUrl ? (
+                  <img
+                    src={imagePreview || formData.imageUrl}
+                    alt="Preview"
+                    className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
+                  />
+                ) : (
+                  <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center border-4 border-gray-200">
+                    <svg className="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div className="flex-1">
+                <ImageUpload
+                  value={formData.imageUrl}
+                  onChange={(imageUrl: string) => {
+                    setFormData(prev => ({ ...prev, imageUrl }));
+                    setImagePreview(imageUrl);
+                  }}
+                  fileType="USER_AVATAR"
+                  label="Upload Photo"
+                  description="Recommended: Square image, at least 400x400px, JPG or PNG"
+                />
+              </div>
+            </div>
           </div>
 
           {/* Contact Info */}
@@ -366,7 +390,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     />
                   </svg>
-                  {uploadingImage ? 'Uploading image...' : isEdit ? 'Updating...' : 'Creating...'}
+                  {isEdit ? 'Updating...' : 'Creating...'}
                 </span>
               ) : (
                 <span>{isEdit ? 'Update Team Member' : 'Create Team Member'}</span>
