@@ -100,25 +100,50 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
     e.preventDefault();
 
     try {
-      // Filter translations - keep only those with fullName AND languageCode
+      // Filter translations - keep only those with at least one filled field
       const filteredTranslations = formData.translations.filter(
-        (t) => t.fullName.trim() && t.languageCode
+        (t) => {
+          const hasData = !!(
+            t.fullName?.trim() ||
+            t.position?.trim() ||
+            t.bio?.trim() ||
+            t.positionDescription?.trim()
+          );
+          return hasData && t.languageCode;
+        }
       );
 
-      // Validate at least one translation
-      if (filteredTranslations.length === 0) {
+      // Validate at least one translation with fullName
+      const hasAtLeastOneName = filteredTranslations.some(t => t.fullName?.trim());
+      if (!hasAtLeastOneName) {
         toast.warning('Please provide at least one name translation');
         return;
       }
 
-      // Clean empty fields from main data, but keep translations structure intact
+      // Clean empty fields from each translation
+      const cleanedTranslations = filteredTranslations.map(t => {
+        const cleaned: TeamMemberTranslationDto = {
+          languageCode: t.languageCode,
+          fullName: t.fullName?.trim() || '',
+        };
+        
+        // Only add optional fields if they have values
+        if (t.id) cleaned.id = t.id;
+        if (t.position?.trim()) cleaned.position = t.position.trim();
+        if (t.bio?.trim()) cleaned.bio = t.bio.trim();
+        if (t.positionDescription?.trim()) cleaned.positionDescription = t.positionDescription.trim();
+        
+        return cleaned;
+      });
+
+      // Clean empty fields from main data
       const { translations, ...mainData } = formData;
       const cleanedMainData = removeEmptyFields(mainData);
 
-      // Final data with cleaned main fields and full translation structure
+      // Final data with cleaned main fields and cleaned translations
       const dataToSend = {
         ...cleanedMainData,
-        translations: filteredTranslations,
+        translations: cleanedTranslations,
       };
 
       console.log('Sending team member data:', dataToSend);
