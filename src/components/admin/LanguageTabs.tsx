@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, memo } from 'react';
 
 type LanguageCode = 'az' | 'en' | 'ru';
 
@@ -14,7 +14,7 @@ const LANGUAGES = [
   { code: 'ru' as LanguageCode, label: 'Русский' },
 ];
 
-export default function LanguageTabs({ children }: LanguageTabsProps) {
+function LanguageTabs({ children }: LanguageTabsProps) {
   const [activeLanguage, setActiveLanguage] = useState<LanguageCode>('az');
 
   const activeIndex = LANGUAGES.findIndex(lang => lang.code === activeLanguage);
@@ -50,3 +50,5 @@ export default function LanguageTabs({ children }: LanguageTabsProps) {
     </div>
   );
 }
+
+export default memo(LanguageTabs);

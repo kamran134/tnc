@@ -53,6 +53,45 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(formData.imageUrl || '');
 
+  // Sync formData when initialData changes (for edit mode)
+  useEffect(() => {
+    if (initialData && isEdit) {
+      setFormData({
+        email: initialData.email || '',
+        phone: initialData.phone || '',
+        imageUrl: initialData.imageUrl || '',
+        linkedinUrl: initialData.linkedinUrl || '',
+        twitterUrl: initialData.twitterUrl || '',
+        active: initialData.active ?? true,
+        sortOrder: initialData.sortOrder ?? 0,
+        translations: initialData.translations || [
+          {
+            languageCode: 'az',
+            fullName: '',
+            position: '',
+            bio: '',
+            positionDescription: '',
+          },
+          {
+            languageCode: 'en',
+            fullName: '',
+            position: '',
+            bio: '',
+            positionDescription: '',
+          },
+          {
+            languageCode: 'ru',
+            fullName: '',
+            position: '',
+            bio: '',
+            positionDescription: '',
+          },
+        ],
+      });
+      setImagePreview(initialData.imageUrl || '');
+    }
+  }, [initialData, isEdit]);
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
