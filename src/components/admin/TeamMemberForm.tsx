@@ -94,8 +94,10 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
     setIsLoading(true);
 
     try {
-      // Filter translations - keep only those with fullName
-      const filteredTranslations = formData.translations.filter((t) => t.fullName.trim());
+      // Filter translations - keep only those with fullName AND languageCode
+      const filteredTranslations = formData.translations.filter(
+        (t) => t.fullName.trim() && t.languageCode
+      );
 
       // Validate at least one translation
       if (filteredTranslations.length === 0) {
