@@ -3,36 +3,26 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { TeamMemberAdminDto } from '@/types/api';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { adminTeamService } from '@/lib/api';
+import {
+  useAdminTeamListQuery,
+  useDeleteTeamMemberMutation,
+  useActivateTeamMemberMutation,
+  useDeactivateTeamMemberMutation,
+} from '@/hooks/queries';
+import { useToast } from '@/components/ui';
 
 export default function TeamManagementPage() {
   const router = useRouter();
-  const queryClient = useQueryClient();
+  const toast = useToast();
   const [page, setPage] = useState(0);
 
   // Fetch team members
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['admin-team', page],
-    queryFn: () => adminTeamService.getAll({ page, size: 10 }),
-  });
+  const { data, isLoading, error } = useAdminTeamListQuery({ page, size: 10 });
 
-  // Delete mutation
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => adminTeamService.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-team'] });
-    },
-  });
-
-  // Activate/Deactivate mutations
-  const toggleActiveMutation = useMutation({
-    mutationFn: ({ id, active }: { id: number; active: boolean }) =>
-      active ? adminTeamService.deactivate(id) : adminTeamService.activate(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-team'] });
-    },
-  });
+  // Mutations
+  const deleteMutation = useDeleteTeamMemberMutation();
+  const activateMutation = useActivateTeamMemberMutation();
+  const deactivateMutation = useDeactivateTeamMemberMutation();
 
   const teamMembers = data?.content || [];
   const pagination = {
@@ -49,21 +39,25 @@ export default function TeamManagementPage() {
     if (!confirm('Are you sure you want to delete this team member?')) return;
     try {
       await deleteMutation.mutateAsync(id);
+      toast.success('Team member deleted successfully!');
     } catch (error) {
       console.error('Error deleting team member:', error);
-      alert('Failed to delete team member');
+      toast.error('Failed to delete team member');
     }
   };
 
   const handleToggleActive = async (member: TeamMemberAdminDto) => {
     try {
-      await toggleActiveMutation.mutateAsync({
-        id: member.id!,
-        active: member.active!,
-      });
+      if (member.active) {
+        await deactivateMutation.mutateAsync(member.id!);
+        toast.success('Team member deactivated successfully!');
+      } else {
+        await activateMutation.mutateAsync(member.id!);
+        toast.success('Team member activated successfully!');
+      }
     } catch (error) {
       console.error('Error toggling team member status:', error);
-      alert('Failed to update team member status');
+      toast.error('Failed to update team member status');
     }
   };
 

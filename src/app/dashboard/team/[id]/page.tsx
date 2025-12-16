@@ -1,36 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import TeamMemberForm from '@/components/admin/TeamMemberForm';
-import { adminTeamService, TeamMemberAdminDto } from '@/lib/api';
+import { useAdminTeamDetailQuery } from '@/hooks/queries';
 
 export default function EditTeamMemberPage() {
   const params = useParams();
   const router = useRouter();
   const id = params?.id as string;
-  const [teamMember, setTeamMember] = useState<TeamMemberAdminDto | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!id) return;
-
-    const loadTeamMember = async () => {
-      try {
-        setIsLoading(true);
-        const data = await adminTeamService.getById(parseInt(id));
-        setTeamMember(data);
-      } catch (err) {
-        console.error('Error loading team member:', err);
-        setError('Failed to load team member');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadTeamMember();
-  }, [id]);
+  // Fetch team member data
+  const { data: teamMember, isLoading, error } = useAdminTeamDetailQuery(id);
 
   if (isLoading) {
     return (
@@ -73,7 +53,7 @@ export default function EditTeamMemberPage() {
             />
           </svg>
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            {error || 'Team member not found'}
+            {error?.message || 'Team member not found'}
           </h3>
           <button
             onClick={() => router.push('/dashboard/team')}

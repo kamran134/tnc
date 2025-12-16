@@ -10,6 +10,7 @@ export * from './useAdminCareersQueries';
 export * from './useAdminServicesQueries';
 export * from './useAdminContactsQueries';
 export * from './useAdminPageHeroQueries';
+export * from './useAdminTeamQueries';
 
 // Dashboard Query Hooks
 export * from './useDashboardQueries';

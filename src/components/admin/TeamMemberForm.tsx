@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { TeamMemberAdminDto, TeamMemberTranslationDto } from '@/types/api';
-import { removeEmptyFields } from '@/lib/utils/cleanup';
+import { TeamMemberAdminDto } from '@/types/api';
+import { useTeamMemberForm } from '@/hooks/useTeamMemberForm';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 import { ImageUpload } from '@/components/ui';
+import { useRouter } from 'next/navigation';
 
 interface TeamMemberFormProps {
   initialData?: TeamMemberAdminDto;
@@ -14,141 +13,15 @@ interface TeamMemberFormProps {
 
 export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemberFormProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string>('');
-  
-  const [formData, setFormData] = useState<TeamMemberAdminDto>({
-    email: initialData?.email || '',
-    phone: initialData?.phone || '',
-    imageUrl: initialData?.imageUrl || '',
-    linkedinUrl: initialData?.linkedinUrl || '',
-    twitterUrl: initialData?.twitterUrl || '',
-    active: initialData?.active ?? true,
-    sortOrder: initialData?.sortOrder ?? 0,
-    translations: initialData?.translations || [
-      {
-        languageCode: 'az',
-        fullName: '',
-        position: '',
-        bio: '',
-        positionDescription: '',
-      },
-      {
-        languageCode: 'en',
-        fullName: '',
-        position: '',
-        bio: '',
-        positionDescription: '',
-      },
-      {
-        languageCode: 'ru',
-        fullName: '',
-        position: '',
-        bio: '',
-        positionDescription: '',
-      },
-    ],
-  });
-
-  // Sync formData when initialData changes (for edit mode)
-  useEffect(() => {
-    if (initialData && isEdit) {
-      // Ensure all 3 languages exist
-      const allLanguages: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
-      const translations = [...(initialData.translations || [])];
-      
-      allLanguages.forEach(langCode => {
-        if (!translations.find(t => t.languageCode === langCode)) {
-          translations.push({
-            languageCode: langCode,
-            fullName: '',
-            position: '',
-            bio: '',
-            positionDescription: '',
-          });
-        }
-      });
-      
-      // Sort to ensure correct order: az, en, ru
-      translations.sort((a, b) => {
-        const order = { az: 0, en: 1, ru: 2 };
-        return order[a.languageCode] - order[b.languageCode];
-      });
-
-      setFormData({
-        email: initialData.email || '',
-        phone: initialData.phone || '',
-        imageUrl: initialData.imageUrl || '',
-        linkedinUrl: initialData.linkedinUrl || '',
-        twitterUrl: initialData.twitterUrl || '',
-        active: initialData.active ?? true,
-        sortOrder: initialData.sortOrder ?? 0,
-        translations,
-      });
-      setImagePreview(initialData.imageUrl || '');
-    }
-  }, [initialData, isEdit]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      // Filter translations - keep only those with fullName AND languageCode
-      const filteredTranslations = formData.translations.filter(
-        (t) => t.fullName.trim() && t.languageCode
-      );
-
-      // Validate at least one translation
-      if (filteredTranslations.length === 0) {
-        alert('Please provide at least one name translation');
-        setIsLoading(false);
-        return;
-      }
-
-      // Clean empty fields from main data, but keep translations structure intact
-      const { translations, ...mainData } = formData;
-      const cleanedMainData = removeEmptyFields(mainData);
-      
-      // Final data with cleaned main fields and full translation structure
-      const dataToSend = {
-        ...cleanedMainData,
-        translations: filteredTranslations,
-      };
-
-      console.log('Sending team member data:', dataToSend);
-
-      const url = isEdit ? `/api/admin/team/${initialData?.id}` : '/api/admin/team';
-      const method = isEdit ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataToSend),
-      });
-
-      if (response.ok) {
-        alert(`Team member ${isEdit ? 'updated' : 'created'} successfully!`);
-        router.push('/dashboard/team');
-      } else {
-        const error = await response.json();
-        console.error('Failed to save team member:', error);
-        alert(`Failed to ${isEdit ? 'update' : 'create'} team member: ` + (error.message || 'Unknown error'));
-      }
-    } catch (error) {
-      console.error('Error saving team member:', error);
-      alert(`Error ${isEdit ? 'updating' : 'creating'} team member`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const updateTranslation = (langIndex: number, field: keyof TeamMemberTranslationDto, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      translations: prev.translations.map((t, i) => (i === langIndex ? { ...t, [field]: value } : t)),
-    }));
-  };
+  const {
+    formData,
+    imagePreview,
+    isLoading,
+    handleSubmit,
+    updateTranslation,
+    updateField,
+    setImagePreview,
+  } = useTeamMemberForm({ initialData, isEdit });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -214,7 +87,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
             <ImageUpload
               value=""
               onChange={(imageUrl: string) => {
-                setFormData(prev => ({ ...prev, imageUrl }));
+                updateField('imageUrl', imageUrl);
                 setImagePreview(imageUrl);
               }}
               fileType="USER_AVATAR"
@@ -232,7 +105,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                  onChange={(e) => updateField('email', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                   placeholder="email@example.com"
                 />
@@ -243,7 +116,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                 <input
                   type="tel"
                   value={formData.phone}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
+                  onChange={(e) => updateField('phone', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                   placeholder="+994 XX XXX XX XX"
                 />
@@ -254,7 +127,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                 <input
                   type="url"
                   value={formData.linkedinUrl}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, linkedinUrl: e.target.value }))}
+                  onChange={(e) => updateField('linkedinUrl', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                   placeholder="https://linkedin.com/in/username"
                 />
@@ -265,7 +138,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                 <input
                   type="url"
                   value={formData.twitterUrl}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, twitterUrl: e.target.value }))}
+                  onChange={(e) => updateField('twitterUrl', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                   placeholder="https://twitter.com/username"
                 />
@@ -282,7 +155,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                 <input
                   type="number"
                   value={formData.sortOrder}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, sortOrder: parseInt(e.target.value) || 0 }))}
+                  onChange={(e) => updateField('sortOrder', parseInt(e.target.value) || 0)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900"
                   min="0"
                 />
@@ -296,7 +169,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                     <input
                       type="radio"
                       checked={formData.active}
-                      onChange={() => setFormData((prev) => ({ ...prev, active: true }))}
+                      onChange={() => updateField('active', true)}
                       className="mr-2"
                     />
                     <span className="text-sm text-gray-700">Active</span>
@@ -305,7 +178,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                     <input
                       type="radio"
                       checked={!formData.active}
-                      onChange={() => setFormData((prev) => ({ ...prev, active: false }))}
+                      onChange={() => updateField('active', false)}
                       className="mr-2"
                     />
                     <span className="text-sm text-gray-700">Inactive</span>
