@@ -47,7 +47,7 @@ export default function TeamPage({ params }: TeamPageProps) {
       <Header />
       <main>
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-br from-primary-600 to-primary-800 text-white py-24">
+        <section className="relative bg-gradient-to-br from-blue-600 to-blue-800 text-white py-24">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="container-max relative z-10">
             <div className="max-w-3xl mx-auto text-center">
