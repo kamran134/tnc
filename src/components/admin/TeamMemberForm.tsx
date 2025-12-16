@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { TeamMemberAdminDto, TeamMemberTranslationDto } from '@/types/api';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
-import { adminFilesService } from '@/lib/api';
+import { ImageUpload } from '@/components/ui';
 
 interface TeamMemberFormProps {
   initialData?: TeamMemberAdminDto;
@@ -50,9 +50,6 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
     ],
   });
 
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>(formData.imageUrl || '');
-
   // Sync formData when initialData changes (for edit mode)
   useEffect(() => {
     if (initialData && isEdit) {
@@ -88,58 +85,17 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
           },
         ],
       });
-      setImagePreview(initialData.imageUrl || '');
     }
   }, [initialData, isEdit]);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const uploadImage = async (): Promise<string | null> => {
-    if (!imageFile) return formData.imageUrl || null;
-
-    try {
-      setUploadingImage(true);
-      const uploadedFile = await adminFilesService.upload(imageFile, 'OTHER', 'Team member photo');
-      return uploadedFile.fileUrl;
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      alert('Failed to upload image');
-      return null;
-    } finally {
-      setUploadingImage(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // Upload image if needed
-      let imageUrl = formData.imageUrl;
-      if (imageFile) {
-        const uploadedUrl = await uploadImage();
-        if (!uploadedUrl) {
-          setIsLoading(false);
-          return;
-        }
-        imageUrl = uploadedUrl;
-      }
-
       // Filter translations - keep only those with fullName
       const filteredData = {
         ...formData,
-        imageUrl,
         translations: formData.translations.filter((t) => t.fullName.trim()),
       };
 
@@ -152,6 +108,8 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
 
       // Clean empty fields
       const cleanedData = removeEmptyFields(filteredData);
+
+      console.log('Sending team member data:', cleanedData);
 
       const url = isEdit ? `/api/admin/team/${initialData?.id}` : '/api/admin/team';
       const method = isEdit ? 'PUT' : 'POST';
@@ -216,36 +174,13 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Image Upload */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Profile Photo</h2>
-            <div className="flex items-start gap-6">
-              <div className="flex-shrink-0">
-                {imagePreview ? (
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
-                  />
-                ) : (
-                  <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center border-4 border-gray-200">
-                    <svg className="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                    </svg>
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Upload Photo</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                />
-                <p className="mt-2 text-sm text-gray-500">
-                  Recommended: Square image, at least 400x400px, JPG or PNG
-                </p>
-              </div>
-            </div>
+            <ImageUpload
+              value={formData.imageUrl}
+              onChange={(imageUrl: string) => setFormData(prev => ({ ...prev, imageUrl }))}
+              fileType="USER_AVATAR"
+              label="Profile Photo"
+              description="Team member profile photo (recommended: square image, at least 400x400px)"
+            />
           </div>
 
           {/* Contact Info */}
@@ -412,13 +347,13 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
               type="button"
               onClick={() => router.push('/dashboard/team')}
               className="px-6 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              disabled={isLoading || uploadingImage}
+              disabled={isLoading}
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={isLoading || uploadingImage}
+              disabled={isLoading}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
