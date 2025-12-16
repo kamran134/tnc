@@ -8,6 +8,7 @@ export { careersService } from './careers.service';
 export { contactService } from './contact.service';
 export { homeService, coreValuesService, membershipsService, companyInfoService } from './public.service';
 export { filesService } from './files.service';
+export { teamService } from './team.service';
 
 // Export admin services
 export { authService } from './auth.service';
@@ -24,6 +25,7 @@ export {
 export { adminFilesService } from './files.service';
 export { adminDashboardService } from './admin-dashboard.service';
 export { adminPageHeroService } from './admin-page-hero.service';
+export { adminTeamService } from './admin-team.service';
 
 // Export all types
 export * from '@/types/api';

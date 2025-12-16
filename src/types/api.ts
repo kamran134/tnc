@@ -91,6 +91,15 @@ export interface HomeContentTranslationDto {
   vision: string;
 }
 
+export interface TeamMemberTranslationDto {
+  id?: number;
+  languageCode: LanguageCode;
+  fullName: string;
+  position?: string;
+  bio?: string;
+  positionDescription?: string;
+}
+
 export interface MissionVisionValueItemDto {
   id?: number;
   title: string;
@@ -233,6 +242,20 @@ export interface CoreValueDto {
   deletedBy?: string;
 }
 
+export interface TeamMemberDto {
+  id: number;
+  fullName: string;
+  position?: string;
+  email?: string;
+  phone?: string;
+  imageUrl?: string;
+  linkedinUrl?: string;
+  twitterUrl?: string;
+  bio?: string;
+  positionDescription?: string;
+  sortOrder?: number;
+}
+
 export interface HomeContentDto {
   id: number;
   languageCode: LanguageCode;
@@ -351,6 +374,23 @@ export interface MembershipAdminDto {
   sortOrder?: number;
   active?: boolean;
   translations: MembershipTranslationDto[];
+  createdAt?: string;
+  updatedAt?: string;
+  deleted?: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+export interface TeamMemberAdminDto {
+  id?: number;
+  email?: string;
+  phone?: string;
+  imageUrl?: string;
+  linkedinUrl?: string;
+  twitterUrl?: string;
+  active?: boolean;
+  sortOrder?: number;
+  translations: TeamMemberTranslationDto[];
   createdAt?: string;
   updatedAt?: string;
   deleted?: boolean;
@@ -534,4 +574,5 @@ export type PageCoreValueAdminDto = Page<CoreValueAdminDto>;
 export type PageContactAdminDto = Page<ContactAdminDto>;
 export type PageUserDto = Page<UserDto>;
 export type PageFileUploadDto = Page<FileUploadDto>;
+export type PageTeamMemberAdminDto = Page<TeamMemberAdminDto>;
 export type PageString = Page<string>;
