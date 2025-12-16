@@ -95,22 +95,26 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
 
     try {
       // Filter translations - keep only those with fullName
-      const filteredData = {
-        ...formData,
-        translations: formData.translations.filter((t) => t.fullName.trim()),
-      };
+      const filteredTranslations = formData.translations.filter((t) => t.fullName.trim());
 
       // Validate at least one translation
-      if (filteredData.translations.length === 0) {
+      if (filteredTranslations.length === 0) {
         alert('Please provide at least one name translation');
         setIsLoading(false);
         return;
       }
 
-      // Clean empty fields
-      const cleanedData = removeEmptyFields(filteredData);
+      // Clean empty fields from main data, but keep translations structure intact
+      const { translations, ...mainData } = formData;
+      const cleanedMainData = removeEmptyFields(mainData);
+      
+      // Final data with cleaned main fields and full translation structure
+      const dataToSend = {
+        ...cleanedMainData,
+        translations: filteredTranslations,
+      };
 
-      console.log('Sending team member data:', cleanedData);
+      console.log('Sending team member data:', dataToSend);
 
       const url = isEdit ? `/api/admin/team/${initialData?.id}` : '/api/admin/team';
       const method = isEdit ? 'PUT' : 'POST';
@@ -118,7 +122,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cleanedData),
+        body: JSON.stringify(dataToSend),
       });
 
       if (response.ok) {
@@ -176,36 +180,45 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
           {/* Image Upload */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Profile Photo</h2>
-            <div className="flex items-start gap-6">
-              <div className="flex-shrink-0">
+            <div className="flex flex-col items-center">
+              <div 
+                className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center border-4 border-gray-200 cursor-pointer hover:border-blue-400 transition-colors relative group"
+                onClick={() => document.getElementById('photo-upload')?.click()}
+              >
                 {imagePreview || formData.imageUrl ? (
-                  <img
-                    src={imagePreview || formData.imageUrl}
-                    alt="Preview"
-                    className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
-                  />
+                  <>
+                    <img
+                      src={imagePreview || formData.imageUrl}
+                      alt="Preview"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 rounded-full transition-all flex items-center justify-center">
+                      <svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                  </>
                 ) : (
-                  <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center border-4 border-gray-200">
-                    <svg className="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                    </svg>
-                  </div>
+                  <svg className="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                  </svg>
                 )}
               </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Upload Photo</label>
-                <ImageUpload
-                  value=""
-                  onChange={(imageUrl: string) => {
-                    setFormData(prev => ({ ...prev, imageUrl }));
-                    setImagePreview(imageUrl);
-                  }}
-                  fileType="USER_AVATAR"
-                  label=""
-                  description="Recommended: Square image, at least 400x400px, JPG or PNG"
-                />
-              </div>
+              <p className="mt-3 text-sm text-gray-600">Click on photo to upload</p>
+              <p className="text-xs text-gray-500">Recommended: Square image, at least 400x400px</p>
             </div>
+            
+            <ImageUpload
+              value=""
+              onChange={(imageUrl: string) => {
+                setFormData(prev => ({ ...prev, imageUrl }));
+                setImagePreview(imageUrl);
+              }}
+              fileType="USER_AVATAR"
+              label=""
+              description=""
+            />
           </div>
 
           {/* Contact Info */}
