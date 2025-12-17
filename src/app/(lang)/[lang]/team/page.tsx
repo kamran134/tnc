@@ -5,7 +5,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import TeamMemberCard from '@/components/team/TeamMemberCard';
 import { teamService, TeamMemberDto } from '@/lib/api';
-import { LoadingSpinner, Alert } from '@/components/ui';
+import { LoadingSpinner, Alert, PageHero } from '@/components/ui';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 interface TeamPageProps {
@@ -46,24 +46,17 @@ export default function TeamPage({ params }: TeamPageProps) {
     <div className="min-h-screen">
       <Header />
       <main>
-        {/* Hero Section */}
-        <section className="relative bg-gradient-to-br from-blue-600 to-blue-800 text-white py-24">
-          <div className="absolute inset-0 bg-black/10"></div>
-          <div className="container-max relative z-10">
-            <div className="max-w-3xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                {lang === 'az' ? 'Bizim Komanda' : lang === 'ru' ? 'Наша Команда' : 'Our Team'}
-              </h1>
-              <p className="text-xl text-primary-100">
-                {lang === 'az'
-                  ? 'Peşəkar komandamızla tanış olun - uğurunuzun arxasındakı mütəxəssislər'
-                  : lang === 'ru'
-                  ? 'Познакомьтесь с нашей профессиональной командой - экспертами вашего успеха'
-                  : 'Meet our professional team - the experts behind your success'}
-              </p>
-            </div>
-          </div>
-        </section>
+        <PageHero
+          pageTag="TEAM"
+          fallbackTitle={lang === 'az' ? 'Komanda Üzvləri' : lang === 'ru' ? 'Члены Команды' : 'Team Members'}
+          fallbackDescription={
+            lang === 'az'
+              ? 'Peşəkar komandamızla tanış olun - uğurunuzun arxasındakı mütəxəssislər'
+              : lang === 'ru'
+              ? 'Познакомьтесь с нашей профессиональной командой - экспертами вашего успеха'
+              : 'Meet our professional team - the experts behind your success'
+          }
+        />
 
         {/* Team Members Section */}
         <section ref={ref as any} className="section-padding bg-gray-50">
