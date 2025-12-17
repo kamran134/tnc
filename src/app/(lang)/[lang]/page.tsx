@@ -29,7 +29,7 @@ export default async function HomePage({ params }: HomePageProps) {
     <div className="min-h-screen">
       <Header />
       <main className="snap-y snap-mandatory overflow-y-scroll" style={{ height: 'calc(100vh - 73px)' }}>
-        <Hero />
+        <Hero companyInfo={companyInfo} />
         <Memberships lang={lang} />
         <Mission lang={lang} companyInfo={companyInfo} />
         <Vision lang={lang} companyInfo={companyInfo} />

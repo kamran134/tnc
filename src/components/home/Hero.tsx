@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import { useTranslations } from '@/hooks/useTranslations'
 import { useEffect, useState } from 'react'
+import { CompanyInfoDto } from '@/types/api'
 
 interface HeroData {
   title: string;
@@ -14,7 +15,11 @@ interface HeroData {
   buttonUrl?: string;
 }
 
-export default function Hero() {
+interface HeroProps {
+  companyInfo?: CompanyInfoDto | null;
+}
+
+export default function Hero({ companyInfo }: HeroProps) {
   const params = useParams();
   const lang = (params.lang as string) || 'az';
   const { ref, isVisible } = useScrollAnimation();
@@ -65,6 +70,15 @@ export default function Hero() {
     <section ref={ref as any} className="snap-start relative bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white flex items-center justify-center overflow-hidden" style={{ height: 'calc(100vh - 73px)' }}>
       <div className="container-max relative z-20">
         <div className={`text-center max-w-6xl mx-auto transition-all duration-1200 ease-out ${isVisible ? 'opacity-100 scale-100 blur-0' : 'opacity-0 scale-90 blur-sm'}`}>
+          {companyInfo?.logoUrl && (
+            <div className="flex justify-center mb-8">
+              <img
+                src={companyInfo.logoUrl}
+                alt={companyInfo.companyName}
+                className="h-24 md:h-32 w-auto object-contain"
+              />
+            </div>
+          )}
           <h1 className="text-5xl md:text-5xl font-bold mb-12">
             {title}
           </h1>
