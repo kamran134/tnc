@@ -8,7 +8,7 @@ import { removeEmptyFields } from '@/lib/utils/cleanup';
 import IconSelector from '@/components/admin/IconSelector';
 import { getMissionIcons, getVisionIcons } from '@/lib/icons/mission-vision-icons';
 import LanguageTabs from '@/components/admin/LanguageTabs';
-import { useToast } from '@/components/ui';
+import { useToast, ImageUpload } from '@/components/ui';
 
 export default function CompanyInfoPage() {
   const router = useRouter();
@@ -465,13 +465,11 @@ export default function CompanyInfoPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Logo URL</label>
-              <input
-                type="url"
+              <label className="block text-sm font-medium text-gray-700 mb-2">Company Logo</label>
+              <ImageUpload
                 value={formData.logoUrl || ''}
-                onChange={(e) => setFormData(prev => ({ ...prev, logoUrl: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                placeholder="/uploads/logo.png"
+                onChange={(imageUrl) => setFormData(prev => ({ ...prev, logoUrl: imageUrl }))}
+                fileType="COMPANY_LOGO"
               />
             </div>
           </div>
