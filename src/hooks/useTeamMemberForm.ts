@@ -22,6 +22,33 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
   const createMutation = useCreateTeamMemberMutation();
   const updateMutation = useUpdateTeamMemberMutation();
 
+  // Helper function to initialize translations
+  const initializeTranslations = (data?: TeamMemberAdminDto): TeamMemberTranslationDto[] => {
+    const allLanguages: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
+    const existingTranslations = [...(data?.translations || [])];
+
+    // Ensure all 3 languages exist
+    allLanguages.forEach((langCode) => {
+      if (!existingTranslations.find((t) => t.languageCode === langCode)) {
+        existingTranslations.push({
+          languageCode: langCode,
+          fullName: '',
+          position: '',
+          bio: '',
+          positionDescription: '',
+        });
+      }
+    });
+
+    // Sort to ensure correct order: az, en, ru
+    existingTranslations.sort((a, b) => {
+      const order = { az: 0, en: 1, ru: 2 };
+      return order[a.languageCode] - order[b.languageCode];
+    });
+
+    return existingTranslations;
+  };
+
   // Form state
   const [formData, setFormData] = useState<TeamMemberAdminDto>({
     email: initialData?.email || '',
@@ -31,56 +58,12 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
     twitterUrl: initialData?.twitterUrl || '',
     active: initialData?.active ?? true,
     sortOrder: initialData?.sortOrder ?? 0,
-    translations: initialData?.translations || [
-      {
-        languageCode: 'az',
-        fullName: '',
-        position: '',
-        bio: '',
-        positionDescription: '',
-      },
-      {
-        languageCode: 'en',
-        fullName: '',
-        position: '',
-        bio: '',
-        positionDescription: '',
-      },
-      {
-        languageCode: 'ru',
-        fullName: '',
-        position: '',
-        bio: '',
-        positionDescription: '',
-      },
-    ],
+    translations: initializeTranslations(initialData),
   });
 
   // Sync formData when initialData changes (for edit mode)
   useEffect(() => {
     if (initialData && isEdit) {
-      // Ensure all 3 languages exist
-      const allLanguages: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
-      const translations = [...(initialData.translations || [])];
-
-      allLanguages.forEach((langCode) => {
-        if (!translations.find((t) => t.languageCode === langCode)) {
-          translations.push({
-            languageCode: langCode,
-            fullName: '',
-            position: '',
-            bio: '',
-            positionDescription: '',
-          });
-        }
-      });
-
-      // Sort to ensure correct order: az, en, ru
-      translations.sort((a, b) => {
-        const order = { az: 0, en: 1, ru: 2 };
-        return order[a.languageCode] - order[b.languageCode];
-      });
-
       setFormData({
         email: initialData.email || '',
         phone: initialData.phone || '',
@@ -89,7 +72,7 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
         twitterUrl: initialData.twitterUrl || '',
         active: initialData.active ?? true,
         sortOrder: initialData.sortOrder ?? 0,
-        translations,
+        translations: initializeTranslations(initialData),
       });
       setImagePreview(initialData.imageUrl || '');
     }
