@@ -185,8 +185,12 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
 
       router.push('/dashboard/team');
     } catch (error: any) {
-      console.error('Error saving team member:', error);
-      const errorMessage = error?.message || 'Unknown error';
+      console.error('❌ Error saving team member:', error);
+      console.error('❌ Error response:', error?.response);
+      console.error('❌ Error data:', error?.response?.data);
+      console.error('❌ Error status:', error?.response?.status);
+      
+      const errorMessage = error?.response?.data?.message || error?.message || 'Unknown error';
       toast.error(`Failed to ${isEdit ? 'update' : 'create'} team member: ${errorMessage}`);
     }
   };
