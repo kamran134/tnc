@@ -49,22 +49,11 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
     return existingTranslations;
   };
 
-  // Form state
-  const [formData, setFormData] = useState<TeamMemberAdminDto>({
-    email: initialData?.email || '',
-    phone: initialData?.phone || '',
-    imageUrl: initialData?.imageUrl || '',
-    linkedinUrl: initialData?.linkedinUrl || '',
-    twitterUrl: initialData?.twitterUrl || '',
-    active: initialData?.active ?? true,
-    sortOrder: initialData?.sortOrder ?? 0,
-    translations: initializeTranslations(initialData),
-  });
-
-  // Sync formData when initialData changes (for edit mode)
-  useEffect(() => {
-    if (initialData && isEdit) {
-      setFormData({
+  // Form state - initialize properly based on mode
+  const [formData, setFormData] = useState<TeamMemberAdminDto>(() => {
+    if (isEdit && initialData) {
+      // Edit mode with data - use real data
+      return {
         email: initialData.email || '',
         phone: initialData.phone || '',
         imageUrl: initialData.imageUrl || '',
@@ -73,6 +62,39 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
         active: initialData.active ?? true,
         sortOrder: initialData.sortOrder ?? 0,
         translations: initializeTranslations(initialData),
+      };
+    }
+    // Create mode or edit mode without data yet - use empty defaults
+    return {
+      email: '',
+      phone: '',
+      imageUrl: '',
+      linkedinUrl: '',
+      twitterUrl: '',
+      active: true,
+      sortOrder: 0,
+      translations: initializeTranslations(undefined),
+    };
+  });
+
+  // Sync formData when initialData changes (for edit mode)
+  useEffect(() => {
+    if (initialData && isEdit) {
+      console.log('🔍 Loading team member data:', initialData);
+      console.log('🔍 Translations from backend:', initialData.translations);
+      
+      const initializedTranslations = initializeTranslations(initialData);
+      console.log('🔍 After initialization:', initializedTranslations);
+      
+      setFormData({
+        email: initialData.email || '',
+        phone: initialData.phone || '',
+        imageUrl: initialData.imageUrl || '',
+        linkedinUrl: initialData.linkedinUrl || '',
+        twitterUrl: initialData.twitterUrl || '',
+        active: initialData.active ?? true,
+        sortOrder: initialData.sortOrder ?? 0,
+        translations: initializedTranslations,
       });
       setImagePreview(initialData.imageUrl || '');
     }
@@ -83,6 +105,8 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
     e.preventDefault();
 
     try {
+      console.log('📤 Form data before processing:', formData);
+      
       // Filter translations - keep only those with at least one filled field
       const filteredTranslations = formData.translations.filter(
         (t) => {
@@ -95,6 +119,8 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
           return hasData && t.languageCode;
         }
       );
+
+      console.log('📤 Filtered translations:', filteredTranslations);
 
       // Validate at least one translation with fullName
       const hasAtLeastOneName = filteredTranslations.some(t => t.fullName?.trim());
@@ -129,7 +155,7 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
         translations: cleanedTranslations,
       };
 
-      console.log('Sending team member data:', dataToSend);
+      console.log('📤 Sending team member data:', JSON.stringify(dataToSend, null, 2));
 
       if (isEdit && initialData?.id) {
         await updateMutation.mutateAsync({
