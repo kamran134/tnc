@@ -23,9 +23,6 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
     setImagePreview,
   } = useTeamMemberForm({ initialData, isEdit });
 
-  console.log('🎨 TeamMemberForm - initialData:', initialData);
-  console.log('🎨 TeamMemberForm - formData:', formData);
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}

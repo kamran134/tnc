@@ -27,17 +27,6 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
     const allLanguages: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
     const existingTranslations = [...(data?.translations || [])];
 
-    console.log('🔧 Before fix - existing translations:', existingTranslations);
-
-    // FIX: Если перевод приходит без languageCode, добавляем его
-    // Предполагаем что первый перевод - азербайджанский
-    existingTranslations.forEach((t, index) => {
-      if (!t.languageCode) {
-        console.log(`🔧 FIX: Translation ${index} has no languageCode, setting to 'az'`);
-        t.languageCode = 'az';
-      }
-    });
-
     // Ensure all 3 languages exist
     allLanguages.forEach((langCode) => {
       if (!existingTranslations.find((t) => t.languageCode === langCode)) {
@@ -54,12 +43,8 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
     // Sort to ensure correct order: az, en, ru
     existingTranslations.sort((a, b) => {
       const order = { az: 0, en: 1, ru: 2 };
-      const aOrder = order[a.languageCode as 'az' | 'en' | 'ru'] ?? 999;
-      const bOrder = order[b.languageCode as 'az' | 'en' | 'ru'] ?? 999;
-      return aOrder - bOrder;
+      return order[a.languageCode] - order[b.languageCode];
     });
-
-    console.log('🔧 After fix - final translations:', existingTranslations);
 
     return existingTranslations;
   };
@@ -95,11 +80,7 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
   // Sync formData when initialData changes (for edit mode)
   useEffect(() => {
     if (initialData && isEdit) {
-      console.log('🔍 Loading team member data:', initialData);
-      console.log('🔍 Translations from backend:', initialData.translations);
-      
       const initializedTranslations = initializeTranslations(initialData);
-      console.log('🔍 After initialization:', initializedTranslations);
       
       setFormData({
         email: initialData.email || '',
@@ -120,8 +101,6 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
     e.preventDefault();
 
     try {
-      console.log('📤 Form data before processing:', formData);
-      
       // Filter translations - keep only those with at least one filled field
       const filteredTranslations = formData.translations.filter(
         (t) => {
@@ -134,8 +113,6 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
           return hasData && t.languageCode;
         }
       );
-
-      console.log('📤 Filtered translations:', filteredTranslations);
 
       // Validate at least one translation with fullName
       const hasAtLeastOneName = filteredTranslations.some(t => t.fullName?.trim());
@@ -170,8 +147,6 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
         translations: cleanedTranslations,
       };
 
-      console.log('📤 Sending team member data:', JSON.stringify(dataToSend, null, 2));
-
       if (isEdit && initialData?.id) {
         await updateMutation.mutateAsync({
           id: initialData.id,
@@ -185,10 +160,6 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
 
       router.push('/dashboard/team');
     } catch (error: any) {
-      console.error('❌ Error saving team member:', error);
-      console.error('❌ Error response:', error?.response);
-      console.error('❌ Error data:', error?.response?.data);
-      console.error('❌ Error status:', error?.response?.status);
       
       const errorMessage = error?.response?.data?.message || error?.message || 'Unknown error';
       toast.error(`Failed to ${isEdit ? 'update' : 'create'} team member: ${errorMessage}`);
