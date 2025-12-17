@@ -27,11 +27,16 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
     const allLanguages: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
     const existingTranslations = [...(data?.translations || [])];
 
-    console.log('🔧 Initializing translations, existing:', existingTranslations.map(t => ({ 
-      languageCode: t.languageCode, 
-      fullName: t.fullName,
-      hasLangCode: !!t.languageCode 
-    })));
+    console.log('🔧 Before fix - existing translations:', existingTranslations);
+
+    // FIX: Если перевод приходит без languageCode, добавляем его
+    // Предполагаем что первый перевод - азербайджанский
+    existingTranslations.forEach((t, index) => {
+      if (!t.languageCode) {
+        console.log(`🔧 FIX: Translation ${index} has no languageCode, setting to 'az'`);
+        t.languageCode = 'az';
+      }
+    });
 
     // Ensure all 3 languages exist
     allLanguages.forEach((langCode) => {
@@ -49,10 +54,12 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
     // Sort to ensure correct order: az, en, ru
     existingTranslations.sort((a, b) => {
       const order = { az: 0, en: 1, ru: 2 };
-      const aOrder = order[a.languageCode] ?? 999;
-      const bOrder = order[b.languageCode] ?? 999;
+      const aOrder = order[a.languageCode as 'az' | 'en' | 'ru'] ?? 999;
+      const bOrder = order[b.languageCode as 'az' | 'en' | 'ru'] ?? 999;
       return aOrder - bOrder;
     });
+
+    console.log('🔧 After fix - final translations:', existingTranslations);
 
     return existingTranslations;
   };
