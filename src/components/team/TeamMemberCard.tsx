@@ -1,7 +1,6 @@
 'use client';
 
 import { TeamMemberDto } from '@/types/api';
-import Image from 'next/image';
 import { useState } from 'react';
 
 interface TeamMemberCardProps {
@@ -25,12 +24,10 @@ export default function TeamMemberCard({ member, index, isVisible }: TeamMemberC
       {/* Image Container */}
       <div className="relative h-80 w-full overflow-hidden bg-gray-100">
         {member.imageUrl ? (
-          <Image
+          <img
             src={member.imageUrl}
             alt={member.fullName}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-primary-200">
