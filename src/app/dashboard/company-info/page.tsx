@@ -465,8 +465,8 @@ export default function CompanyInfoPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Company Logo</label>
               <ImageUpload
+                label="Company Logo"
                 value={formData.logoUrl || ''}
                 onChange={(imageUrl) => setFormData(prev => ({ ...prev, logoUrl: imageUrl }))}
                 fileType="COMPANY_LOGO"
