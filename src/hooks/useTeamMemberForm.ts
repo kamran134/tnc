@@ -27,6 +27,12 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
     const allLanguages: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
     const existingTranslations = [...(data?.translations || [])];
 
+    console.log('🔧 Initializing translations, existing:', existingTranslations.map(t => ({ 
+      languageCode: t.languageCode, 
+      fullName: t.fullName,
+      hasLangCode: !!t.languageCode 
+    })));
+
     // Ensure all 3 languages exist
     allLanguages.forEach((langCode) => {
       if (!existingTranslations.find((t) => t.languageCode === langCode)) {
@@ -43,7 +49,9 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
     // Sort to ensure correct order: az, en, ru
     existingTranslations.sort((a, b) => {
       const order = { az: 0, en: 1, ru: 2 };
-      return order[a.languageCode] - order[b.languageCode];
+      const aOrder = order[a.languageCode] ?? 999;
+      const bOrder = order[b.languageCode] ?? 999;
+      return aOrder - bOrder;
     });
 
     return existingTranslations;
