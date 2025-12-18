@@ -47,7 +47,7 @@ export default function Header() {
               <img
                 src={companyInfo.logoUrl}
                 alt={companyInfo.companyName}
-                className="h-12 w-auto object-contain"
+                className="h-24 w-auto object-contain position-absolute"
               />
             ) : (
               <span className="text-2xl font-bold text-primary-700">TnC</span>
