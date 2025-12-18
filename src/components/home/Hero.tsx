@@ -70,15 +70,6 @@ export default function Hero({ companyInfo }: HeroProps) {
     <section ref={ref as any} className="snap-start relative bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white flex items-center justify-center overflow-hidden" style={{ height: 'calc(100vh - 73px)' }}>
       <div className="container-max relative z-20">
         <div className={`text-center max-w-6xl mx-auto transition-all duration-1200 ease-out ${isVisible ? 'opacity-100 scale-100 blur-0' : 'opacity-0 scale-90 blur-sm'}`}>
-          {companyInfo?.logoUrl && (
-            <div className="flex justify-center mb-8">
-              <img
-                src={companyInfo.logoUrl}
-                alt={companyInfo.companyName}
-                className="h-24 md:h-32 w-auto object-contain"
-              />
-            </div>
-          )}
           <h1 className="text-5xl md:text-5xl font-bold mb-12">
             {title}
           </h1>

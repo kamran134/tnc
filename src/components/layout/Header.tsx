@@ -1,16 +1,31 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import LanguageSwitcher from './LanguageSwitcher'
 import { useTranslations } from '@/hooks/useTranslations'
+import { CompanyInfoDto, LanguageCode } from '@/types/api'
+import { companyInfoService } from '@/lib/api'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [companyInfo, setCompanyInfo] = useState<CompanyInfoDto | null>(null)
   const params = useParams();
   const lang = (params.lang as string) || 'az';
   const { t } = useTranslations();
+
+  useEffect(() => {
+    const fetchCompanyInfo = async () => {
+      try {
+        const data = await companyInfoService.getCompanyInfo(lang as LanguageCode);
+        setCompanyInfo(data);
+      } catch (error) {
+        console.error('Failed to load company info:', error);
+      }
+    };
+    fetchCompanyInfo();
+  }, [lang]);
 
   const navigation = [
     { name: t('nav.home'), href: `/${lang}` },
@@ -27,8 +42,16 @@ export default function Header() {
       <nav className="container-max">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link href={`/${lang}`} className="text-2xl font-bold text-primary-700">
-            TnC
+          <Link href={`/${lang}`} className="flex items-center">
+            {companyInfo?.logoUrl ? (
+              <img
+                src={companyInfo.logoUrl}
+                alt={companyInfo.companyName}
+                className="h-12 w-auto object-contain"
+              />
+            ) : (
+              <span className="text-2xl font-bold text-primary-700">TnC</span>
+            )}
           </Link>
 
           {/* Desktop Navigation */}
