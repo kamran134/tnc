@@ -24,6 +24,7 @@ export default function ImageUpload({
   const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState<string>(value || '');
   const [dragActive, setDragActive] = useState(false);
+  const [currentFileId, setCurrentFileId] = useState<number | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Синхронизируем preview с внешним value
@@ -76,6 +77,18 @@ export default function ImageUpload({
         const data = await response.json();
         console.log('File uploaded:', data);
         
+        // Если есть старый файл - удаляем его
+        if (currentFileId) {
+          try {
+            await fetch(`/api/admin/files/${currentFileId}`, {
+              method: 'DELETE',
+            });
+            console.log('Old file deleted:', currentFileId);
+          } catch (error) {
+            console.error('Failed to delete old file:', error);
+          }
+        }
+        
         // Конвертируем бэкенд URL для nginx
         // Бэкенд возвращает: http://localhost:8080/api/files/news_image/filename.jpg
         // Nginx раздаёт из: /uploads/news_image/filename.jpg
@@ -85,6 +98,8 @@ export default function ImageUpload({
           imageUrl = imageUrl.replace(/^https?:\/\/[^\/]+/, '').replace('/api/files/', '/uploads/');
         }
         
+        // Сохраняем новый fileId
+        setCurrentFileId(data.id);
         onChange(imageUrl, data.id);
       } else {
         const error = await response.json();
@@ -142,8 +157,31 @@ export default function ImageUpload({
     }
   };
 
-  const handleRemove = () => {
+  const handleRemove = async () => {
+    // Удаляем файл с сервера если есть fileId
+    if (currentFileId) {
+      try {
+        const response = await fetch(`/api/admin/files/${currentFileId}`, {
+          method: 'DELETE',
+        });
+        
+        if (response.ok) {
+          console.log('File deleted from server:', currentFileId);
+        } else {
+          console.error('Failed to delete file from server');
+          alert('Failed to delete file from server');
+          return;
+        }
+      } catch (error) {
+        console.error('Error deleting file:', error);
+        alert('Error deleting file. Please try again.');
+        return;
+      }
+    }
+    
+    // Очищаем состояние только после успешного удаления с сервера
     setPreview('');
+    setCurrentFileId(undefined);
     onChange('', undefined);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
