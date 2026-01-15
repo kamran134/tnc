@@ -563,6 +563,34 @@ export interface DashboardDataDto {
   newContacts: number;
 }
 
+// Service Category DTOs
+export interface ServiceCategoryTranslationDto {
+  id?: number;
+  languageCode: LanguageCode;
+  name: string;
+  description?: string;
+}
+
+export interface ServiceCategoryAdminDto {
+  id: number;
+  code: string;
+  iconUrl?: string;
+  sortOrder?: number;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  translations: ServiceCategoryTranslationDto[];
+}
+
+export interface ServiceCategoryUserDto {
+  id: number;
+  code: string;
+  name: string;
+  description?: string;
+  iconUrl?: string;
+  sortOrder?: number;
+}
+
 // API Response Types
 export type PageNewsDto = Page<NewsDto>;
 export type PageCareerDto = Page<CareerDto>;
@@ -575,4 +603,5 @@ export type PageContactAdminDto = Page<ContactAdminDto>;
 export type PageUserDto = Page<UserDto>;
 export type PageFileUploadDto = Page<FileUploadDto>;
 export type PageTeamMemberAdminDto = Page<TeamMemberAdminDto>;
+export type PageServiceCategoryAdminDto = Page<ServiceCategoryAdminDto>;
 export type PageString = Page<string>;

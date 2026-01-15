@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ServiceAdminDto } from '@/types/api';
 import { useAdminServicesListQuery, useDeleteServiceMutation } from '@/hooks/queries';
+import ManageServiceCategoriesModal from '@/components/admin/ManageServiceCategoriesModal';
 
 export default function ServicesPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
 
   const { data: services, isLoading } = useAdminServicesListQuery();
   const deleteServiceMutation = useDeleteServiceMutation();
@@ -57,6 +59,12 @@ export default function ServicesPage() {
               <p className="text-gray-600">Manage company services and offerings</p>
             </div>
             <div className="flex space-x-3">
+              <button
+                onClick={() => setIsCategoriesModalOpen(true)}
+                className="px-4 py-2 text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+              >
+                📁 Manage Categories
+              </button>
               <button
                 onClick={() => router.push('/dashboard')}
                 className="px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
@@ -203,6 +211,12 @@ export default function ServicesPage() {
                 onClick={() => router.push('/dashboard/services/new')}
                 className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
               >
+
+      {/* Categories Modal */}
+      <ManageServiceCategoriesModal
+        isOpen={isCategoriesModalOpen}
+        onClose={() => setIsCategoriesModalOpen(false)}
+      />
                 + Add Service
               </button>
             </div>

@@ -14,6 +14,7 @@ export { teamService } from './team.service';
 export { authService } from './auth.service';
 export { adminNewsService } from './admin-news.service';
 export { adminServicesService } from './admin-services.service';
+export { adminServiceCategoriesService, serviceCategoriesService } from './admin-service-categories.service';
 export { adminCareersService } from './admin-careers.service';
 export { adminContactsService } from './admin-contacts.service';
 export { 
