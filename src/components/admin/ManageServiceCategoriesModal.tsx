@@ -90,12 +90,14 @@ export default function ManageServiceCategoriesModal({
               </div>
               <div className="flex items-center space-x-3">
                 <button
+                  type="button"
                   onClick={handleCreate}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   + Add Category
                 </button>
                 <button
+                  type="button"
                   onClick={onClose}
                   className="text-gray-400 hover:text-gray-600 transition-colors"
                 >
@@ -122,6 +124,7 @@ export default function ManageServiceCategoriesModal({
                 <div className="text-center py-12">
                   <p className="text-gray-500 text-lg mb-4">No categories yet</p>
                   <button
+                    type="button"
                     onClick={handleCreate}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
@@ -185,12 +188,14 @@ export default function ManageServiceCategoriesModal({
                         {/* Actions */}
                         <div className="flex items-center space-x-2">
                           <button
+                            type="button"
                             onClick={() => handleEdit(category)}
                             className="px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                           >
                             Edit
                           </button>
                           <button
+                            type="button"
                             onClick={() => handleDelete(category.id)}
                             className="px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           >
