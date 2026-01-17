@@ -6,6 +6,8 @@ import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 import { useAdminServiceDetailQuery, useUpdateServiceMutation } from '@/hooks/queries';
+import { adminServiceCategoriesService } from '@/lib/api';
+import type { ServiceCategoryAdminDto } from '@/types/api';
 
 interface Translation {
   languageCode: string;
@@ -24,10 +26,10 @@ export default function EditServicePage() {
   const updateMutation = useUpdateServiceMutation();
   
   const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState<ServiceCategoryAdminDto[]>([]);
   const [formData, setFormData] = useState({
-    category: '',
+    serviceCategoryId: null as number | null,
     iconUrl: '',
-    sortOrder: 0,
     active: true,
     translations: [
       { languageCode: 'az', title: '', content: '', excerpt: '' },
@@ -35,6 +37,20 @@ export default function EditServicePage() {
       { languageCode: 'ru', title: '', content: '', excerpt: '' },
     ] as Translation[]
   });
+
+  // Load categories
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await adminServiceCategoriesService.getAllAsList();
+        setCategories(data);
+      } catch (error) {
+        console.error('Failed to load categories:', error);
+        toast.error('Failed to load categories');
+      }
+    };
+    loadCategories();
+  }, [toast]);
 
   // Transform service data to form format
   useEffect(() => {
@@ -46,9 +62,8 @@ export default function EditServicePage() {
       }
       
       setFormData({
-        category: serviceData.category || '',
+        serviceCategoryId: serviceData.serviceCategoryId || null,
         iconUrl: iconUrl,
-        sortOrder: serviceData.sortOrder || 0,
         active: serviceData.active !== false,
         translations: [
           {
@@ -153,15 +168,24 @@ export default function EditServicePage() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">General Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                <input
-                  type="text"
-                  value={formData.category}
-                  onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                  placeholder="e.g., Accounting, Tax, Legal"
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Category <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={formData.serviceCategoryId || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, serviceCategoryId: e.target.value ? parseInt(e.target.value) : null }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900"
                   required
-                />
+                >
+                  <option value="">Select Category</option>
+                  {categories.filter(c => c.active).map(category => (
+                    <option key={category.id} value={category.id}>
+                      {category.translations.find(t => t.languageCode === 'en')?.name || 
+                       category.translations.find(t => t.languageCode === 'az')?.name || 
+                       category.code}
+                    </option>
+                  ))}
+                </select>
               </div>
               
               <ImageUpload
@@ -173,17 +197,6 @@ export default function EditServicePage() {
                 className="md:col-span-2"
               />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Sort Order</label>
-                <input
-                  type="number"
-                  value={formData.sortOrder}
-                  onChange={(e) => setFormData(prev => ({ ...prev, sortOrder: parseInt(e.target.value) || 0 }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                  placeholder="0"
-                  min="0"
-                />
-              </div>
 
               <div className="md:col-span-2">
                 <label className="flex items-center">

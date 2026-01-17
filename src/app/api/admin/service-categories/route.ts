@@ -67,12 +67,18 @@ export async function POST(request: NextRequest) {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('access_token')?.value;
 
+    console.log('🔐 [Admin Service Categories API] POST Request received');
+    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
+
     if (!accessToken) {
+      console.log('❌ No access token - returning 401');
       return NextResponse.json(
         { message: 'Not authenticated' },
         { status: 401 }
       );
     }
+    
+    console.log('Creating service category with data:', JSON.stringify(body, null, 2));
     
     // Проксируем запрос к Java бэкенду
     const response = await fetch(`${BACKEND_URL}/api/admin/service-categories`, {
@@ -84,8 +90,11 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(body),
     });
 
+    console.log('📥 Backend response status:', response.status);
+
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Failed to create service category' }));
+      console.log('❌ Backend returned error:', error);
       return NextResponse.json(
         { message: error.message || 'Failed to create service category' },
         { status: response.status }
@@ -93,6 +102,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
+    console.log('✅ Service category created successfully');
     return NextResponse.json(data, { status: 201 });
 
   } catch (error) {

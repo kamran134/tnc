@@ -12,7 +12,6 @@ export default function EditServiceCategoryPage({ params }: { params: Promise<{ 
   const [formData, setFormData] = useState<{
     code: string;
     iconUrl: string;
-    sortOrder: number;
     active: boolean;
     translations: ServiceCategoryTranslationDto[];
   } | null>(null);
@@ -23,29 +22,28 @@ export default function EditServiceCategoryPage({ params }: { params: Promise<{ 
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const loadCategory = async () => {
+      try {
+        const category = await adminServiceCategoriesService.getById(parseInt(id));
+        setFormData({
+          code: category.code,
+          iconUrl: category.iconUrl || '',
+          active: category.active,
+          translations: [
+            category.translations.find(t => t.languageCode === 'az') || { languageCode: 'az', name: '', description: '' },
+            category.translations.find(t => t.languageCode === 'en') || { languageCode: 'en', name: '', description: '' },
+            category.translations.find(t => t.languageCode === 'ru') || { languageCode: 'ru', name: '', description: '' },
+          ],
+        });
+      } catch (err) {
+        setError('Failed to load category');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     loadCategory();
   }, [id]);
-
-  const loadCategory = async () => {
-    try {
-      const category = await adminServiceCategoriesService.getById(parseInt(id));
-      setFormData({
-        code: category.code,
-        iconUrl: category.iconUrl || '',
-        sortOrder: category.sortOrder || 0,
-        active: category.active,
-        translations: [
-          category.translations.find(t => t.languageCode === 'az') || { languageCode: 'az', name: '', description: '' },
-          category.translations.find(t => t.languageCode === 'en') || { languageCode: 'en', name: '', description: '' },
-          category.translations.find(t => t.languageCode === 'ru') || { languageCode: 'ru', name: '', description: '' },
-        ],
-      });
-    } catch (err) {
-      setError('Failed to load category');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const updateTranslation = (index: number, field: string, value: string) => {
     if (!formData) return;
@@ -185,20 +183,6 @@ export default function EditServiceCategoryPage({ params }: { params: Promise<{ 
                 );
               })}
             </div>
-          </div>
-
-          {/* Sort Order */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Sort Order
-            </label>
-            <input
-              type="number"
-              value={formData.sortOrder}
-              onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              min="0"
-            />
           </div>
 
           {/* Active Status */}

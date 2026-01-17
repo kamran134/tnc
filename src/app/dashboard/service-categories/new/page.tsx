@@ -11,7 +11,6 @@ export default function NewServiceCategoryPage() {
   const [formData, setFormData] = useState({
     code: '',
     iconUrl: '',
-    sortOrder: 0,
     active: true,
     translations: [
       { languageCode: 'az', name: '', description: '' },
@@ -133,20 +132,6 @@ export default function NewServiceCategoryPage() {
                 );
               })}
             </div>
-          </div>
-
-          {/* Sort Order */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Sort Order
-            </label>
-            <input
-              type="number"
-              value={formData.sortOrder}
-              onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              min="0"
-            />
           </div>
 
           {/* Active Status */}

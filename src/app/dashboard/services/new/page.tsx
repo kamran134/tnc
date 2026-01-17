@@ -1,19 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
+import { adminServiceCategoriesService } from '@/lib/api';
+import type { ServiceCategoryAdminDto } from '@/types/api';
 
 export default function CreateServicePage() {
   const router = useRouter();
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState<ServiceCategoryAdminDto[]>([]);
   const [formData, setFormData] = useState({
-    category: '',
+    serviceCategoryId: null as number | null,
     iconUrl: '',
-    sortOrder: 0,
     active: true,
     translations: [
       {
@@ -36,6 +38,19 @@ export default function CreateServicePage() {
       }
     ]
   });
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await adminServiceCategoriesService.getAllAsList();
+        setCategories(data);
+      } catch (error) {
+        console.error('Failed to load categories:', error);
+        toast.error('Failed to load categories');
+      }
+    };
+    loadCategories();
+  }, [toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,22 +127,23 @@ export default function CreateServicePage() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Service Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Category <span className="text-red-500">*</span>
+                </label>
                 <select
-                  value={formData.category}
-                  onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                  value={formData.serviceCategoryId || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, serviceCategoryId: e.target.value ? parseInt(e.target.value) : null }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900"
                   required
                 >
                   <option value="">Select Category</option>
-                  <option value="Accounting">Accounting</option>
-                  <option value="Finance">Finance</option>
-                  <option value="Tax">Tax</option>
-                  <option value="Legal">Legal</option>
-                  <option value="HR">HR</option>
-                  <option value="Consulting">Consulting</option>
-                  <option value="Audit">Audit</option>
-                  <option value="Business">Business</option>
+                  {categories.filter(c => c.active).map(category => (
+                    <option key={category.id} value={category.id}>
+                      {category.translations.find(t => t.languageCode === 'en')?.name || 
+                       category.translations.find(t => t.languageCode === 'az')?.name || 
+                       category.code}
+                    </option>
+                  ))}
                 </select>
               </div>
               
@@ -139,18 +155,6 @@ export default function CreateServicePage() {
                 description="Icon or image for the service"
                 className="md:col-span-2"
               />
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Sort Order</label>
-                <input
-                  type="number"
-                  value={formData.sortOrder}
-                  onChange={(e) => setFormData(prev => ({ ...prev, sortOrder: parseInt(e.target.value) || 0 }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                  placeholder="0"
-                  min="0"
-                />
-              </div>
 
               <div className="flex items-center">
                 <input
