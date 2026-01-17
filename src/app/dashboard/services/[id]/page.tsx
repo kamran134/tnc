@@ -5,15 +5,23 @@ import { useRouter, useParams } from 'next/navigation';
 import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
-import { useAdminServiceDetailQuery, useUpdateServiceMutation } from '@/hooks/queries';
 import { adminServiceCategoriesService } from '@/lib/api';
 import type { ServiceCategoryAdminDto } from '@/types/api';
 
 interface Translation {
+  id?: number;
   languageCode: string;
   title: string;
   content: string;
   excerpt: string;
+}
+
+interface ServiceData {
+  id: number;
+  serviceCategoryId: number | null;
+  iconUrl: string | null;
+  active: boolean;
+  translations: Translation[];
 }
 
 export default function EditServicePage() {
@@ -22,10 +30,8 @@ export default function EditServicePage() {
   const serviceId = params.id as string;
   const toast = useToast();
   
-  const { data: serviceData, isLoading: isLoadingData } = useAdminServiceDetailQuery(serviceId);
-  const updateMutation = useUpdateServiceMutation();
-  
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [categories, setCategories] = useState<ServiceCategoryAdminDto[]>([]);
   const [formData, setFormData] = useState({
     serviceCategoryId: null as number | null,
@@ -37,6 +43,55 @@ export default function EditServicePage() {
       { languageCode: 'ru', title: '', content: '', excerpt: '' },
     ] as Translation[]
   });
+
+  // Load service data
+  useEffect(() => {
+    const loadService = async () => {
+      try {
+        const response = await fetch(`/api/admin/services/${serviceId}`);
+        if (!response.ok) throw new Error('Failed to load service');
+        const serviceData: ServiceData = await response.json();
+        
+        // Конвертируем iconUrl из /api/files/ в /uploads/
+        let iconUrl = serviceData.iconUrl || '';
+        if (iconUrl && iconUrl.includes('/api/files/')) {
+          iconUrl = iconUrl.replace(/^https?:\/\/[^\/]+/, '').replace('/api/files/', '/uploads/');
+        }
+        
+        setFormData({
+          serviceCategoryId: serviceData.serviceCategoryId || null,
+          iconUrl: iconUrl,
+          active: serviceData.active !== false,
+          translations: [
+            {
+              languageCode: 'az',
+              title: serviceData.translations?.find((t: Translation) => t.languageCode === 'az')?.title || '',
+              content: serviceData.translations?.find((t: Translation) => t.languageCode === 'az')?.content || '',
+              excerpt: serviceData.translations?.find((t: Translation) => t.languageCode === 'az')?.excerpt || ''
+            },
+            {
+              languageCode: 'en',
+              title: serviceData.translations?.find((t: Translation) => t.languageCode === 'en')?.title || '',
+              content: serviceData.translations?.find((t: Translation) => t.languageCode === 'en')?.content || '',
+              excerpt: serviceData.translations?.find((t: Translation) => t.languageCode === 'en')?.excerpt || ''
+            },
+            {
+              languageCode: 'ru',
+              title: serviceData.translations?.find((t: Translation) => t.languageCode === 'ru')?.title || '',
+              content: serviceData.translations?.find((t: Translation) => t.languageCode === 'ru')?.content || '',
+              excerpt: serviceData.translations?.find((t: Translation) => t.languageCode === 'ru')?.excerpt || ''
+            }
+          ]
+        });
+      } catch (error) {
+        console.error('Failed to load service:', error);
+        toast.error('Failed to load service');
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+    loadService();
+  }, [serviceId, toast]);
 
   // Load categories
   useEffect(() => {
@@ -52,43 +107,6 @@ export default function EditServicePage() {
     loadCategories();
   }, [toast]);
 
-  // Transform service data to form format
-  useEffect(() => {
-    if (serviceData) {
-      // Конвертируем iconUrl из /api/files/ в /uploads/
-      let iconUrl = serviceData.iconUrl || '';
-      if (iconUrl && iconUrl.includes('/api/files/')) {
-        iconUrl = iconUrl.replace(/^https?:\/\/[^\/]+/, '').replace('/api/files/', '/uploads/');
-      }
-      
-      setFormData({
-        serviceCategoryId: serviceData.serviceCategoryId || null,
-        iconUrl: iconUrl,
-        active: serviceData.active !== false,
-        translations: [
-          {
-            languageCode: 'az',
-            title: serviceData.translations?.find((t: any) => t.languageCode === 'az')?.title || '',
-            content: serviceData.translations?.find((t: any) => t.languageCode === 'az')?.content || '',
-            excerpt: serviceData.translations?.find((t: any) => t.languageCode === 'az')?.excerpt || ''
-          },
-          {
-            languageCode: 'en',
-            title: serviceData.translations?.find((t: any) => t.languageCode === 'en')?.title || '',
-            content: serviceData.translations?.find((t: any) => t.languageCode === 'en')?.content || '',
-            excerpt: serviceData.translations?.find((t: any) => t.languageCode === 'en')?.excerpt || ''
-          },
-          {
-            languageCode: 'ru',
-            title: serviceData.translations?.find((t: any) => t.languageCode === 'ru')?.title || '',
-            content: serviceData.translations?.find((t: any) => t.languageCode === 'ru')?.content || '',
-            excerpt: serviceData.translations?.find((t: any) => t.languageCode === 'ru')?.excerpt || ''
-          }
-        ]
-      });
-    }
-  }, [serviceData]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -103,13 +121,20 @@ export default function EditServicePage() {
       // Удаляем все пустые поля
       const cleanedData = removeEmptyFields(filteredData);
 
-      await updateMutation.mutateAsync({ 
-        id: Number(serviceId), 
-        data: cleanedData 
+      const response = await fetch(`/api/admin/services/${serviceId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cleanedData)
       });
-      
-      toast.success('Service updated successfully!');
-      router.push('/dashboard/services');
+
+      if (response.ok) {
+        toast.success('Service updated successfully!');
+        router.push('/dashboard/services');
+      } else {
+        const error = await response.json();
+        console.error('Failed to update service:', error);
+        toast.error('Failed to update service: ' + (error.message || 'Unknown error'));
+      }
     } catch (error) {
       console.error('Error updating service:', error);
       toast.error('Failed to update service');
@@ -197,16 +222,16 @@ export default function EditServicePage() {
                 className="md:col-span-2"
               />
 
-
-              <div className="md:col-span-2">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.active}
-                    onChange={(e) => setFormData(prev => ({ ...prev, active: e.target.checked }))}
-                    className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                  />
-                  <span className="ml-2 text-sm text-gray-700">Active (visible on website)</span>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="active"
+                  checked={formData.active}
+                  onChange={(e) => setFormData(prev => ({ ...prev, active: e.target.checked }))}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="active" className="ml-2 text-sm font-medium text-gray-700">
+                  Active service
                 </label>
               </div>
             </div>
