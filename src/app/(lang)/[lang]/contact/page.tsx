@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { PageHero, Alert, Button, Card } from '@/components/ui'
@@ -8,8 +8,15 @@ import { contactService } from '@/lib/api'
 import { ContactDto } from '@/types/api'
 import { useTranslations } from '@/hooks/useTranslations'
 
+interface Service {
+  id: number;
+  title: string;
+  languageCode: string;
+}
+
 export default function ContactPage() {
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
+  const [services, setServices] = useState<Service[]>([]);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,6 +28,21 @@ export default function ContactPage() {
   const [submitting, setSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadServices = async () => {
+      try {
+        const response = await fetch(`/api/services?lang=${language}`);
+        if (response.ok) {
+          const data = await response.json();
+          setServices(data);
+        }
+      } catch (error) {
+        console.error('Failed to load services:', error);
+      }
+    };
+    loadServices();
+  }, [language]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -164,11 +186,11 @@ export default function ContactPage() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 text-gray-900"
                     >
                       <option value="">{t('contact.selectService')}</option>
-                      <option value="accounting">{t('footer.services.accounting')}</option>
-                      <option value="tax-compliance">{t('footer.services.taxCompliance')}</option>
-                      <option value="tax-advisory">{t('footer.services.taxAdvisory')}</option>
-                      <option value="legal">{t('footer.services.legal')}</option>
-                      <option value="hr">{t('footer.services.hr')}</option>
+                      {services.map(service => (
+                        <option key={service.id} value={service.title}>
+                          {service.title}
+                        </option>
+                      ))}
                       <option value="other">{t('contact.other')}</option>
                     </select>
                   </div>

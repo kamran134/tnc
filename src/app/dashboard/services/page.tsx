@@ -1,17 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ServiceAdminDto } from '@/types/api';
 import { useAdminServicesListQuery, useDeleteServiceMutation } from '@/hooks/queries';
+import { adminServiceCategoriesService } from '@/lib/api';
+import type { ServiceCategoryAdminDto } from '@/types/api';
 
 export default function ServicesPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [categories, setCategories] = useState<ServiceCategoryAdminDto[]>([]);
 
   const { data: services, isLoading } = useAdminServicesListQuery();
   const deleteServiceMutation = useDeleteServiceMutation();
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await adminServiceCategoriesService.getAllAsList();
+        setCategories(data);
+      } catch (error) {
+        console.error('Failed to load categories:', error);
+      }
+    };
+    loadCategories();
+  }, []);
 
   const getTranslation = (service: ServiceAdminDto, lang: string = 'az') => {
     return service.translations?.find(t => t.languageCode === lang) || service.translations?.[0];
@@ -103,11 +118,13 @@ export default function ServicesPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900"
               >
                 <option value="">All Categories</option>
-                <option value="ACCOUNTING">Accounting</option>
-                <option value="FINANCE">Finance</option>
-                <option value="TAX">Tax</option>
-                <option value="LEGAL">Legal</option>
-                <option value="HR">HR</option>
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.translations.find(t => t.languageCode === 'en')?.name || 
+                     category.translations.find(t => t.languageCode === 'az')?.name || 
+                     category.code}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="flex items-end">
