@@ -15,7 +15,7 @@ interface Service {
 }
 
 export default function ContactPage() {
-  const { t, language } = useTranslations();
+  const { t, locale } = useTranslations();
   const [services, setServices] = useState<Service[]>([]);
   const [formData, setFormData] = useState({
     name: '',
@@ -32,7 +32,7 @@ export default function ContactPage() {
   useEffect(() => {
     const loadServices = async () => {
       try {
-        const response = await fetch(`/api/services?lang=${language}`);
+        const response = await fetch(`/api/services?lang=${locale}`);
         if (response.ok) {
           const data = await response.json();
           setServices(data);
@@ -42,7 +42,7 @@ export default function ContactPage() {
       }
     };
     loadServices();
-  }, [language]);
+  }, [locale]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
