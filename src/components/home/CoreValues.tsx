@@ -1,79 +1,33 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { CoreValueDto, LanguageCode } from '@/types/api'
+import { CompanyInfoDto, CoreValueDto, LanguageCode } from '@/types/api'
 import { coreValuesService } from '@/lib/api'
 import { LoadingSpinner, Alert } from '@/components/ui'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 
 interface CoreValuesProps {
   lang?: string;
+  companyInfo: CompanyInfoDto | null;
 }
 
-export default function CoreValues({ lang = 'az' }: CoreValuesProps) {
-  const [values, setValues] = useState<CoreValueDto[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+export default function CoreValues({ lang, companyInfo }: CoreValuesProps) {
   const { ref, isVisible } = useScrollAnimation()
-
-  useEffect(() => {
-    loadCoreValues()
-  }, [lang])
-
-  const loadCoreValues = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      const data = await coreValuesService.getAll(lang as LanguageCode)
-      console.log('CoreValues - Loaded data:', data)
-      setValues(data)
-    } catch (err) {
-      console.error('Failed to load core values:', err)
-      setError('Failed to load core values')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (loading) {
-    return (
-      <section className="snap-start section-padding bg-white flex items-center" style={{ minHeight: '100vh' }}>
-        <div className="container-max">
-          <LoadingSpinner />
-        </div>
-      </section>
-    )
-  }
-
-  if (error) {
-    return (
-      <section className="snap-start section-padding bg-white flex items-center" style={{ minHeight: '100vh' }}>
-        <div className="container-max">
-          <Alert type="error" message={error} />
-        </div>
-      </section>
-    )
-  }
-
-  // ПУНКТ 5: Если нет данных - не показываем секцию
-  if (!values || values.length === 0) {
-    return null;
-  }
 
   return (
     <section ref={ref as any} className="snap-start section-padding bg-white flex items-center" style={{ minHeight: '100vh' }}>
       <div className="container-max">
         <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Our Core Values
+            {companyInfo?.valuesTitle || 'Our Core Values'}
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Our core values are important to us as they define who we are and how we do business.
+            {companyInfo?.valuesDescription || 'We are committed to upholding the highest standards of integrity, excellence, and collaboration in all that we do.'}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {values.map((value, index) => (
+          {companyInfo?.values.map((value, index) => (
             <div
               key={value.id}
               className={`bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-50 translate-y-20'}`}
@@ -93,7 +47,7 @@ export default function CoreValues({ lang = 'az' }: CoreValuesProps) {
                 </h3>
               </div>
               <p className="text-gray-700 leading-relaxed">
-                {value.content}
+                {value.description}
               </p>
             </div>
           ))}

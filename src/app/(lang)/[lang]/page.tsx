@@ -33,7 +33,7 @@ export default async function HomePage({ params }: HomePageProps) {
         <Memberships lang={lang} />
         <Mission lang={lang} companyInfo={companyInfo} />
         <Vision lang={lang} companyInfo={companyInfo} />
-        <CoreValues lang={lang} />
+        <CoreValues lang={lang} companyInfo={companyInfo} />
         <Footer />
       </main>
     </div>
