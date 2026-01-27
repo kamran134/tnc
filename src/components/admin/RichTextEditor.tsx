@@ -1,14 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
-
-// Динамически импортируем ReactQuill чтобы избежать SSR проблем
-const ReactQuill = dynamic(() => import('react-quill'), { 
-  ssr: false,
-  loading: () => <p className="text-gray-500">Loading editor...</p>
-});
 
 interface RichTextEditorProps {
   value: string;
@@ -40,6 +34,15 @@ const formats = [
 ];
 
 export default function RichTextEditor({ value, onChange, placeholder, className }: RichTextEditorProps) {
+  // Динамически импортируем ReactQuill только на клиенте
+  const ReactQuill = useMemo(() => dynamic(
+    () => import('react-quill'),
+    { 
+      ssr: false,
+      loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64 flex items-center justify-center text-gray-500">Loading editor...</div>
+    }
+  ), []);
+
   return (
     <div className={`rich-text-editor ${className || ''}`}>
       <ReactQuill
@@ -49,7 +52,6 @@ export default function RichTextEditor({ value, onChange, placeholder, className
         modules={modules}
         formats={formats}
         placeholder={placeholder}
-        className="bg-white"
       />
       <style jsx global>{`
         .rich-text-editor .ql-container {
