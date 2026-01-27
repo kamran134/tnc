@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { PageHero, Alert, Button, Card } from '@/components/ui'
-import { contactService } from '@/lib/api'
-import { ContactDto } from '@/types/api'
+import { contactService, companyInfoService } from '@/lib/api'
+import { ContactDto, CompanyInfoDto, LanguageCode } from '@/types/api'
 import { useTranslations } from '@/hooks/useTranslations'
 
 interface Service {
@@ -17,6 +17,7 @@ interface Service {
 export default function ContactPage() {
   const { t, locale } = useTranslations();
   const [services, setServices] = useState<Service[]>([]);
+  const [companyInfo, setCompanyInfo] = useState<CompanyInfoDto | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -30,18 +31,23 @@ export default function ContactPage() {
   const [submitError, setSubmitError] = useState<string | null>(null)
 
   useEffect(() => {
-    const loadServices = async () => {
+    const loadData = async () => {
       try {
+        // Load services
         const response = await fetch(`/api/services?lang=${locale}`);
         if (response.ok) {
           const data = await response.json();
           setServices(data);
         }
+        
+        // Load company info
+        const info = await companyInfoService.getCompanyInfo(locale as LanguageCode);
+        setCompanyInfo(info);
       } catch (error) {
-        console.error('Failed to load services:', error);
+        console.error('Failed to load data:', error);
       }
     };
-    loadServices();
+    loadData();
   }, [locale]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -245,8 +251,7 @@ export default function ContactPage() {
                       <div>
                         <h3 className="font-semibold text-gray-900">{t('contact.address')}</h3>
                         <p className="text-gray-600">
-                          {t('contact.officeAddress')}<br />
-                          {t('footer.location')}
+                          {companyInfo?.address || t('footer.location')}
                         </p>
                       </div>
                     </div>
@@ -257,7 +262,7 @@ export default function ContactPage() {
                       </svg>
                       <div>
                         <h3 className="font-semibold text-gray-900">{t('footer.phone')}</h3>
-                        <p className="text-gray-600">+994 XX XXX XX XX</p>
+                        <p className="text-gray-600">{companyInfo?.phone || '+994 XX XXX XX XX'}</p>
                       </div>
                     </div>
                     
@@ -267,9 +272,25 @@ export default function ContactPage() {
                       </svg>
                       <div>
                         <h3 className="font-semibold text-gray-900">{t('footer.email')}</h3>
-                        <p className="text-gray-600">info@tnc.az</p>
+                        <p className="text-gray-600">{companyInfo?.email || 'info@tnc.az'}</p>
                       </div>
                     </div>
+                    
+                    {companyInfo?.website && (
+                      <div className="flex items-start space-x-3">
+                        <svg className="w-6 h-6 text-primary-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                        </svg>
+                        <div>
+                          <h3 className="font-semibold text-gray-900">{t('footer.website')}</h3>
+                          <p className="text-gray-600">
+                            <a href={companyInfo.website} target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 transition-colors">
+                              {companyInfo.website}
+                            </a>
+                          </p>
+                        </div>
+                      </div>
+                    )}
                     
                     <div className="flex items-start space-x-3">
                       <svg className="w-6 h-6 text-primary-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
