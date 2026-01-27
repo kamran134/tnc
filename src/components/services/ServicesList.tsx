@@ -107,9 +107,55 @@ export default function ServicesList() {
                       </p>
                     )}
                     <div 
-                      className="text-gray-700 prose prose-sm max-w-none"
+                      className="text-gray-700 prose prose-sm max-w-none rich-text-content"
                       dangerouslySetInnerHTML={{ __html: service.content }}
                     />
+                    <style jsx global>{`
+                      .rich-text-content h1,
+                      .rich-text-content h2,
+                      .rich-text-content h3 {
+                        font-weight: 600;
+                        margin-top: 1.5rem;
+                        margin-bottom: 1rem;
+                        color: rgb(17 24 39);
+                      }
+                      .rich-text-content h1 { font-size: 1.875rem; }
+                      .rich-text-content h2 { font-size: 1.5rem; }
+                      .rich-text-content h3 { font-size: 1.25rem; }
+                      .rich-text-content p {
+                        margin-bottom: 1rem;
+                        line-height: 1.75;
+                      }
+                      .rich-text-content strong {
+                        font-weight: 600;
+                        color: rgb(17 24 39);
+                      }
+                      .rich-text-content em {
+                        font-style: italic;
+                      }
+                      .rich-text-content ul,
+                      .rich-text-content ol {
+                        margin-top: 0.5rem;
+                        margin-bottom: 1rem;
+                        padding-left: 1.5rem;
+                      }
+                      .rich-text-content ul {
+                        list-style-type: disc;
+                      }
+                      .rich-text-content ol {
+                        list-style-type: decimal;
+                      }
+                      .rich-text-content li {
+                        margin-bottom: 0.5rem;
+                      }
+                      .rich-text-content a {
+                        color: rgb(37 99 235);
+                        text-decoration: underline;
+                      }
+                      .rich-text-content a:hover {
+                        color: rgb(29 78 216);
+                      }
+                    `}</style>
                   </div>
                   
                   <div className="flex-shrink-0 mt-6 lg:mt-0">
