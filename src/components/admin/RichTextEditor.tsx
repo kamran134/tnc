@@ -1,8 +1,7 @@
 'use client';
 
-import { useMemo } from 'react';
-import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
+import { useEffect, useRef } from 'react';
+import 'quill/dist/quill.snow.css';
 
 interface RichTextEditorProps {
   value: string;
@@ -24,35 +23,77 @@ const modules = {
   ],
 };
 
-const formats = [
-  'header',
-  'bold', 'italic', 'underline', 'strike',
-  'list', 'bullet', 'indent',
-  'link',
-  'color', 'background',
-  'align'
-];
-
 export default function RichTextEditor({ value, onChange, placeholder, className }: RichTextEditorProps) {
-  // Динамически импортируем ReactQuill только на клиенте
-  const ReactQuill = useMemo(() => dynamic(
-    () => import('react-quill'),
-    { 
-      ssr: false,
-      loading: () => <div className="animate-pulse bg-gray-100 rounded-lg h-64 flex items-center justify-center text-gray-500">Loading editor...</div>
+  const editorRef = useRef<HTMLDivElement>(null);
+  const quillRef = useRef<any>(null);
+  const isInitializing = useRef(false);
+
+  useEffect(() => {
+    if (!editorRef.current || isInitializing.current) return;
+    
+    isInitializing.current = true;
+
+    // Динамически импортируем Quill только на клиенте
+    import('quill').then((Quill) => {
+      if (!editorRef.current || quillRef.current) return;
+
+      const QuillClass = Quill.default;
+      
+      // Создаём экземпляр Quill
+      const quill = new QuillClass(editorRef.current, {
+        theme: 'snow',
+        modules,
+        placeholder: placeholder || 'Enter text...',
+      });
+
+      // Устанавливаем начальное значение
+      if (value) {
+        quill.clipboard.dangerouslyPasteHTML(value);
+      }
+
+      // Слушаем изменения
+      quill.on('text-change', () => {
+        const html = quill.root.innerHTML;
+        // Не вызываем onChange если контент пустой
+        if (html === '<p><br></p>') {
+          onChange('');
+        } else {
+          onChange(html);
+        }
+      });
+
+      quillRef.current = quill;
+    });
+
+    // Cleanup
+    return () => {
+      if (quillRef.current) {
+        quillRef.current = null;
+      }
+      isInitializing.current = false;
+    };
+  }, []);
+
+  // Обновляем содержимое при изменении value извне
+  useEffect(() => {
+    if (!quillRef.current) return;
+    
+    const currentContent = quillRef.current.root.innerHTML;
+    const normalizedCurrent = currentContent === '<p><br></p>' ? '' : currentContent;
+    const normalizedValue = value || '';
+    
+    if (normalizedCurrent !== normalizedValue) {
+      const selection = quillRef.current.getSelection();
+      quillRef.current.clipboard.dangerouslyPasteHTML(normalizedValue);
+      if (selection) {
+        quillRef.current.setSelection(selection);
+      }
     }
-  ), []);
+  }, [value]);
 
   return (
     <div className={`rich-text-editor ${className || ''}`}>
-      <ReactQuill
-        theme="snow"
-        value={value}
-        onChange={onChange}
-        modules={modules}
-        formats={formats}
-        placeholder={placeholder}
-      />
+      <div ref={editorRef} />
       <style jsx global>{`
         .rich-text-editor .ql-container {
           min-height: 200px;
