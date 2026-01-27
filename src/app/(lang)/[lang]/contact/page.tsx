@@ -282,7 +282,7 @@ export default function ContactPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                         </svg>
                         <div>
-                          <h3 className="font-semibold text-gray-900">{t('footer.website')}</h3>
+                          <h3 className="font-semibold text-gray-900">Website</h3>
                           <p className="text-gray-600">
                             <a href={companyInfo.website} target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 transition-colors">
                               {companyInfo.website}
