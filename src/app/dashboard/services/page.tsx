@@ -1,32 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ServiceAdminDto } from '@/types/api';
 import { useAdminServicesListQuery, useDeleteServiceMutation } from '@/hooks/queries';
-import { adminServiceCategoriesService } from '@/lib/api';
-import type { ServiceCategoryAdminDto } from '@/types/api';
 
 export default function ServicesPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
-  const [categories, setCategories] = useState<ServiceCategoryAdminDto[]>([]);
 
   const { data: services, isLoading } = useAdminServicesListQuery();
   const deleteServiceMutation = useDeleteServiceMutation();
-
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const data = await adminServiceCategoriesService.getAllAsList();
-        setCategories(data);
-      } catch (error) {
-        console.error('Failed to load categories:', error);
-      }
-    };
-    loadCategories();
-  }, []);
 
   const getTranslation = (service: ServiceAdminDto, lang: string = 'az') => {
     return service.translations?.find(t => t.languageCode === lang) || service.translations?.[0];
@@ -99,7 +84,7 @@ export default function ServicesPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Search Services</label>
               <input
@@ -109,23 +94,6 @@ export default function ServicesPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900"
-              >
-                <option value="">All Categories</option>
-                {categories.map(category => (
-                  <option key={category.id} value={category.id}>
-                    {category.translations.find(t => t.languageCode === 'en')?.name || 
-                     category.translations.find(t => t.languageCode === 'az')?.name || 
-                     category.code}
-                  </option>
-                ))}
-              </select>
             </div>
             <div className="flex items-end">
               <button
@@ -155,6 +123,7 @@ export default function ServicesPage() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {services?.content?.map((service) => {
                   const translation = getTranslation(service);
+                  
                   return (
                     <tr key={service.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
@@ -169,7 +138,7 @@ export default function ServicesPage() {
                       </td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {service.category}
+                          {service.categoryName || service.category || 'No category'}
                         </span>
                       </td>
                       <td className="px-6 py-4">

@@ -321,6 +321,9 @@ export interface ContactDto {
 export interface ServiceAdminDto {
   id?: number;
   category: string;
+  serviceCategoryId?: number;
+  categoryCode?: string;
+  categoryName?: string;
   iconUrl?: string;
   sortOrder?: number;
   active?: boolean;
