@@ -82,7 +82,7 @@ jobs:
       with:
         host: ${{ secrets.HOST_HETZNER }}
         username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        key: ${{ secrets.SSH_PRIVATE_KEY_2 }}
         port: ${{ secrets.PORT }}
         script: |
           # Переход в директорию проекта
