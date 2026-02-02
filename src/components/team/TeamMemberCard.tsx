@@ -2,6 +2,7 @@
 
 import { TeamMemberDto } from '@/types/api';
 import { useState } from 'react';
+import TeamMemberModal from './TeamMemberModal';
 
 interface TeamMemberCardProps {
   member: TeamMemberDto;
@@ -11,16 +12,19 @@ interface TeamMemberCardProps {
 
 export default function TeamMemberCard({ member, index, isVisible }: TeamMemberCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div
-      className={`group relative bg-white rounded-lg shadow-md overflow-hidden transition-all duration-1000 ease-out hover:shadow-xl ${
-        isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 translate-y-10'
-      }`}
-      style={{ transitionDelay: `${index * 100}ms` }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <>
+      <div
+        className={`group relative bg-white rounded-lg shadow-md overflow-hidden transition-all duration-1000 ease-out hover:shadow-xl cursor-pointer ${
+          isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 translate-y-10'
+        }`}
+        style={{ transitionDelay: `${index * 100}ms` }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={() => setIsModalOpen(true)}
+      >
       {/* Image Container */}
       <div className="relative h-80 w-full overflow-hidden bg-gray-100">
         {member.imageUrl ? (
@@ -135,7 +139,32 @@ export default function TeamMemberCard({ member, index, isVisible }: TeamMemberC
             {member.positionDescription}
           </p>
         )}
+
+        {/* Click to view indicator */}
+        <div className="mt-4 flex items-center text-sm text-primary-600 font-medium">
+          <span>Подробнее</span>
+          <svg
+            className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </div>
       </div>
     </div>
+
+      <TeamMemberModal
+        member={member}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+    </>
   );
 }
