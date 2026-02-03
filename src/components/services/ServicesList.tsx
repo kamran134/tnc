@@ -163,7 +163,7 @@ export default function ServicesList() {
                       href={`/${lang}/contact`}
                       className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 transition-colors duration-200"
                     >
-                      Get Consultation
+                      {lang === 'az' ? 'Konsultasiya almaq' : lang === 'en' ? 'Get Consultation' : lang === 'ru' ? 'Получить консультацию' : 'Get Consultation'}
                     </Link>
                   </div>
                 </div>
@@ -175,17 +175,19 @@ export default function ServicesList() {
         <div className="text-center mt-16">
           <div className="bg-white p-8 rounded-lg shadow-md">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Need a Custom Solution?
+              {lang === 'az' ? 'Fərdi həllə ehtiyacınız var?' : lang === 'en' ? 'Need a Custom Solution?' : lang === 'ru' ? 'Нужно индивидуальное решение?' : 'Need a Custom Solution?'}
             </h3>
             <p className="text-gray-600 mb-6">
-              We understand that every business is unique. Contact us to discuss your specific requirements 
-              and how we can tailor our services to meet your needs.
+              {lang === 'az' ? 'Hər bir biznesin unikal olduğunu başa düşürük. Xüsusi tələblərinizi müzakirə etmək və xidmətlərimizi ehtiyaclarınıza uyğunlaşdırmaq üçün bizimlə əlaqə saxlayın.' : 
+               lang === 'en' ? 'We understand that every business is unique. Contact us to discuss your specific requirements and how we can tailor our services to meet your needs.' : 
+               lang === 'ru' ? 'Мы понимаем, что каждый бизнес уникален. Свяжитесь с нами, чтобы обсудить ваши конкретные требования и то, как мы можем адаптировать наши услуги под ваши нужды.' : 
+               'We understand that every business is unique. Contact us to discuss your specific requirements and how we can tailor our services to meet your needs.'}
             </p>
             <Link
               href={`/${lang}/contact`}
               className="btn-primary"
             >
-              Contact Our Experts
+              {lang === 'az' ? 'Ekspertlərimizlə əlaqə saxlayın' : lang === 'en' ? 'Contact Our Experts' : lang === 'ru' ? 'Свяжитесь с нашими экспертами' : 'Contact Our Experts'}
             </Link>
           </div>
         </div>
