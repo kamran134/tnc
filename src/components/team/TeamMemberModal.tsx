@@ -7,9 +7,29 @@ interface TeamMemberModalProps {
   member: TeamMemberDto;
   isOpen: boolean;
   onClose: () => void;
+  lang?: string;
 }
 
-export default function TeamMemberModal({ member, isOpen, onClose }: TeamMemberModalProps) {
+const translations = {
+  az: {
+    positionDescription: 'Vəzifə təsviri',
+    bio: 'Bioqrafiya',
+    contacts: 'Əlaqə'
+  },
+  en: {
+    positionDescription: 'Position Description',
+    bio: 'Biography',
+    contacts: 'Contacts'
+  },
+  ru: {
+    positionDescription: 'Описание должности',
+    bio: 'Биография',
+    contacts: 'Контакты'
+  }
+};
+
+export default function TeamMemberModal({ member, isOpen, onClose, lang = 'az' }: TeamMemberModalProps) {
+  const t = translations[lang as keyof typeof translations] || translations.az;
   // Close on ESC key
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -59,96 +79,104 @@ export default function TeamMemberModal({ member, isOpen, onClose }: TeamMemberM
 
         {/* Modal Content */}
         <div className="overflow-y-auto max-h-[90vh]">
-          {/* Header with Image */}
-          <div className="relative h-80 bg-gradient-to-br from-primary-100 to-primary-200">
-            {member.imageUrl ? (
-              <img
-                src={member.imageUrl}
-                alt={member.fullName}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <svg
-                  className="w-40 h-40 text-primary-400"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                </svg>
+          {/* Header with compact image on left side */}
+          <div className="flex flex-col md:flex-row gap-6 p-8">
+            {/* Image - Fixed size, not stretched */}
+            <div className="flex-shrink-0">
+              <div className="relative w-full md:w-64 h-80 rounded-xl overflow-hidden shadow-lg">
+                {member.imageUrl ? (
+                  <img
+                    src={member.imageUrl}
+                    alt={member.fullName}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-primary-200">
+                    <svg
+                      className="w-32 h-32 text-primary-400"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    </svg>
+                  </div>
+                )}
+                {/* Decorative gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-900/20 to-transparent"></div>
               </div>
-            )}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-8">
-              <h2 className="text-3xl font-bold text-white mb-2">
-                {member.fullName}
-              </h2>
-              {member.position && (
-                <p className="text-xl text-primary-200 font-semibold">
-                  {member.position}
-                </p>
-              )}
             </div>
-          </div>
 
-          {/* Body Content */}
-          <div className="p-8">
-            {/* Position Description */}
-            {member.positionDescription && (
+            {/* Info Section */}
+            <div className="flex-1 min-w-0">
+              {/* Name and Position */}
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                  <svg
-                    className="w-5 h-5 mr-2 text-primary-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
-                  Описание должности
-                </h3>
-                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {member.positionDescription}
-                </p>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                  {member.fullName}
+                </h2>
+                {member.position && (
+                  <p className="text-xl text-primary-600 font-semibold">
+                    {member.position}
+                  </p>
+                )}
               </div>
-            )}
 
-            {/* Bio */}
-            {member.bio && (
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                  <svg
-                    className="w-5 h-5 mr-2 text-primary-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  Биография
-                </h3>
-                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {member.bio}
-                </p>
-              </div>
-            )}
+              {/* Position Description */}
+              {member.positionDescription && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                    <svg
+                      className="w-5 h-5 mr-2 text-primary-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
+                    </svg>
+                    {t.positionDescription}
+                  </h3>
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                    {member.positionDescription}
+                  </p>
+                </div>
+              )}
 
-            {/* Social Links */}
-            {(member.linkedinUrl || member.twitterUrl || member.email) && (
-              <div className="pt-6 border-t border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Контакты
-                </h3>
-                <div className="flex flex-wrap gap-4">
+              {/* Bio */}
+              {member.bio && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                    <svg
+                      className="w-5 h-5 mr-2 text-primary-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                    {t.bio}
+                  </h3>
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                    {member.bio}
+                  </p>
+                </div>
+              )}
+
+              {/* Social Links */}
+              {(member.linkedinUrl || member.twitterUrl || member.email) && (
+                <div className="pt-6 border-t border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    {t.contacts}
+                  </h3>
+                  <div className="flex flex-wrap gap-4">
                   {member.linkedinUrl && (
                     <a
                       href={member.linkedinUrl}
@@ -209,6 +237,7 @@ export default function TeamMemberModal({ member, isOpen, onClose }: TeamMemberM
                 </div>
               </div>
             )}
+            </div>
           </div>
         </div>
       </div>

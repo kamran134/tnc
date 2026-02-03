@@ -24,12 +24,10 @@ export default function Memberships({ lang = 'az' }: MembershipsProps) {
     try {
       setIsLoading(true);
       const data = await membershipsService.getAll(lang as LanguageCode);
-      console.log('Memberships - Loaded data:', data);
       setMemberships(data);
       setError(null);
     } catch (err) {
       setError('Failed to load memberships');
-      console.error('Memberships error:', err);
     } finally {
       setIsLoading(false);
     }

@@ -8,11 +8,14 @@ interface TeamMemberCardProps {
   member: TeamMemberDto;
   index: number;
   isVisible: boolean;
+  lang?: string;
 }
 
-export default function TeamMemberCard({ member, index, isVisible }: TeamMemberCardProps) {
+export default function TeamMemberCard({ member, index, isVisible, lang = 'az' }: TeamMemberCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const viewMoreText = lang === 'az' ? 'Ətraflı' : lang === 'ru' ? 'Подробнее' : 'View More';
 
   return (
     <>
@@ -142,7 +145,7 @@ export default function TeamMemberCard({ member, index, isVisible }: TeamMemberC
 
         {/* Click to view indicator */}
         <div className="mt-4 flex items-center text-sm text-primary-600 font-medium">
-          <span>Подробнее</span>
+          <span>{viewMoreText}</span>
           <svg
             className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1"
             fill="none"
@@ -164,6 +167,7 @@ export default function TeamMemberCard({ member, index, isVisible }: TeamMemberC
         member={member}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        lang={lang}
       />
     </>
   );

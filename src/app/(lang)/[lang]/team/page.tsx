@@ -100,6 +100,7 @@ export default function TeamPage({ params }: TeamPageProps) {
                     member={member}
                     index={index}
                     isVisible={isVisible}
+                    lang={lang}
                   />
                 ))}
               </div>
