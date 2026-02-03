@@ -202,7 +202,7 @@ export default function CreateCareerPage() {
                         value={translation.title}
                         onChange={(e) => updateTranslation(index, 'title', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                        placeholder={`Job title in ${translation.languageCode.toUpperCase()}`}
+                        placeholder={translation.languageCode === 'az' ? 'İş vakansiyalarının adı...' : translation.languageCode === 'en' ? 'Job title...' : 'Название вакансии...'}
                         minLength={5}
                         required={translation.languageCode === 'az'}
                       />
@@ -215,7 +215,7 @@ export default function CreateCareerPage() {
                         onChange={(e) => updateTranslation(index, 'excerpt', e.target.value)}
                         rows={2}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                        placeholder={`Brief job description in ${translation.languageCode.toUpperCase()}`}
+                        placeholder={translation.languageCode === 'az' ? 'Qısa təsvir...' : translation.languageCode === 'en' ? 'Brief job description...' : 'Краткое описание...'}
                       />
                     </div>
 
@@ -226,7 +226,7 @@ export default function CreateCareerPage() {
                         onChange={(e) => updateTranslation(index, 'content', e.target.value)}
                         rows={8}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                        placeholder={`Detailed job description, requirements, and responsibilities in ${translation.languageCode.toUpperCase()}`}
+                        placeholder={translation.languageCode === 'az' ? 'Ətraflı təsvir, tələblər və məsuliyyətlər...' : translation.languageCode === 'en' ? 'Detailed job description, requirements, and responsibilities...' : 'Подробное описание, требования и обязанности...'}
                         required={translation.languageCode === 'az'}
                       />
                     </div>

@@ -188,7 +188,7 @@ export default function CreateServicePage() {
                         value={translation.title}
                         onChange={(e) => updateTranslation(index, 'title', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                        placeholder={`Service title in ${translation.languageCode.toUpperCase()}`}
+                        placeholder={translation.languageCode === 'az' ? 'Xidmətin adı...' : translation.languageCode === 'en' ? 'Service title...' : 'Название услуги...'}
                         minLength={5}
                         required={translation.languageCode === 'az'}
                       />
@@ -201,16 +201,17 @@ export default function CreateServicePage() {
                         onChange={(e) => updateTranslation(index, 'excerpt', e.target.value)}
                         rows={2}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                        placeholder={`Brief service description in ${translation.languageCode.toUpperCase()}`}
+                        placeholder={translation.languageCode === 'az' ? 'Qısa təsvir...' : translation.languageCode === 'en' ? 'Brief service description...' : 'Краткое описание...'}
                       />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Detailed Description</label>
                       <RichTextEditor
+                        key={translation.languageCode}
                         value={translation.content}
                         onChange={(value) => updateTranslation(index, 'content', value)}
-                        placeholder={`Detailed service description in ${translation.languageCode.toUpperCase()}`}
+                        placeholder={translation.languageCode === 'az' ? 'Xidmətin ətraflı təsviri...' : translation.languageCode === 'en' ? 'Detailed service description...' : 'Подробное описание услуги...'}
                       />
                     </div>
                   </div>

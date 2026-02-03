@@ -265,7 +265,7 @@ export default function EditNewsPage() {
                         value={translation.title}
                         onChange={(e) => updateTranslation(index, 'title', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                        placeholder={`Article title in ${translation.languageCode.toUpperCase()}`}
+                        placeholder={translation.languageCode === 'az' ? 'Məqalənin başlığı...' : translation.languageCode === 'en' ? 'Article title...' : 'Название статьи...'}
                         minLength={5}
                         required={translation.languageCode === 'az'}
                       />
@@ -289,7 +289,7 @@ export default function EditNewsPage() {
                         onChange={(e) => updateTranslation(index, 'excerpt', e.target.value)}
                         rows={2}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                        placeholder={`Brief article description in ${translation.languageCode.toUpperCase()}`}
+                        placeholder={translation.languageCode === 'az' ? 'Qısa məzmun...' : translation.languageCode === 'en' ? 'Brief excerpt...' : 'Краткое содержание...'}
                       />
                     </div>
 
@@ -300,7 +300,7 @@ export default function EditNewsPage() {
                         onChange={(e) => updateTranslation(index, 'content', e.target.value)}
                         rows={12}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                        placeholder={`Full article content in ${translation.languageCode.toUpperCase()}`}
+                        placeholder={translation.languageCode === 'az' ? 'Məqalənin məzmunu...' : translation.languageCode === 'en' ? 'Article content...' : 'Содержание статьи...'}
                         required={translation.languageCode === 'az'}
                       />
                     </div>
