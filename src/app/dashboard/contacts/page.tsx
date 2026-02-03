@@ -22,9 +22,13 @@ export default function ContactsPage() {
   };
 
   // Debug: выводим структуру данных в консоль
-  if (contacts.length > 0 && typeof window !== 'undefined') {
-    console.log('Contacts data structure:', contacts[0]);
-    console.log('All contacts:', contacts);
+  console.log('=== CONTACTS DEBUG ===');
+  console.log('Raw API data:', data);
+  console.log('Contacts array:', contacts);
+  console.log('Contacts length:', contacts.length);
+  if (contacts.length > 0) {
+    console.log('First contact structure:', contacts[0]);
+    console.log('First contact keys:', Object.keys(contacts[0]));
   }
 
   const formatDate = (dateString?: string) => {

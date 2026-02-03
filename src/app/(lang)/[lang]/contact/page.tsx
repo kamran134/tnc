@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { PageHero, Alert, Button, Card } from '@/components/ui'
@@ -16,6 +17,7 @@ interface Service {
 
 export default function ContactPage() {
   const { t, locale } = useTranslations();
+  const searchParams = useSearchParams();
   const [services, setServices] = useState<Service[]>([]);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfoDto | null>(null);
   const [formData, setFormData] = useState({
@@ -49,6 +51,17 @@ export default function ContactPage() {
     };
     loadData();
   }, [locale]);
+
+  // Автоматически выбрать услугу из URL параметра
+  useEffect(() => {
+    const serviceParam = searchParams.get('service');
+    if (serviceParam) {
+      setFormData(prev => ({
+        ...prev,
+        service: decodeURIComponent(serviceParam)
+      }));
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
