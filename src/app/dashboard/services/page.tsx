@@ -32,6 +32,25 @@ export default function ServicesPage() {
     }
   };
 
+  const handleToggleActive = async (serviceId: number, currentStatus: boolean) => {
+    try {
+      const action = currentStatus ? 'deactivate' : 'activate';
+      const response = await fetch(`/api/admin/services/${serviceId}/${action}`, {
+        method: 'PATCH',
+      });
+
+      if (response.ok) {
+        // Refresh the list
+        window.location.reload();
+      } else {
+        alert(`Failed to ${action} service`);
+      }
+    } catch (error) {
+      console.error('Error toggling service status:', error);
+      alert('Error updating service status');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -165,13 +184,16 @@ export default function ServicesPage() {
                             Edit
                           </button>
                           <button
-                            onClick={() => {
-                              // Toggle active status
-                              // Implementation needed
-                            }}
-                            className="text-green-600 hover:text-green-900"
+                            onClick={() => handleToggleActive(service.id, service.active)}
+                            className={service.active ? "text-orange-600 hover:text-orange-900" : "text-green-600 hover:text-green-900"}
                           >
                             {service.active ? 'Deactivate' : 'Activate'}
+                          </button>
+                          <button
+                            onClick={() => handleDelete(service.id)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            Delete
                           </button>
                         </div>
                       </td>
