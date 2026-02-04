@@ -44,6 +44,7 @@ export default function EditServicePage() {
       { languageCode: 'ru', title: '', content: '', excerpt: '' },
     ] as Translation[]
   });
+  const [iconDeleted, setIconDeleted] = useState(false); // Track if icon was explicitly deleted
 
   // Load service data
   useEffect(() => {
@@ -84,6 +85,7 @@ export default function EditServicePage() {
             }
           ]
         });
+        setIconDeleted(false); // Reset deletion flag when loading service
       } catch (error) {
         console.error('Failed to load service:', error);
         toast.error('Failed to load service');
@@ -120,7 +122,13 @@ export default function EditServicePage() {
       };
 
       // Удаляем все пустые поля
-      const cleanedData = removeEmptyFields(filteredData);
+      const cleanedData: any = removeEmptyFields(filteredData);
+      
+      // If icon was explicitly deleted, add iconUrl: null to the cleaned data
+      // This ensures the backend receives the deletion instruction
+      if (iconDeleted && !cleanedData.iconUrl) {
+        cleanedData.iconUrl = null;
+      }
 
       const response = await fetch(`/api/admin/services/${serviceId}`, {
         method: 'PUT',
@@ -216,7 +224,15 @@ export default function EditServicePage() {
               
               <ImageUpload
                 value={formData.iconUrl}
-                onChange={(iconUrl: string) => setFormData(prev => ({ ...prev, iconUrl }))}
+                onChange={(iconUrl: string) => {
+                  setFormData(prev => ({ ...prev, iconUrl }));
+                  // Track if icon was deleted (empty string from red X button)
+                  if (iconUrl === '') {
+                    setIconDeleted(true);
+                  } else {
+                    setIconDeleted(false);
+                  }
+                }}
                 fileType="SERVICE_IMAGE"
                 label="Service Icon"
                 description="Icon or image for the service"
