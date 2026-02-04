@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
 
 export async function PATCH(
   request: NextRequest,
@@ -6,12 +9,23 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
     
-    const response = await fetch(`${backendUrl}/api/admin/services/${id}/activate`, {
+    // Получаем токен из cookies
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get('access_token')?.value;
+
+    if (!accessToken) {
+      return NextResponse.json(
+        { message: 'Not authenticated' },
+        { status: 401 }
+      );
+    }
+    
+    const response = await fetch(`${BACKEND_URL}/api/admin/services/${id}/activate`, {
       method: 'PATCH',
       headers: {
-        'Cookie': request.headers.get('cookie') || '',
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
       },
     });
 
