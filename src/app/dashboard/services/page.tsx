@@ -184,13 +184,13 @@ export default function ServicesPage() {
                             Edit
                           </button>
                           <button
-                            onClick={() => handleToggleActive(service.id, service.active)}
+                            onClick={() => service.id && handleToggleActive(service.id, service.active ?? false)}
                             className={service.active ? "text-orange-600 hover:text-orange-900" : "text-green-600 hover:text-green-900"}
                           >
                             {service.active ? 'Deactivate' : 'Activate'}
                           </button>
                           <button
-                            onClick={() => handleDelete(service.id)}
+                            onClick={() => service.id && handleDelete(service.id)}
                             className="text-red-600 hover:text-red-900"
                           >
                             Delete
