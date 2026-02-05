@@ -44,8 +44,8 @@ const nextConfig = {
     optimizePackageImports: ['@heroicons/react'],
   },
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
-    //removeConsole: false, // Временно включаем для отладки
+    // Временно отключаем удаление console.log для отладки
+    removeConsole: false,
   },
   // Отключаем source maps в проде для ускорения сборки
   productionBrowserSourceMaps: false,
