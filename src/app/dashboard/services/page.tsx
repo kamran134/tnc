@@ -4,13 +4,19 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ServiceAdminDto } from '@/types/api';
 import { useAdminServicesListQuery, useDeleteServiceMutation } from '@/hooks/queries';
+import { Pagination } from '@/components/ui';
 
 export default function ServicesPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
 
-  const { data: services, isLoading } = useAdminServicesListQuery();
+  const { data: servicesData, isLoading } = useAdminServicesListQuery({ 
+    page: currentPage, 
+    size: pageSize 
+  });
   const deleteServiceMutation = useDeleteServiceMutation();
 
   const getTranslation = (service: ServiceAdminDto, lang: string = 'az') => {
@@ -30,6 +36,15 @@ export default function ServicesPage() {
     } catch (error) {
       console.error('Error deleting service:', error);
     }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+    setCurrentPage(0); // Reset to first page when changing page size
   };
 
   const handleToggleActive = async (serviceId: number, currentStatus: boolean) => {
@@ -140,7 +155,7 @@ export default function ServicesPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {services?.content?.map((service) => {
+                {servicesData?.content?.map((service) => {
                   const translation = getTranslation(service);
                   
                   return (
@@ -203,9 +218,21 @@ export default function ServicesPage() {
               </tbody>
             </table>
           </div>
+          
+          {/* Pagination */}
+          {servicesData && servicesData.totalElements > 0 && (
+            <Pagination
+              currentPage={servicesData.number}
+              totalPages={servicesData.totalPages}
+              pageSize={servicesData.size}
+              totalElements={servicesData.totalElements}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
+          )}
         </div>
 
-        {services?.content?.length === 0 && !isLoading && (
+        {servicesData?.content?.length === 0 && !isLoading && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

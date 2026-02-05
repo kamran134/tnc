@@ -7,3 +7,4 @@ export { default as EmptyState } from './EmptyState';
 export { default as ImageUpload } from './ImageUpload';
 export { default as Toast } from './Toast';
 export { ToastProvider, useToast } from './ToastProvider';
+export { default as Pagination } from './Pagination';
