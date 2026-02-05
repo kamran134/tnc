@@ -47,7 +47,14 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('✅ Services fetched successfully, count:', data.content?.length || 0);
+    console.log('✅ Services fetched successfully');
+    console.log('📊 Data structure:', {
+      totalElements: data.totalElements,
+      totalPages: data.totalPages,
+      size: data.size,
+      number: data.number,
+      contentLength: data.content?.length || 0
+    });
     return NextResponse.json(data, { status: 200 });
 
   } catch (error) {

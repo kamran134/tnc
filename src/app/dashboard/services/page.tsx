@@ -82,6 +82,13 @@ export default function ServicesPage() {
 
   // Debug: log the data structure
   console.log('Services Data:', servicesData);
+  console.log('Pagination info:', {
+    totalElements: servicesData?.totalElements,
+    totalPages: servicesData?.totalPages,
+    size: servicesData?.size,
+    number: servicesData?.number,
+    contentLength: servicesData?.content?.length
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -222,6 +229,24 @@ export default function ServicesPage() {
             </table>
           </div>
         </div>
+        
+        {/* Debug info - временно */}
+        {servicesData && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded p-4 mt-4">
+            <h3 className="font-bold text-yellow-800 mb-2">Debug Info:</h3>
+            <pre className="text-xs overflow-auto">
+              {JSON.stringify({
+                totalElements: servicesData.totalElements,
+                totalPages: servicesData.totalPages,
+                size: servicesData.size,
+                number: servicesData.number,
+                contentLength: servicesData.content?.length,
+                first: servicesData.first,
+                last: servicesData.last
+              }, null, 2)}
+            </pre>
+          </div>
+        )}
         
         {/* Pagination - placed outside table container */}
         {servicesData && (
