@@ -24,6 +24,7 @@ export function useAdminServicesListQuery(params?: {
   return useQuery({
     queryKey: adminServicesKeys.list(params),
     queryFn: () => adminServicesService.getAll(params),
+    placeholderData: (previousData) => previousData,
   });
 }
 
