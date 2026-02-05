@@ -71,3 +71,23 @@ export function useUpdateServiceMutation() {
     },
   });
 }
+
+export function useToggleServiceActiveMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, activate }: { id: number; activate: boolean }) => {
+      const action = activate ? 'activate' : 'deactivate';
+      const response = await fetch(`/api/admin/services/${id}/${action}`, {
+        method: 'PATCH',
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to ${action} service`);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminServicesKeys.lists() });
+    },
+  });
+}

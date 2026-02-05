@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ServiceAdminDto } from '@/types/api';
-import { useAdminServicesListQuery, useDeleteServiceMutation } from '@/hooks/queries';
+import { useAdminServicesListQuery, useDeleteServiceMutation, useToggleServiceActiveMutation } from '@/hooks/queries';
 import { Pagination } from '@/components/ui';
 import { useDebounce } from '@/hooks/useDebounce';
 
@@ -29,6 +29,7 @@ export default function ServicesPage() {
     content: debouncedSearchTerm || undefined,
   });
   const deleteServiceMutation = useDeleteServiceMutation();
+  const toggleActiveMutation = useToggleServiceActiveMutation();
 
   const getTranslation = (service: ServiceAdminDto, lang: string = 'az') => {
     return service.translations?.find(t => t.languageCode === lang) || service.translations?.[0];
@@ -60,17 +61,10 @@ export default function ServicesPage() {
 
   const handleToggleActive = async (serviceId: number, currentStatus: boolean) => {
     try {
-      const action = currentStatus ? 'deactivate' : 'activate';
-      const response = await fetch(`/api/admin/services/${serviceId}/${action}`, {
-        method: 'PATCH',
+      await toggleActiveMutation.mutateAsync({ 
+        id: serviceId, 
+        activate: !currentStatus 
       });
-
-      if (response.ok) {
-        // Refresh the list
-        window.location.reload();
-      } else {
-        alert(`Failed to ${action} service`);
-      }
     } catch (error) {
       console.error('Error toggling service status:', error);
       alert('Error updating service status');
