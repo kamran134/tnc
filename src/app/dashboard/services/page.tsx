@@ -80,6 +80,9 @@ export default function ServicesPage() {
     );
   }
 
+  // Debug: log the data structure
+  console.log('Services Data:', servicesData);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -218,19 +221,21 @@ export default function ServicesPage() {
               </tbody>
             </table>
           </div>
-          
-          {/* Pagination */}
-          {servicesData && servicesData.totalElements > 0 && (
+        </div>
+        
+        {/* Pagination - placed outside table container */}
+        {servicesData && (
+          <div className="bg-white rounded-b-lg shadow-sm border-t-0 border border-gray-200 mt-0">
             <Pagination
-              currentPage={servicesData.number}
-              totalPages={servicesData.totalPages}
-              pageSize={servicesData.size}
-              totalElements={servicesData.totalElements}
+              currentPage={servicesData.number || 0}
+              totalPages={servicesData.totalPages || 1}
+              pageSize={servicesData.size || pageSize}
+              totalElements={servicesData.totalElements || 0}
               onPageChange={handlePageChange}
               onPageSizeChange={handlePageSizeChange}
             />
-          )}
-        </div>
+          </div>
+        )}
 
         {servicesData?.content?.length === 0 && !isLoading && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
