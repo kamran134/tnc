@@ -48,6 +48,29 @@ export async function GET(request: NextRequest) {
 
     const data = await response.json();
     console.log('✅ Services fetched successfully');
+    console.log('📊 Raw data structure:', data);
+    console.log('📊 Data has page object:', !!data.page);
+    
+    // Если данные приходят в формате {content, page}, нужно преобразовать в Spring Page формат
+    if (data.page && !data.totalElements) {
+      console.log('🔄 Transforming data structure from {content, page} to Spring Page format');
+      const transformedData = {
+        content: data.content,
+        totalElements: data.page.totalElements,
+        totalPages: data.page.totalPages,
+        size: data.page.size,
+        number: data.page.number,
+        numberOfElements: data.page.numberOfElements || data.content?.length || 0,
+        first: data.page.first,
+        last: data.page.last,
+        empty: data.page.empty,
+        sort: data.page.sort || [],
+        pageable: data.page.pageable || {}
+      };
+      console.log('✅ Transformed data:', transformedData);
+      return NextResponse.json(transformedData, { status: 200 });
+    }
+    
     console.log('📊 Data structure:', {
       totalElements: data.totalElements,
       totalPages: data.totalPages,

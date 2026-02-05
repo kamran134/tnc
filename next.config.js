@@ -45,7 +45,8 @@ const nextConfig = {
   },
   compiler: {
     // Временно отключаем удаление console.log для отладки
-    removeConsole: false,
+    // removeConsole: false,
+    removeConsole: process.env.NODE_ENV === 'production',
   },
   // Отключаем source maps в проде для ускорения сборки
   productionBrowserSourceMaps: false,
