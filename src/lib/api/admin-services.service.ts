@@ -10,6 +10,10 @@ export const adminServicesService = {
     page?: number;
     size?: number;
     sort?: string;
+    title?: string;
+    content?: string;
+    categoryCode?: string;
+    active?: boolean;
   }): Promise<PageServiceAdminDto> {
     try {
       console.log('🔍 Fetching services with params:', params);

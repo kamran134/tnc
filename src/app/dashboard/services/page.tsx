@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ServiceAdminDto } from '@/types/api';
 import { useAdminServicesListQuery, useDeleteServiceMutation } from '@/hooks/queries';
 import { Pagination } from '@/components/ui';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export default function ServicesPage() {
   const router = useRouter();
@@ -13,9 +14,19 @@ export default function ServicesPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
 
+  // Debounce search term to avoid too many API calls
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  // Reset to first page when search term changes
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [debouncedSearchTerm]);
+
   const { data: servicesData, isLoading } = useAdminServicesListQuery({ 
     page: currentPage, 
-    size: pageSize 
+    size: pageSize,
+    title: debouncedSearchTerm || undefined,
+    content: debouncedSearchTerm || undefined,
   });
   const deleteServiceMutation = useDeleteServiceMutation();
 

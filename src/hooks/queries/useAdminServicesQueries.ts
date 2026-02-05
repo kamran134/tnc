@@ -6,7 +6,7 @@ import type { ServiceAdminDto } from '@/types/api';
 export const adminServicesKeys = {
   all: ['admin', 'services'] as const,
   lists: () => [...adminServicesKeys.all, 'list'] as const,
-  list: (params?: { page?: number; size?: number; sort?: string }) => [...adminServicesKeys.lists(), params] as const,
+  list: (params?: { page?: number; size?: number; sort?: string; title?: string; content?: string; categoryCode?: string; active?: boolean }) => [...adminServicesKeys.lists(), params] as const,
   details: () => [...adminServicesKeys.all, 'detail'] as const,
   detail: (id: string | number) => [...adminServicesKeys.details(), id] as const,
 };
@@ -16,6 +16,10 @@ export function useAdminServicesListQuery(params?: {
   page?: number;
   size?: number;
   sort?: string;
+  title?: string;
+  content?: string;
+  categoryCode?: string;
+  active?: boolean;
 }) {
   return useQuery({
     queryKey: adminServicesKeys.list(params),
