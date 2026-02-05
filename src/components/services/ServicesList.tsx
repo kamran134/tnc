@@ -27,7 +27,13 @@ export default function ServicesList() {
       setLoading(true)
       setError(null)
       const data = await servicesService.getAll(lang)
-      setServices(data)
+      // Sort by displayOrder (ascending)
+      const sortedData = [...data].sort((a, b) => {
+        const orderA = a.displayOrder ?? Number.MAX_SAFE_INTEGER;
+        const orderB = b.displayOrder ?? Number.MAX_SAFE_INTEGER;
+        return orderA - orderB;
+      });
+      setServices(sortedData)
     } catch (err) {
       console.error('Failed to load services:', err)
       setError('Failed to load services')
