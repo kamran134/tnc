@@ -1,5 +1,5 @@
 // Export API client and utilities
-export { default as apiClient, tokenManager, handleApiError, ApiError } from './client';
+export { default as apiClient, handleApiError, ApiError } from './client';
 
 // Export public services
 export { newsService } from './news.service';
@@ -10,8 +10,8 @@ export { homeService, coreValuesService, membershipsService, companyInfoService 
 export { filesService } from './files.service';
 export { teamService } from './team.service';
 
-// Export admin services
-export { authService } from './auth.service';
+// Export auth service from new location for backward compatibility
+export { authService } from '@/lib/auth/client';
 export { adminNewsService } from './admin-news.service';
 export { adminServicesService } from './admin-services.service';
 export { adminServiceCategoriesService, serviceCategoriesService } from './admin-service-categories.service';

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authService, UserDto } from '@/lib/api';
+import { authService } from '@/lib/auth/client';
+import { UserDto } from '@/types/api';
 
 interface AuthContextType {
   user: UserDto | null;
@@ -37,16 +38,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const loadUser = async () => {
     try {
-      // Быстрая проверка наличия токена (без API запроса)
-      if (authService.isAuthenticated()) {
-        // Токен есть - загружаем данные пользователя
-        const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
-      } else {
-        setUser(null);
-      }
+      // Пытаемся получить пользователя (проверка через cookies на сервере)
+      const currentUser = await authService.getCurrentUser();
+      setUser(currentUser);
     } catch (error) {
-      console.error('Failed to load user:', error);
+      // Если не авторизован или токен истек - просто null
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -56,9 +52,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      await authService.login({ email, password });
-      const currentUser = await authService.getCurrentUser();
-      setUser(currentUser);
+      const user = await authService.login({ email, password });
+      setUser(user);
     } catch (error) {
       console.error('Login failed:', error);
       setUser(null);
@@ -82,13 +77,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const refreshUser = async () => {
     try {
-      // Быстрая проверка наличия токена (без API запроса)
-      if (authService.isAuthenticated()) {
-        const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
-      } else {
-        setUser(null);
-      }
+      const currentUser = await authService.getCurrentUser();
+      setUser(currentUser);
     } catch (error) {
       console.error('Failed to refresh user:', error);
       setUser(null);

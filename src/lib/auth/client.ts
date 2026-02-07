@@ -3,7 +3,7 @@
  * Работает через Next.js API routes, которые управляют HTTP-only cookies
  */
 
-import { UserDto, LoginRequest } from '@/types/api';
+import { UserDto, LoginRequest, ChangePasswordRequest } from '@/types/api';
 
 class AuthService {
   /**
@@ -40,6 +40,21 @@ class AuthService {
     } catch (error) {
       console.error('Logout error:', error);
       // Не пробрасываем ошибку, чтобы logout всегда работал на клиенте
+    }
+  }
+
+  /**
+   * Logout from all devices через API route
+   */
+  async logoutAll(): Promise<void> {
+    const response = await fetch('/api/auth/logout-all', {
+      method: 'POST',
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Failed to logout from all devices' }));
+      throw new Error(error.message || 'Failed to logout from all devices');
     }
   }
 
@@ -82,6 +97,25 @@ class AuthService {
 
     if (!response.ok) {
       throw new Error('Failed to refresh token');
+    }
+  }
+
+  /**
+   * Change password
+   */
+  async changePassword(request: ChangePasswordRequest): Promise<void> {
+    const response = await fetch('/api/auth/change-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Failed to change password' }));
+      throw new Error(error.message || 'Failed to change password');
     }
   }
 }

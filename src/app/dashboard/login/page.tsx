@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { authService } from '@/lib/auth/client';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -21,72 +22,11 @@ export default function LoginPage() {
     setError('');
 
     try {
-      console.log('========================================================================');
-      console.log('🔐 CLIENT: ==================== LOGIN START ====================');
-      console.log('⏰ Time:', new Date().toISOString());
-      console.log('📧 Email:', formData.email);
-      console.log('🌐 Current URL:', window.location.href);
-      console.log('🍪 Cookies BEFORE login:', document.cookie);
-      console.log('🚀 Sending POST to /api/auth/login...');
-      
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-        credentials: 'include', // ВАЖНО! Для cookies
-      });
-
-      console.log('📥 CLIENT: Response received!');
-      console.log('📥 Status:', response.status, response.statusText);
-      console.log('📥 Response headers:');
-      const headers = Object.fromEntries(response.headers.entries());
-      Object.keys(headers).forEach(key => {
-        console.log(`   ${key}: ${headers[key]}`);
-      });
-      console.log('🍪 Cookies AFTER response:', document.cookie);
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log('✅ CLIENT: Login successful!');
-        console.log('📦 Response data:', JSON.stringify(data, null, 2));
-        console.log('🔑 Access token:', data.accessToken ? `EXISTS (${data.accessToken.substring(0, 30)}...)` : '❌ MISSING');
-        console.log('🔑 Refresh token:', data.refreshToken ? `EXISTS (${data.refreshToken.substring(0, 30)}...)` : '❌ MISSING');
-        
-        if (!data.accessToken) {
-          console.error('❌ CLIENT: ERROR - No access token in response!');
-          console.log('🔐 CLIENT: ==================== LOGIN FAILED (NO TOKEN) ====================');
-          console.log('========================================================================\n');
-          setError('Ошибка: токен не получен');
-          setIsLoading(false);
-          return;
-        }
-        
-        // Проверяем cookies после установки
-        console.log('🍪 Checking cookies after login...');
-        console.log('🍪 document.cookie:', document.cookie);
-        
-        // Небольшая задержка чтобы cookies точно установились
-        console.log('⏳ Waiting 200ms for cookies to be set...');
-        await new Promise(resolve => setTimeout(resolve, 200));
-        
-        console.log('🍪 Cookies after 200ms delay:', document.cookie);
-        console.log('🔄 Redirecting to /dashboard...');
-        console.log('🔐 CLIENT: ==================== LOGIN SUCCESS ====================');
-        console.log('========================================================================\n');
-        
-        // Используем window.location для полной перезагрузки и применения cookies
-        window.location.href = '/dashboard';
-      } else {
-        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-        console.error('❌ CLIENT: Login failed:', errorData);
-        setError(errorData.message || 'Ошибка входа');
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error('💥 CLIENT: Login error:', error);
-      setError('Ошибка сети: ' + (error instanceof Error ? error.message : String(error)));
+      await authService.login(formData);
+      router.push('/dashboard');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ошибка входа');
+    } finally {
       setIsLoading(false);
     }
   };

@@ -6,44 +6,6 @@ import { removeEmptyFields } from '../utils/cleanup';
 // Rewrites в next.config.js нужны только для проксирования на серверной стороне Next.js
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://tnc.az/api';
 
-// Token storage keys
-const ACCESS_TOKEN_KEY = 'access_token';
-const REFRESH_TOKEN_KEY = 'refresh_token';
-
-// Token management utilities
-export const tokenManager = {
-  getAccessToken: (): string | null => {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem(ACCESS_TOKEN_KEY);
-  },
-
-  setAccessToken: (token: string): void => {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem(ACCESS_TOKEN_KEY, token);
-  },
-
-  getRefreshToken: (): string | null => {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
-  },
-
-  setRefreshToken: (token: string): void => {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem(REFRESH_TOKEN_KEY, token);
-  },
-
-  clearTokens: (): void => {
-    if (typeof window === 'undefined') return;
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
-  },
-
-  setTokens: (accessToken: string, refreshToken: string): void => {
-    tokenManager.setAccessToken(accessToken);
-    tokenManager.setRefreshToken(refreshToken);
-  }
-};
-
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -57,11 +19,9 @@ const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Request interceptor - Add auth token
+// Request interceptor - Clean data and ensure lang parameter
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = tokenManager.getAccessToken();
-    
     // Ensure lang param exists, use 'az' as default if not provided
     if (!config.params) {
       config.params = { lang: 'az' };
@@ -73,10 +33,6 @@ apiClient.interceptors.request.use(
     if (config.data && ['post', 'put', 'patch'].includes(config.method?.toLowerCase() || '')) {
       config.data = removeEmptyFields(config.data);
     }
-    
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
 
     return config;
   },
@@ -85,122 +41,12 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor - Handle token refresh
-let isRefreshing = false;
-let failedQueue: Array<{
-  resolve: (value?: unknown) => void;
-  reject: (reason?: unknown) => void;
-}> = [];
-
-const processQueue = (error: AxiosError | null, token: string | null = null) => {
-  failedQueue.forEach(prom => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
-  });
-
-  failedQueue = [];
-};
-
+// Response interceptor - Simple error handling
 apiClient.interceptors.response.use(
   (response) => {
     return response;
   },
-  async (error: AxiosError) => {
-    
-    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
-
-    // If error is 401 and we haven't retried yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      // Check if this is a public endpoint (no auth required)
-      const publicEndpoints = [
-        '/home-content',
-        '/core-values',
-        '/memberships',
-        '/company-info',
-        '/services',
-        '/news',
-        '/careers',
-        '/contact'
-      ];
-      
-      const isPublicEndpoint = publicEndpoints.some(endpoint => 
-        originalRequest.url?.includes(endpoint)
-      );
-      
-      // For public endpoints, just return the error without refresh
-      if (isPublicEndpoint) {
-        return Promise.reject(error);
-      }
-
-      if (isRefreshing) {
-        // If already refreshing, queue this request
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        })
-          .then(token => {
-            if (originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-            }
-            return apiClient(originalRequest);
-          })
-          .catch(err => {
-            return Promise.reject(err);
-          });
-      }
-
-      originalRequest._retry = true;
-      isRefreshing = true;
-
-      const refreshToken = tokenManager.getRefreshToken();
-
-      if (!refreshToken) {
-        // No refresh token, clear tokens and redirect to login
-        tokenManager.clearTokens();
-        if (typeof window !== 'undefined') {
-          window.location.href = '/dashboard/login';
-        }
-        return Promise.reject(error);
-      }
-
-      try {
-        // Attempt to refresh the token
-        const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-          refreshToken
-        });
-
-        const { accessToken, refreshToken: newRefreshToken } = response.data;
-
-        // Update tokens
-        tokenManager.setTokens(accessToken, newRefreshToken);
-
-        // Update the failed request with new token
-        if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-        }
-
-        // Process queued requests
-        processQueue(null, accessToken);
-
-        // Retry the original request
-        return apiClient(originalRequest);
-      } catch (refreshError) {
-        // Refresh failed, clear tokens and redirect
-        processQueue(refreshError as AxiosError, null);
-        tokenManager.clearTokens();
-        
-        if (typeof window !== 'undefined') {
-          window.location.href = '/dashboard/login';
-        }
-
-        return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
-      }
-    }
-
+  (error: AxiosError) => {
     // Handle 403 Forbidden
     if (error.response?.status === 403) {
       console.error('Access forbidden:', error.response.data);
