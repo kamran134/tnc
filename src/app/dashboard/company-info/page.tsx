@@ -11,7 +11,6 @@ import { useToast, ImageUpload } from '@/components/ui';
 import { useCompanyInfoQuery, useCompanyInfoMutation } from '@/hooks/queries';
 
 const DEFAULT_FORM_DATA: CompanyInfoAdminDto = {
-const DEFAULT_FORM_DATA: CompanyInfoAdminDto = {
   companyName: '',
   email: '',
   phone: '',
@@ -293,6 +292,10 @@ export default function CompanyInfoPage() {
     }
   }, [deleteCompanyInfo, toast]);
 
+  // Memoize mission and vision icons (before any conditional returns)
+  const missionIcons = useMemo(() => getMissionIcons(), []);
+  const visionIcons = useMemo(() => getVisionIcons(), []);
+
   // Show loading state
   if (isLoadingData) {
     return (
@@ -301,10 +304,6 @@ export default function CompanyInfoPage() {
       </div>
     );
   }
-
-  // Memoize mission and vision icons
-  const missionIcons = useMemo(() => getMissionIcons(), []);
-  const visionIcons = useMemo(() => getVisionIcons(), []);
 
   return (
     <div className="max-w-6xl mx-auto p-6">
