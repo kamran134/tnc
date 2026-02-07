@@ -11,7 +11,7 @@ interface CoreValuesProps {
   companyInfo: CompanyInfoDto | null;
 }
 
-export default function CoreValues({ lang, companyInfo }: CoreValuesProps) {
+export default function CoreValues({ companyInfo }: CoreValuesProps) {
   const { ref, isVisible } = useScrollAnimation()
 
   return (

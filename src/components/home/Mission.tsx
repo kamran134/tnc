@@ -9,7 +9,7 @@ interface MissionProps {
   companyInfo: CompanyInfoDto | null;
 }
 
-export default function Mission({ lang, companyInfo }: MissionProps) {
+export default function Mission({ companyInfo }: MissionProps) {
   const { ref, isVisible } = useScrollAnimation();
 
   return (

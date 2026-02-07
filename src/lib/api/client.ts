@@ -51,12 +51,23 @@ const apiClient: AxiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  // Add default params to prevent validation errors
+  params: {
+    lang: 'az', // Default language parameter
+  },
 });
 
 // Request interceptor - Add auth token
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = tokenManager.getAccessToken();
+    
+    // Ensure lang param exists, use 'az' as default if not provided
+    if (!config.params) {
+      config.params = { lang: 'az' };
+    } else if (!config.params.lang) {
+      config.params.lang = 'az';
+    }
     
     // Clean empty fields from request data for POST, PUT, PATCH requests
     if (config.data && ['post', 'put', 'patch'].includes(config.method?.toLowerCase() || '')) {

@@ -9,7 +9,7 @@ interface VisionProps {
   companyInfo: CompanyInfoDto | null;
 }
 
-export default function Vision({ lang, companyInfo }: VisionProps) {
+export default function Vision({ companyInfo }: VisionProps) {
   const { ref, isVisible } = useScrollAnimation();
 
   return (

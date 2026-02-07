@@ -9,11 +9,12 @@ export const publicQueryKeys = {
 
 /**
  * Hook for fetching company info on public pages
- * - Caches data for 10 minutes to avoid repeated requests
+ * - Caches data for 2 minutes to avoid repeated requests
  * - Returns null on 404 (data doesn't exist yet)
  * - Shared across all components on the page
+ * - refetchOnMount disabled: prevents SSR spam (data rarely changes)
  */
-export function useCompanyInfo(lang: LanguageCode) {
+export function useCompanyInfo(lang: LanguageCode = 'az') {
   return useQuery({
     queryKey: publicQueryKeys.companyInfo(lang),
     queryFn: async () => {
@@ -27,10 +28,11 @@ export function useCompanyInfo(lang: LanguageCode) {
         throw error;
       }
     },
-    staleTime: 10 * 60 * 1000, // 10 minutes - company info rarely changes
-    gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
+    staleTime: 2 * 60 * 1000, // 2 minutes - company info rarely changes
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
     retry: false, // Don't retry on error
     refetchOnWindowFocus: false, // Don't refetch when window regains focus
     refetchOnReconnect: false, // Don't refetch on reconnect
+    refetchOnMount: false, // CRITICAL: prevent SSR request spam on every page render
   });
 }
