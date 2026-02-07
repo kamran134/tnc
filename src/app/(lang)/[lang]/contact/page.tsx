@@ -5,9 +5,10 @@ import { useSearchParams } from 'next/navigation'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { PageHero, Alert, Button, Card } from '@/components/ui'
-import { contactService, companyInfoService } from '@/lib/api'
-import { ContactDto, CompanyInfoDto, LanguageCode } from '@/types/api'
+import { contactService } from '@/lib/api'
+import { ContactDto, LanguageCode } from '@/types/api'
 import { useTranslations } from '@/hooks/useTranslations'
+import { useCompanyInfo } from '@/hooks/queries'
 
 interface Service {
   id: number;
@@ -19,7 +20,10 @@ export default function ContactPage() {
   const { t, locale } = useTranslations();
   const searchParams = useSearchParams();
   const [services, setServices] = useState<Service[]>([]);
-  const [companyInfo, setCompanyInfo] = useState<CompanyInfoDto | null>(null);
+  
+  // Use React Query hook - data will be cached and shared with Footer
+  const { data: companyInfo } = useCompanyInfo(locale as LanguageCode);
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -35,18 +39,14 @@ export default function ContactPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Load services
+        // Load services only
         const response = await fetch(`/api/services?lang=${locale}`);
         if (response.ok) {
           const data = await response.json();
           setServices(data);
         }
-        
-        // Load company info
-        const info = await companyInfoService.getCompanyInfo(locale as LanguageCode);
-        setCompanyInfo(info);
       } catch (error) {
-        console.error('Failed to load data:', error);
+        console.error('Failed to load services:', error);
       }
     };
     loadData();

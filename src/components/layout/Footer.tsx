@@ -3,16 +3,17 @@
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations } from '@/hooks/useTranslations'
-import { useEffect, useState } from 'react'
-import { CompanyInfoDto, LanguageCode } from '@/types/api'
-import { companyInfoService } from '@/lib/api'
+import { LanguageCode } from '@/types/api'
+import { useCompanyInfo } from '@/hooks/queries'
 
 export default function Footer() {
   const { t } = useTranslations();
   const currentYear = new Date().getFullYear()
   const params = useParams();
-  const lang = (params.lang as string) || 'az';
-  const [companyInfo, setCompanyInfo] = useState<CompanyInfoDto | null>(null);
+  const lang = (params.lang as LanguageCode) || 'az';
+  
+  // Use React Query hook - data will be cached and shared across components
+  const { data: companyInfo } = useCompanyInfo(lang);
 
   const services = [
     t('footer.services.accounting'),
@@ -29,18 +30,6 @@ export default function Footer() {
     { name: t('nav.careers'), href: `/${lang}/careers` },
     { name: t('nav.contact'), href: `/${lang}/contact` }
   ]
-
-  useEffect(() => {
-    const fetchCompanyInfo = async () => {
-      try {
-        const data = await companyInfoService.getCompanyInfo(lang as LanguageCode);
-        setCompanyInfo(data);
-      } catch (error) {
-        console.error('Failed to load company info:', error);
-      }
-    };
-    fetchCompanyInfo();
-  }, [lang]);
 
   return (
     <footer className="snap-start bg-gray-900 text-white flex items-center" style={{ minHeight: '100vh' }}>

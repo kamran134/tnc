@@ -3,6 +3,7 @@ export * from './useNewsQueries';
 export * from './useCareersQueries';
 export * from './useServicesQueries';
 export * from './usePageHeroQueries';
+export * from './usePublicQueries';
 
 // Admin API Query Hooks
 export * from './useAdminNewsQueries';
