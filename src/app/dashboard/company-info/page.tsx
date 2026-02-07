@@ -1,226 +1,182 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { adminCompanyInfoService, authService } from '@/lib/api';
 import { CompanyInfoAdminDto, CompanyInfoTranslationDto, MissionVisionValueItemDto } from '@/types/api';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import IconSelector from '@/components/admin/IconSelector';
 import { getMissionIcons, getVisionIcons } from '@/lib/icons/mission-vision-icons';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 import { useToast, ImageUpload } from '@/components/ui';
+import { useCompanyInfoQuery, useCompanyInfoMutation } from '@/hooks/queries';
+
+const DEFAULT_FORM_DATA: CompanyInfoAdminDto = {
+const DEFAULT_FORM_DATA: CompanyInfoAdminDto = {
+  companyName: '',
+  email: '',
+  phone: '',
+  website: '',
+  linkedinUrl: '',
+  logoUrl: '',
+  foundedYear: '',
+  teamSize: '',
+  translations: [
+    { 
+      languageCode: 'az', 
+      address: '', 
+      description: '', 
+      history: '',
+      missionTitle: '',
+      missionDescription: '',
+      missions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
+      visionTitle: '',
+      visionDescription: '',
+      visions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
+      valuesTitle: '',
+      valuesDescription: '',
+      values: [{ title: '', description: '', displayOrder: 1 }],
+    },
+    { 
+      languageCode: 'en', 
+      address: '', 
+      description: '', 
+      history: '',
+      missionTitle: '',
+      missionDescription: '',
+      missions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
+      visionTitle: '',
+      visionDescription: '',
+      visions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
+      valuesTitle: '',
+      valuesDescription: '',
+      values: [{ title: '', description: '', displayOrder: 1 }],
+    },
+    { 
+      languageCode: 'ru', 
+      address: '', 
+      description: '', 
+      history: '',
+      missionTitle: '',
+      missionDescription: '',
+      missions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
+      visionTitle: '',
+      visionDescription: '',
+      visions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
+      valuesTitle: '',
+      valuesDescription: '',
+      values: [{ title: '', description: '', displayOrder: 1 }],
+    },
+  ]
+};
+
+function normalizeCompanyInfo(data: CompanyInfoAdminDto): CompanyInfoAdminDto {
+  // Ensure all 3 languages exist
+  const allLanguages: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
+  const normalizedData = { ...data };
+  
+  if (normalizedData.translations) {
+    allLanguages.forEach(langCode => {
+      if (!normalizedData.translations.find(t => t.languageCode === langCode)) {
+        normalizedData.translations.push({
+          languageCode: langCode,
+          address: '',
+          description: '',
+          history: '',
+          missionTitle: '',
+          missionDescription: '',
+          missions: [],
+          visionTitle: '',
+          visionDescription: '',
+          visions: [],
+          valuesTitle: '',
+          valuesDescription: '',
+          values: []
+        });
+      }
+    });
+    
+    // Sort to ensure correct order: az, en, ru
+    normalizedData.translations.sort((a, b) => {
+      const order = { az: 0, en: 1, ru: 2 };
+      return order[a.languageCode] - order[b.languageCode];
+    });
+    
+    // Синхронизируем длины массивов missions/visions/values для всех языков
+    if (normalizedData.translations.length > 0) {
+      const maxMissions = Math.max(...normalizedData.translations.map(t => t.missions?.length || 0));
+      const maxVisions = Math.max(...normalizedData.translations.map(t => t.visions?.length || 0));
+      const maxValues = Math.max(...normalizedData.translations.map(t => t.values?.length || 0));
+      
+      normalizedData.translations.forEach((translation, index) => {
+        // Дополняем missions до максимальной длины
+        while ((translation.missions?.length || 0) < maxMissions) {
+          if (!translation.missions) translation.missions = [];
+          translation.missions.push({
+            title: '',
+            description: '',
+            displayOrder: translation.missions.length + 1,
+            ...(index === 0 ? { icon: '' } : {})
+          });
+        }
+        
+        // Дополняем visions до максимальной длины
+        while ((translation.visions?.length || 0) < maxVisions) {
+          if (!translation.visions) translation.visions = [];
+          translation.visions.push({
+            title: '',
+            description: '',
+            displayOrder: translation.visions.length + 1,
+            ...(index === 0 ? { icon: '' } : {})
+          });
+        }
+        
+        // Дополняем values до максимальной длины
+        while ((translation.values?.length || 0) < maxValues) {
+          if (!translation.values) translation.values = [];
+          translation.values.push({
+            title: '',
+            description: '',
+            displayOrder: translation.values.length + 1
+          });
+        }
+      });
+    }
+  }
+  
+  return normalizedData;
+}
 
 export default function CompanyInfoPage() {
   const router = useRouter();
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingData, setIsLoadingData] = useState(true);
-  const [exists, setExists] = useState(false);
-  const [formData, setFormData] = useState<CompanyInfoAdminDto>({
-    companyName: '',
-    email: '',
-    phone: '',
-    website: '',
-    linkedinUrl: '',
-    logoUrl: '',
-    foundedYear: '',
-    teamSize: '',
-    translations: [
-      { 
-        languageCode: 'az', 
-        address: '', 
-        description: '', 
-        history: '',
-        missionTitle: '',
-        missionDescription: '',
-        missions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
-        visionTitle: '',
-        visionDescription: '',
-        visions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
-        valuesTitle: '',
-        valuesDescription: '',
-        values: [{ title: '', description: '', displayOrder: 1 }],
-      },
-      { 
-        languageCode: 'en', 
-        address: '', 
-        description: '', 
-        history: '',
-        missionTitle: '',
-        missionDescription: '',
-        missions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
-        visionTitle: '',
-        visionDescription: '',
-        visions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
-        valuesTitle: '',
-        valuesDescription: '',
-        values: [{ title: '', description: '', displayOrder: 1 }],
-      },
-      { 
-        languageCode: 'ru', 
-        address: '', 
-        description: '', 
-        history: '',
-        missionTitle: '',
-        missionDescription: '',
-        missions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
-        visionTitle: '',
-        visionDescription: '',
-        visions: [{ title: '', description: '', displayOrder: 1, icon: '' }],
-        valuesTitle: '',
-        valuesDescription: '',
-        values: [{ title: '', description: '', displayOrder: 1 }],
-      },
-    ]
-  });
+  const [formData, setFormData] = useState<CompanyInfoAdminDto>(DEFAULT_FORM_DATA);
 
-  // Load company info data
+  // React Query hooks
+  const { data: serverData, isLoading: isLoadingData, error } = useCompanyInfoQuery();
+  const { create, update, delete: deleteCompanyInfo } = useCompanyInfoMutation();
+
+  // Memoized values
+  const exists = useMemo(() => !!serverData, [serverData]);
+  const isSubmitting = useMemo(
+    () => create.isPending || update.isPending || deleteCompanyInfo.isPending,
+    [create.isPending, update.isPending, deleteCompanyInfo.isPending]
+  );
+
+  // Initialize form with server data (only once when data loads)
   useEffect(() => {
-    // Middleware уже проверил cookies - просто грузим данные
-    loadCompanyInfo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const loadCompanyInfo = async () => {
-    try {
-      setIsLoadingData(true);
-      const data = await adminCompanyInfoService.get();
-      console.log('Loaded company info:', data);
-      
-      // Ensure all 3 languages exist
-      const allLanguages: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
-      if (data.translations) {
-        allLanguages.forEach(langCode => {
-          if (!data.translations.find(t => t.languageCode === langCode)) {
-            data.translations.push({
-              languageCode: langCode,
-              address: '',
-              description: '',
-              history: '',
-              missionTitle: '',
-              missionDescription: '',
-              missions: [],
-              visionTitle: '',
-              visionDescription: '',
-              visions: [],
-              valuesTitle: '',
-              valuesDescription: '',
-              values: []
-            });
-          }
-        });
-        
-        // Sort to ensure correct order: az, en, ru
-        data.translations.sort((a, b) => {
-          const order = { az: 0, en: 1, ru: 2 };
-          return order[a.languageCode] - order[b.languageCode];
-        });
-      }
-      
-      // Синхронизируем длины массивов missions/visions/values для всех языков
-      if (data.translations && data.translations.length > 0) {
-        const maxMissions = Math.max(...data.translations.map(t => t.missions?.length || 0));
-        const maxVisions = Math.max(...data.translations.map(t => t.visions?.length || 0));
-        const maxValues = Math.max(...data.translations.map(t => t.values?.length || 0));
-        
-        data.translations.forEach((translation, index) => {
-          // Дополняем missions до максимальной длины
-          while ((translation.missions?.length || 0) < maxMissions) {
-            if (!translation.missions) translation.missions = [];
-            translation.missions.push({
-              title: '',
-              description: '',
-              displayOrder: translation.missions.length + 1,
-              ...(index === 0 ? { icon: '' } : {})
-            });
-          }
-          
-          // Дополняем visions до максимальной длины
-          while ((translation.visions?.length || 0) < maxVisions) {
-            if (!translation.visions) translation.visions = [];
-            translation.visions.push({
-              title: '',
-              description: '',
-              displayOrder: translation.visions.length + 1,
-              ...(index === 0 ? { icon: '' } : {})
-            });
-          }
-          
-          // Дополняем values до максимальной длины
-          while ((translation.values?.length || 0) < maxValues) {
-            if (!translation.values) translation.values = [];
-            translation.values.push({
-              title: '',
-              description: '',
-              displayOrder: translation.values.length + 1
-            });
-          }
-        });
-      }
-      
-      setExists(true);
-      setFormData(data);
-    } catch (err: any) {
-      console.log('Company info not found, create mode');
-      setExists(false);
-    } finally {
-      setIsLoadingData(false);
+    if (serverData) {
+      setFormData(normalizeCompanyInfo(serverData));
     }
-  };
+  }, [serverData]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      setIsLoading(true);
-      
-      // Фильтруем переводы - оставляем только те, где есть хотя бы одно заполненное поле
-      const filteredData = {
-        ...formData,
-        translations: formData.translations.filter(t => 
-          t.address?.trim() || 
-          t.description?.trim() || 
-          t.history?.trim() ||
-          t.missionTitle?.trim() ||
-          t.missionDescription?.trim() ||
-          t.visionTitle?.trim() ||
-          t.visionDescription?.trim() ||
-          t.valuesTitle?.trim() ||
-          t.valuesDescription?.trim() ||
-          (t.missions && t.missions.length > 0 && t.missions.some(m => m.title?.trim() || m.description?.trim())) ||
-          (t.visions && t.visions.length > 0 && t.visions.some(v => v.title?.trim() || v.description?.trim())) ||
-          (t.values && t.values.length > 0 && t.values.some(v => v.title?.trim() || v.description?.trim()))
-        )
-      };
-      
-      // Clean the form data before sending to backend
-      const cleanedData = removeEmptyFields(filteredData);
-      
-      if (exists) {
-        await adminCompanyInfoService.update(cleanedData as CompanyInfoAdminDto);
-        toast.success('Company information updated successfully!');
-      } else {
-        await adminCompanyInfoService.create(cleanedData as CompanyInfoAdminDto);
-        toast.success('Company information created successfully!');
-        setExists(true);
-      }
-      
-      await loadCompanyInfo();
-    } catch (err: any) {
-      console.error('Failed to save company info:', err);
-      toast.error(err.message || 'Failed to save company information');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const updateTranslation = (index: number, field: keyof CompanyInfoTranslationDto, value: any) => {
+  // Memoized update handlers
+  const updateTranslation = useCallback((index: number, field: keyof CompanyInfoTranslationDto, value: any) => {
     const newTranslations = [...formData.translations];
     newTranslations[index] = { ...newTranslations[index], [field]: value };
     setFormData(prev => ({ ...prev, translations: newTranslations }));
-  };
+  }, [formData.translations]);
 
-  const addItem = (translationIndex: number, type: 'missions' | 'visions' | 'values') => {
+  const addItem = useCallback((translationIndex: number, type: 'missions' | 'visions' | 'values') => {
     const newTranslations = [...formData.translations];
     const itemsLength = newTranslations[0][type].length;
     
@@ -239,9 +195,9 @@ export default function CompanyInfoPage() {
     });
     
     setFormData(prev => ({ ...prev, translations: newTranslations }));
-  };
+  }, [formData.translations]);
 
-  const removeItem = (translationIndex: number, type: 'missions' | 'visions' | 'values', itemIndex: number) => {
+  const removeItem = useCallback((translationIndex: number, type: 'missions' | 'visions' | 'values', itemIndex: number) => {
     const newTranslations = [...formData.translations];
     
     // Remove item from ALL languages
@@ -255,9 +211,9 @@ export default function CompanyInfoPage() {
     });
     
     setFormData(prev => ({ ...prev, translations: newTranslations }));
-  };
+  }, [formData.translations]);
 
-  const updateItem = (translationIndex: number, type: 'missions' | 'visions' | 'values', itemIndex: number, field: keyof MissionVisionValueItemDto, value: string | number) => {
+  const updateItem = useCallback((translationIndex: number, type: 'missions' | 'visions' | 'values', itemIndex: number, field: keyof MissionVisionValueItemDto, value: string | number) => {
     const newTranslations = [...formData.translations];
     
     // Ensure the array exists
@@ -281,83 +237,63 @@ export default function CompanyInfoPage() {
       [type]: items
     };
     setFormData(prev => ({ ...prev, translations: newTranslations }));
-  };
+  }, [formData.translations]);
 
-  const handleDelete = async () => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Фильтруем переводы - оставляем только те, где есть хотя бы одно заполненное поле
+    const filteredData = {
+      ...formData,
+      translations: formData.translations.filter(t => 
+        t.address?.trim() || 
+        t.description?.trim() || 
+        t.history?.trim() ||
+        t.missionTitle?.trim() ||
+        t.missionDescription?.trim() ||
+        t.visionTitle?.trim() ||
+        t.visionDescription?.trim() ||
+        t.valuesTitle?.trim() ||
+        t.valuesDescription?.trim() ||
+        (t.missions && t.missions.length > 0 && t.missions.some(m => m.title?.trim() || m.description?.trim())) ||
+        (t.visions && t.visions.length > 0 && t.visions.some(v => v.title?.trim() || v.description?.trim())) ||
+        (t.values && t.values.length > 0 && t.values.some(v => v.title?.trim() || v.description?.trim()))
+      )
+    };
+    
+    // Clean the form data before sending to backend
+    const cleanedData = removeEmptyFields(filteredData);
+    
+    try {
+      if (exists) {
+        await update.mutateAsync(cleanedData as CompanyInfoAdminDto);
+        toast.success('Company information updated successfully!');
+      } else {
+        await create.mutateAsync(cleanedData as CompanyInfoAdminDto);
+        toast.success('Company information created successfully!');
+      }
+    } catch (err: any) {
+      console.error('Failed to save company info:', err);
+      toast.error(err.message || 'Failed to save company information');
+    }
+  }, [formData, exists, create, update, toast]);
+
+  const handleDelete = useCallback(async () => {
     if (!confirm('Are you sure you want to delete company information?')) {
       return;
     }
 
     try {
-      setIsLoading(true);
-      await adminCompanyInfoService.delete();
+      await deleteCompanyInfo.mutateAsync();
       toast.success('Company information deleted successfully!');
-      setExists(false);
-      setFormData({
-        companyName: '',
-        email: '',
-        phone: '',
-        website: '',
-        linkedinUrl: '',
-        logoUrl: '',
-        foundedYear: '',
-        teamSize: '',
-        translations: [
-          { 
-            languageCode: 'az', 
-            address: '', 
-            description: '', 
-            history: '',
-            missionTitle: '',
-            missionDescription: '',
-            missions: [{ title: '', description: '', displayOrder: 1 }],
-            visionTitle: '',
-            visionDescription: '',
-            visions: [{ title: '', description: '', displayOrder: 1 }],
-            valuesTitle: '',
-            valuesDescription: '',
-            values: [{ title: '', description: '', displayOrder: 1 }],
-          },
-          { 
-            languageCode: 'en', 
-            address: '', 
-            description: '', 
-            history: '',
-            missionTitle: '',
-            missionDescription: '',
-            missions: [],
-            visionTitle: '',
-            visionDescription: '',
-            visions: [],
-            valuesTitle: '',
-            valuesDescription: '',
-            values: [],
-          },
-          { 
-            languageCode: 'ru', 
-            address: '', 
-            description: '', 
-            history: '',
-            missionTitle: '',
-            missionDescription: '',
-            missions: [],
-            visionTitle: '',
-            visionDescription: '',
-            visions: [],
-            valuesTitle: '',
-            valuesDescription: '',
-            values: [],
-          },
-        ]
-      });
+      setFormData(DEFAULT_FORM_DATA);
     } catch (err: any) {
       console.error('Failed to delete company info:', err);
       toast.error(err.message || 'Failed to delete company information');
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [deleteCompanyInfo, toast]);
 
+  // Show loading state
   if (isLoadingData) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -365,6 +301,10 @@ export default function CompanyInfoPage() {
       </div>
     );
   }
+
+  // Memoize mission and vision icons
+  const missionIcons = useMemo(() => getMissionIcons(), []);
+  const visionIcons = useMemo(() => getVisionIcons(), []);
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -386,7 +326,7 @@ export default function CompanyInfoPage() {
           <button
             onClick={handleDelete}
             type="button"
-            disabled={isLoading}
+            disabled={isSubmitting}
             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
           >
             Delete
@@ -590,7 +530,7 @@ export default function CompanyInfoPage() {
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Icon (for az language)</label>
                   <IconSelector
-                    icons={getMissionIcons()}
+                    icons={missionIcons}
                     selectedIcon={formData.translations[0].missions[missionIndex].icon || ''}
                     onSelect={(iconName) => {
                       updateItem(0, 'missions', missionIndex, 'icon', iconName);
@@ -706,7 +646,7 @@ export default function CompanyInfoPage() {
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Icon (for az language)</label>
                   <IconSelector
-                    icons={getVisionIcons()}
+                    icons={visionIcons}
                     selectedIcon={formData.translations[0].visions[visionIndex].icon || ''}
                     onSelect={(iconName) => {
                       updateItem(0, 'visions', visionIndex, 'icon', iconName);
@@ -856,10 +796,10 @@ export default function CompanyInfoPage() {
         <div className="flex justify-end">
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isSubmitting}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? (exists ? 'Updating...' : 'Creating...') : (exists ? 'Update Company Info' : 'Create Company Info')}
+            {isSubmitting ? (exists ? 'Updating...' : 'Creating...') : (exists ? 'Update Company Info' : 'Create Company Info')}
           </button>
         </div>
       </form>

@@ -11,6 +11,7 @@ export * from './useAdminServicesQueries';
 export * from './useAdminContactsQueries';
 export * from './useAdminPageHeroQueries';
 export * from './useAdminTeamQueries';
+export * from './useAdminContentQueries';
 
 // Dashboard Query Hooks
 export * from './useDashboardQueries';
