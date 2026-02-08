@@ -1,21 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCurrentUserQuery, useLogoutMutation, useDashboardStatsQuery } from '@/hooks/queries';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { data: user, isLoading, error } = useCurrentUserQuery();
+  const { data: user, isLoading } = useCurrentUserQuery();
   const { data: statistics, isLoading: statsLoading } = useDashboardStatsQuery();
   const logoutMutation = useLogoutMutation();
-
-  useEffect(() => {
-    if (error) {
-      console.error('❌ Authentication error, redirecting to login...');
-      router.push('/dashboard/login');
-    }
-  }, [error, router]);
 
   const handleLogout = async () => {
     try {
