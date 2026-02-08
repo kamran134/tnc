@@ -39,11 +39,37 @@ export function usePublishNewsMutation() {
 
   return useMutation({
     mutationFn: (id: number) => adminNewsService.publish(id),
-    onSuccess: (_, id) => {
-      // Инвалидируем все списки новостей
+    onMutate: async (id) => {
+      // Отменяем текущие запросы
+      await queryClient.cancelQueries({ queryKey: adminNewsKeys.lists() });
+      
+      // Получаем предыдущие данные
+      const previousData = queryClient.getQueriesData({ queryKey: adminNewsKeys.lists() });
+      
+      // Оптимистично обновляем все списки
+      queryClient.setQueriesData<any>({ queryKey: adminNewsKeys.lists() }, (old: any) => {
+        if (!old?.content) return old;
+        return {
+          ...old,
+          content: old.content.map((article: any) => 
+            article.id === id ? { ...article, published: true } : article
+          )
+        };
+      });
+      
+      return { previousData };
+    },
+    onError: (err, id, context: any) => {
+      // Откатываем при ошибке
+      if (context?.previousData) {
+        context.previousData.forEach(([queryKey, data]: [any, any]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+    },
+    onSettled: () => {
+      // Инвалидируем для перезагрузки с сервера
       queryClient.invalidateQueries({ queryKey: adminNewsKeys.lists() });
-      // Инвалидируем конкретную новость
-      queryClient.invalidateQueries({ queryKey: adminNewsKeys.detail(id) });
     },
   });
 }
@@ -53,9 +79,31 @@ export function useUnpublishNewsMutation() {
 
   return useMutation({
     mutationFn: (id: number) => adminNewsService.unpublish(id),
-    onSuccess: (_, id) => {
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: adminNewsKeys.lists() });
+      const previousData = queryClient.getQueriesData({ queryKey: adminNewsKeys.lists() });
+      
+      queryClient.setQueriesData<any>({ queryKey: adminNewsKeys.lists() }, (old: any) => {
+        if (!old?.content) return old;
+        return {
+          ...old,
+          content: old.content.map((article: any) => 
+            article.id === id ? { ...article, published: false } : article
+          )
+        };
+      });
+      
+      return { previousData };
+    },
+    onError: (err, id, context: any) => {
+      if (context?.previousData) {
+        context.previousData.forEach(([queryKey, data]: [any, any]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: adminNewsKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: adminNewsKeys.detail(id) });
     },
   });
 }
