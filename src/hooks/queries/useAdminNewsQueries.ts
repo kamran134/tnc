@@ -39,14 +39,8 @@ export function usePublishNewsMutation() {
 
   return useMutation({
     mutationFn: (id: number) => adminNewsService.publish(id),
-    onMutate: async (id) => {
-      // Отменяем текущие запросы
-      await queryClient.cancelQueries({ queryKey: adminNewsKeys.lists() });
-      
-      // Получаем предыдущие данные
-      const previousData = queryClient.getQueriesData({ queryKey: adminNewsKeys.lists() });
-      
-      // Оптимистично обновляем все списки
+    onSuccess: (_, id) => {
+      // Обновляем published в кеше БЕЗ перезагрузки с сервера
       queryClient.setQueriesData<any>({ queryKey: adminNewsKeys.lists() }, (old: any) => {
         if (!old?.content) return old;
         return {
@@ -56,20 +50,6 @@ export function usePublishNewsMutation() {
           )
         };
       });
-      
-      return { previousData };
-    },
-    onError: (err, id, context: any) => {
-      // Откатываем при ошибке
-      if (context?.previousData) {
-        context.previousData.forEach(([queryKey, data]: [any, any]) => {
-          queryClient.setQueryData(queryKey, data);
-        });
-      }
-    },
-    onSettled: () => {
-      // Инвалидируем для перезагрузки с сервера
-      queryClient.invalidateQueries({ queryKey: adminNewsKeys.lists() });
     },
   });
 }
@@ -79,10 +59,8 @@ export function useUnpublishNewsMutation() {
 
   return useMutation({
     mutationFn: (id: number) => adminNewsService.unpublish(id),
-    onMutate: async (id) => {
-      await queryClient.cancelQueries({ queryKey: adminNewsKeys.lists() });
-      const previousData = queryClient.getQueriesData({ queryKey: adminNewsKeys.lists() });
-      
+    onSuccess: (_, id) => {
+      // Обновляем published в кеше БЕЗ перезагрузки с сервера
       queryClient.setQueriesData<any>({ queryKey: adminNewsKeys.lists() }, (old: any) => {
         if (!old?.content) return old;
         return {
@@ -92,18 +70,6 @@ export function useUnpublishNewsMutation() {
           )
         };
       });
-      
-      return { previousData };
-    },
-    onError: (err, id, context: any) => {
-      if (context?.previousData) {
-        context.previousData.forEach(([queryKey, data]: [any, any]) => {
-          queryClient.setQueryData(queryKey, data);
-        });
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: adminNewsKeys.lists() });
     },
   });
 }
