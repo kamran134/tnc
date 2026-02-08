@@ -94,7 +94,11 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Moitem.hasDropdown ? (
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden py-4 border-t space-y-2">
+            {navigation.map((item) => (
+              item.hasDropdown ? (
                 <ServicesDropdown 
                   key={item.name}
                   isMobile={true}
@@ -109,11 +113,7 @@ export default function Header() {
                 >
                   {item.name}
                 </Link>
-              )Name="block py-2 text-gray-700 hover:text-primary-600 font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.name}
-              </Link>
+              )
             ))}
             <div className="pt-2 border-t">
               <LanguageSwitcher />

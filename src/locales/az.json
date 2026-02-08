@@ -67,7 +67,9 @@
     "selectCategory": "Xidmət kateqoriyasını seçin",
     "categories": "Kateqoriyalar",
     "noServices": "Xidmət tapılmadı",
-    "categoryNotFound": "Kateqoriya tapılmadı"
+    "categoryNotFound": "Kateqoriya tapılmadı",
+    "allServicesTitle": "Bütün Xidmətlərimiz",
+    "allServicesDescription": "Peşəkar xidmətlərimizin tam çeşidini nəzərdən keçirin"
   },
   "breadcrumbs": {
     "home": "Ana Səhifə",

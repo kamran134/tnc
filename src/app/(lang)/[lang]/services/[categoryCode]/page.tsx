@@ -5,14 +5,14 @@ import CategorySidebar from '@/components/services/CategorySidebar'
 import ServicesList from '@/components/services/ServicesList'
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     lang: string
     categoryCode: string
-  }
+  }>
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
-  const { categoryCode } = params
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const { categoryCode } = await params
 
   return (
     <div className="min-h-screen">

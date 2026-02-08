@@ -67,7 +67,9 @@
     "selectCategory": "Выберите категорию услуг",
     "categories": "Категории",
     "noServices": "Услуги не найдены",
-    "categoryNotFound": "Категория не найдена"
+    "categoryNotFound": "Категория не найдена",
+    "allServicesTitle": "Все наши услуги",
+    "allServicesDescription": "Ознакомьтесь с полным спектром наших профессиональных услуг"
   },
   "breadcrumbs": {
     "home": "Главная",

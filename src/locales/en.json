@@ -67,7 +67,9 @@
     "selectCategory": "Choose a service category",
     "categories": "Categories",
     "noServices": "No services found",
-    "categoryNotFound": "Category not found"
+    "categoryNotFound": "Category not found",
+    "allServicesTitle": "All Our Services",
+    "allServicesDescription": "Browse through our complete range of professional services"
   },
   "breadcrumbs": {
     "home": "Home",
