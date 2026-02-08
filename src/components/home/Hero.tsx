@@ -50,7 +50,7 @@ export default function Hero({ companyInfo }: HeroProps) {
   const subtitle = heroData?.subtitle || '';
   const description = heroData?.heroDescription || 'Delivering excellence with integrity. Expert guidance for your business growth and compliance needs.';
   const buttonText = heroData?.buttonText || 'Our Services';
-  const buttonUrl = heroData?.buttonUrl || `/${lang}/services`;
+  const buttonUrl = `/${lang}/${heroData?.buttonUrl}` || `/${lang}/services`;
 
   if (isLoading) {
     return (
