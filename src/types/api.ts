@@ -339,7 +339,7 @@ export interface NewsAdminDto {
   id?: number;
   imageUrl?: string;
   author?: string;
-  publishDate?: string;
+  publishedDate?: string;
   published?: boolean;
   category?: string;
   readTimeMinutes?: number;

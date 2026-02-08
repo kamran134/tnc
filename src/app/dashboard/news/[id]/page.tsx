@@ -108,7 +108,6 @@ export default function EditNewsPage() {
       toast.success('News article updated successfully!');
       router.push('/dashboard/news');
     } catch (error) {
-      console.error('Error updating news:', error);
       toast.error('Network error. Please check your connection and try again.');
     } finally {
       setIsLoading(false);
@@ -126,7 +125,6 @@ export default function EditNewsPage() {
       }
       setFormData(prev => ({ ...prev, published: !prev.published }));
     } catch (error) {
-      console.error('Error toggling publish status:', error);
       toast.error('An error occurred. Please try again.');
     }
   };
