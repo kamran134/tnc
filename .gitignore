@@ -38,8 +38,10 @@ next-env.d.ts
 nginx-server.conf
 nginx.conf
 docker-compose.prod.yml
+docker-compose.yml
 ssl/
 uploads/
 postgres-data/
 logs/
 NGINX_UPDATE_INSTRUCTIONS.md
+PROD_CONFIG.md

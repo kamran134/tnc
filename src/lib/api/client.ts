@@ -2,14 +2,16 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, InternalAxiosRequ
 import { removeEmptyFields } from '../utils/cleanup';
 
 // API Configuration
-// В ЛЮБОМ случае используем полный URL к бекенду
-// Rewrites в next.config.js нужны только для проксирования на серверной стороне Next.js
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://tnc.az/api';
+// Используем относительный путь /api для всех запросов
+// Это заставляет их идти через Next.js API routes которые читают httpOnly cookies
+// и добавляют Authorization header при проксировании на бэкенд
+export const API_BASE_URL = '/api';
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
+  withCredentials: true, // Отправляем cookies с запросами (критично для httpOnly cookies)
   headers: {
     'Content-Type': 'application/json',
   },
