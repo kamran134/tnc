@@ -60,7 +60,10 @@
     "accounting": "Accounting",
     "tax": "Tax",
     "legal": "Legal",
-    "hr": "Human Resources"
+    "hr": "Human Resources",
+    "allCategories": "All Categories",
+    "noCategories": "No categories found",
+    "viewAll": "View all services"
   },
   "news": {
     "title": "News & Articles",

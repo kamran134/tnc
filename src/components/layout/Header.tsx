@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import LanguageSwitcher from './LanguageSwitcher'
+import ServicesDropdown from './ServicesDropdown'
 import { useTranslations } from '@/hooks/useTranslations'
 import { CompanyInfoDto, LanguageCode } from '@/types/api'
 import { companyInfoService } from '@/lib/api'
@@ -28,12 +29,12 @@ export default function Header() {
   }, [lang]);
 
   const navigation = [
-    { name: t('nav.home'), href: `/${lang}` },
-    { name: t('nav.services'), href: `/${lang}/services` },
-    { name: t('nav.team'), href: `/${lang}/team` },
-    { name: t('nav.news'), href: `/${lang}/news` },
-    { name: t('nav.careers'), href: `/${lang}/careers` },
-    { name: t('nav.contact'), href: `/${lang}/contact` },
+    { name: t('nav.home'), href: `/${lang}`, hasDropdown: false },
+    { name: t('nav.services'), href: `/${lang}/services`, hasDropdown: true },
+    { name: t('nav.team'), href: `/${lang}/team`, hasDropdown: false },
+    { name: t('nav.news'), href: `/${lang}/news`, hasDropdown: false },
+    { name: t('nav.careers'), href: `/${lang}/careers`, hasDropdown: false },
+    { name: t('nav.contact'), href: `/${lang}/contact`, hasDropdown: false },
     // Dashboard скрыт - доступ только через прямой URL /dashboard
   ]
 
@@ -57,13 +58,17 @@ export default function Header() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-gray-700 hover:text-primary-600 font-medium transition-colors duration-200"
-              >
-                {item.name}
-              </Link>
+              item.hasDropdown ? (
+                <ServicesDropdown key={item.name} />
+              ) : (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="text-gray-700 hover:text-primary-600 font-medium transition-colors duration-200"
+                >
+                  {item.name}
+                </Link>
+              )
             ))}
             <LanguageSwitcher />
           </div>
@@ -89,14 +94,22 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t space-y-2">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="block py-2 text-gray-700 hover:text-primary-600 font-medium"
+        {/* Moitem.hasDropdown ? (
+                <ServicesDropdown 
+                  key={item.name}
+                  isMobile={true}
+                  onItemClick={() => setIsMenuOpen(false)}
+                />
+              ) : (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="block py-2 text-gray-700 hover:text-primary-600 font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              )Name="block py-2 text-gray-700 hover:text-primary-600 font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}

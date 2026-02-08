@@ -60,7 +60,10 @@
     "accounting": "Mühasibatlıq",
     "tax": "Vergi",
     "legal": "Hüquqi",
-    "hr": "İnsan Resursları"
+    "hr": "İnsan Resursları",
+    "allCategories": "Bütün Kateqoriyalar",
+    "noCategories": "Kateqoriya tapılmadı",
+    "viewAll": "Bütün xidmətlər"
   },
   "news": {
     "title": "Xəbərlər və Məqalələr",
