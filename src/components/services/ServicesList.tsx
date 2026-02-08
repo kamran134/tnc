@@ -33,10 +33,14 @@ export default function ServicesList({ categoryCode }: ServicesListProps) {
       setLoading(true)
       setError(null)
       
+      console.log('Loading services:', { categoryCode, lang })
+      
       // Если передан categoryCode - загружаем сервисы категории, иначе все
       const data = categoryCode 
         ? await servicesService.getByCategory(categoryCode, lang)
         : await servicesService.getAll(lang)
+      
+      console.log('Loaded services:', data)
       
       // Sort by displayOrder (ascending)
       const sortedData = [...data].sort((a, b) => {
@@ -45,9 +49,14 @@ export default function ServicesList({ categoryCode }: ServicesListProps) {
         return orderA - orderB;
       });
       setServices(sortedData)
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to load services:', err)
-      setError('Failed to load services')
+      console.error('Error details:', {
+        message: err?.message,
+        response: err?.response?.data,
+        status: err?.response?.status
+      })
+      setError(`Failed to load services: ${err?.response?.data?.message || err?.message || 'Unknown error'}`)
     } finally {
       setLoading(false)
     }
