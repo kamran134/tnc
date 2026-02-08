@@ -63,7 +63,8 @@
     "hr": "Human Resources",
     "allCategories": "All Categories",
     "noCategories": "No categories found",
-    "viewAll": "View all services"
+    "viewAll": "View all services",
+    "selectCategory": "Choose a service category"
   },
   "news": {
     "title": "News & Articles",

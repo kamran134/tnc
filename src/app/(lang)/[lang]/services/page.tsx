@@ -1,7 +1,7 @@
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import ServiceHero from '@/components/services/ServiceHero'
-import ServicesList from '@/components/services/ServicesList'
+import CategoriesGrid from '@/components/services/CategoriesGrid'
 
 export default function ServicesPage() {
   return (
@@ -9,7 +9,7 @@ export default function ServicesPage() {
       <Header />
       <main>
         <ServiceHero />
-        <ServicesList />
+        <CategoriesGrid />
       </main>
       <Footer />
     </div>
