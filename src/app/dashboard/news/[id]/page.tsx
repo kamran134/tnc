@@ -83,7 +83,7 @@ export default function EditNewsPage() {
         ]
       });
     }
-  }, [newsId, router]);
+  }, [newsData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
