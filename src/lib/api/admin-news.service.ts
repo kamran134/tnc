@@ -60,7 +60,7 @@ export const adminNewsService = {
   // Delete news (soft delete)
   async delete(id: number): Promise<void> {
     try {
-      await apiClient.delete(`/api/admin/news/${id}`);
+      await apiClient.delete(`/admin/news/${id}`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -69,7 +69,7 @@ export const adminNewsService = {
   // Publish news
   async publish(id: number): Promise<void> {
     try {
-      await apiClient.patch(`/api/admin/news/${id}/publish`);
+      await apiClient.patch(`/admin/news/${id}/publish`);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -78,7 +78,7 @@ export const adminNewsService = {
   // Unpublish news
   async unpublish(id: number): Promise<void> {
     try {
-      await apiClient.patch(`/api/admin/news/${id}/unpublish`);
+      await apiClient.patch(`/admin/news/${id}/unpublish`);
     } catch (error) {
       throw handleApiError(error);
     }
