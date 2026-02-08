@@ -2,6 +2,7 @@ import apiClient, { handleApiError } from './client';
 import {
   ServiceDto,
   LanguageCode,
+  ServiceCategoryUserDto,
 } from '@/types/api';
 
 export const servicesService = {
