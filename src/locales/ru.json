@@ -64,7 +64,14 @@
     "allCategories": "Все категории",
     "noCategories": "Категории не найдены",
     "viewAll": "Все услуги",
-    "selectCategory": "Выберите категорию услуг"
+    "selectCategory": "Выберите категорию услуг",
+    "categories": "Категории",
+    "noServices": "Услуги не найдены",
+    "categoryNotFound": "Категория не найдена"
+  },
+  "breadcrumbs": {
+    "home": "Главная",
+    "services": "Услуги"
   },
   "news": {
     "title": "Новости и статьи",

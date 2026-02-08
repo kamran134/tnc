@@ -6,10 +6,16 @@ import Link from 'next/link'
 import { LoadingSpinner, Alert, Card } from '@/components/ui'
 import { ServiceDto, LanguageCode } from '@/types/api'
 import { servicesService } from '@/lib/api'
+import { useTranslations } from '@/hooks/useTranslations'
 
-export default function ServicesList() {
+interface ServicesListProps {
+  categoryCode?: string
+}
+
+export default function ServicesList({ categoryCode }: ServicesListProps) {
   const params = useParams();
   const lang = (params.lang as LanguageCode) || 'az';
+  const { t } = useTranslations()
 
   const [services, setServices] = useState<ServiceDto[]>([])
   const [loading, setLoading] = useState(true)
@@ -20,13 +26,18 @@ export default function ServicesList() {
       loadServices()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lang])
+  }, [lang, categoryCode])
 
   const loadServices = async () => {
     try {
       setLoading(true)
       setError(null)
-      const data = await servicesService.getAll(lang)
+      
+      // Если передан categoryCode - загружаем сервисы категории, иначе все
+      const data = categoryCode 
+        ? await servicesService.getByCategory(categoryCode, lang)
+        : await servicesService.getAll(lang)
+      
       // Sort by displayOrder (ascending)
       const sortedData = [...data].sort((a, b) => {
         const orderA = a.displayOrder ?? Number.MAX_SAFE_INTEGER;
@@ -44,42 +55,31 @@ export default function ServicesList() {
 
   if (loading) {
     return (
-      <section className="section-padding bg-gray-50">
-        <div className="container-max">
-          <LoadingSpinner />
-        </div>
-      </section>
+      <div className="py-8">
+        <LoadingSpinner />
+      </div>
     )
   }
 
   if (error) {
     return (
-      <section className="section-padding bg-gray-50">
-        <div className="container-max">
-          <Alert type="error" message={error} />
-        </div>
-      </section>
+      <div className="py-8">
+        <Alert type="error" message={error} />
+      </div>
     )
   }
 
-  // ПУНКТ 5: Если нет сервисов - показываем пустое состояние
+  // Если нет сервисов - показываем пустое состояние
   if (!services || services.length === 0) {
     return (
-      <section className="section-padding bg-gray-50">
-        <div className="container-max">
-          <div className="text-center py-16">
-            <p className="text-gray-500 text-lg">No services available at the moment.</p>
-          </div>
-        </div>
-      </section>
-    );
+      <div className="py-8 text-center">
+        <p className="text-gray-500 text-lg">{t('services.noServices')}</p>
+      </div>
+    )
   }
 
   return (
-    <section className="section-padding bg-gray-50">
-      <div className="container-max">
-        <div className="grid gap-8">
-          {services.map((service) => (
+    <div className="space-y-8">{services.map((service) => (
             <div
               key={service.id}
               className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200"
@@ -176,28 +176,6 @@ export default function ServicesList() {
               </div>
             </div>
           ))}
-        </div>
-        
-        <div className="text-center mt-16">
-          <div className="bg-white p-8 rounded-lg shadow-md">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              {lang === 'az' ? 'Fərdi həllə ehtiyacınız var?' : lang === 'en' ? 'Need a Custom Solution?' : lang === 'ru' ? 'Нужно индивидуальное решение?' : 'Need a Custom Solution?'}
-            </h3>
-            <p className="text-gray-600 mb-6">
-              {lang === 'az' ? 'Hər bir biznesin unikal olduğunu başa düşürük. Xüsusi tələblərinizi müzakirə etmək və xidmətlərimizi ehtiyaclarınıza uyğunlaşdırmaq üçün bizimlə əlaqə saxlayın.' : 
-               lang === 'en' ? 'We understand that every business is unique. Contact us to discuss your specific requirements and how we can tailor our services to meet your needs.' : 
-               lang === 'ru' ? 'Мы понимаем, что каждый бизнес уникален. Свяжитесь с нами, чтобы обсудить ваши конкретные требования и то, как мы можем адаптировать наши услуги под ваши нужды.' : 
-               'We understand that every business is unique. Contact us to discuss your specific requirements and how we can tailor our services to meet your needs.'}
-            </p>
-            <Link
-              href={`/${lang}/contact`}
-              className="btn-primary"
-            >
-              {lang === 'az' ? 'Ekspertlərimizlə əlaqə saxlayın' : lang === 'en' ? 'Contact Our Experts' : lang === 'ru' ? 'Свяжитесь с нашими экспертами' : 'Contact Our Experts'}
-            </Link>
-          </div>
-        </div>
       </div>
-    </section>
-  )
-}
+    )
+  }

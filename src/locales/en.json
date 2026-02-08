@@ -64,7 +64,14 @@
     "allCategories": "All Categories",
     "noCategories": "No categories found",
     "viewAll": "View all services",
-    "selectCategory": "Choose a service category"
+    "selectCategory": "Choose a service category",
+    "categories": "Categories",
+    "noServices": "No services found",
+    "categoryNotFound": "Category not found"
+  },
+  "breadcrumbs": {
+    "home": "Home",
+    "services": "Services"
   },
   "news": {
     "title": "News & Articles",

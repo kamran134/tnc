@@ -64,7 +64,14 @@
     "allCategories": "Bütün Kateqoriyalar",
     "noCategories": "Kateqoriya tapılmadı",
     "viewAll": "Bütün xidmətlər",
-    "selectCategory": "Xidmət kateqoriyasını seçin"
+    "selectCategory": "Xidmət kateqoriyasını seçin",
+    "categories": "Kateqoriyalar",
+    "noServices": "Xidmət tapılmadı",
+    "categoryNotFound": "Kateqoriya tapılmadı"
+  },
+  "breadcrumbs": {
+    "home": "Ana Səhifə",
+    "services": "Xidmətlər"
   },
   "news": {
     "title": "Xəbərlər və Məqalələr",
