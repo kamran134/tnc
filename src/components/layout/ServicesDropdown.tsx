@@ -23,6 +23,7 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
 
   useEffect(() => {
     loadCategories()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang])
 
   useEffect(() => {
@@ -104,6 +105,7 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
                   >
                     {category.iconUrl ? (
                       <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={category.iconUrl}
                           alt={category.name}
@@ -192,6 +194,7 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
                   onClick={handleItemClick}
                 >
                   {category.iconUrl && (
+                    /* eslint-disable-next-line @next/next/no-img-element */
                     <img
                       src={category.iconUrl}
                       alt={category.name}
