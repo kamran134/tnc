@@ -11,55 +11,16 @@ export async function middleware(request: NextRequest) {
   // Только для /dashboard (НЕ для /dashboard/login)
   if (pathname.startsWith('/dashboard') && !pathname.startsWith('/dashboard/login')) {
     const accessToken = request.cookies.get('access_token')?.value;
-    const refreshToken = request.cookies.get('refresh_token')?.value;
     
     // Если есть access token - пропускаем
     if (accessToken) {
       return NextResponse.next();
-    } else if (refreshToken) {
-      // Если нет access токена, но есть refresh - пытаемся обновить
-      try {
-        const refreshResponse = await fetch(new URL('/api/auth/refresh', request.url), {
-          method: 'POST',
-          headers: {
-            Cookie: `refresh_token=${refreshToken}`,
-          },
-        });
-
-        if (refreshResponse.ok) {
-          // Refresh успешен - продолжаем и копируем новые cookies
-          const response = NextResponse.next();
-          
-          // Копируем ВСЕ Set-Cookie заголовки (их может быть несколько)
-          const setCookieHeaders = refreshResponse.headers.getSetCookie();
-          if (setCookieHeaders && setCookieHeaders.length > 0) {
-            setCookieHeaders.forEach((cookie) => {
-              response.headers.append('set-cookie', cookie);
-            });
-          }
-          
-          // Добавляем язык в header
-          const currentLocale = locales.find(
-            (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-          ) || defaultLocale;
-          response.headers.set('x-locale', currentLocale);
-          
-          return response;
-        }
-      } catch (error) {
-        console.error('Middleware refresh error:', error);
-      }
-      
-      // Refresh failed - редирект на login
-      const loginUrl = new URL('/dashboard/login', request.url);
-      loginUrl.searchParams.set('redirect', pathname);
-      return NextResponse.redirect(loginUrl);
-    } else {
-      // Нет токенов - редирект на login
-      const loginUrl = new URL('/dashboard/login', request.url);
-      loginUrl.searchParams.set('redirect', pathname);
-      return NextResponse.redirect(loginUrl);
     }
+    
+    // Нет токена - редирект на login
+    const loginUrl = new URL('/dashboard/login', request.url);
+    loginUrl.searchParams.set('redirect', pathname);
+    return NextResponse.redirect(loginUrl);
   }
   
   // Если уже на странице логина и есть access token - редирект в dashboard

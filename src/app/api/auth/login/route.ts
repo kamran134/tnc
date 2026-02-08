@@ -27,23 +27,14 @@ export async function POST(request: NextRequest) {
     
     const isSecure = process.env.NODE_ENV === 'production';
     
-    // expiresIn приходит в миллисекундах, конвертируем в секунды для cookie maxAge
-    const accessTokenMaxAge = data.expiresIn ? Math.floor(data.expiresIn / 1000) : 3600; // 1 час по дефолту
-    const refreshTokenMaxAge = 60 * 60 * 24 * 30; // 30 дней
+    // Access token на 30 дней
+    const accessTokenMaxAge = 60 * 60 * 24 * 30; // 30 дней
     
     nextResponse.cookies.set('access_token', data.accessToken, {
-      httpOnly: true, // Всегда httpOnly для безопасности
+      httpOnly: true,
       secure: isSecure,
       sameSite: 'lax',
       maxAge: accessTokenMaxAge,
-      path: '/',
-    });
-
-    nextResponse.cookies.set('refresh_token', data.refreshToken, {
-      httpOnly: true, // Всегда httpOnly для безопасности
-      secure: isSecure,
-      sameSite: 'lax',
-      maxAge: refreshTokenMaxAge,
       path: '/',
     });
 
