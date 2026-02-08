@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { NewsAdminDto } from '@/types/api';
 import { useToast } from '@/components/ui';
-import { useAdminNewsListQuery, usePublishNewsMutation, useUnpublishNewsMutation } from '@/hooks/queries';
+import { useAdminNewsListQuery, usePublishNewsMutation, useUnpublishNewsMutation, useDeleteNewsMutation } from '@/hooks/queries';
 
 export default function NewsPage() {
   const router = useRouter();
@@ -13,6 +13,7 @@ export default function NewsPage() {
   const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [publishedFilter, setPublishedFilter] = useState<boolean | undefined>(undefined);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
 
   const { data, isLoading, error } = useAdminNewsListQuery({
     page,
@@ -22,6 +23,7 @@ export default function NewsPage() {
   
   const publishMutation = usePublishNewsMutation();
   const unpublishMutation = useUnpublishNewsMutation();
+  const deleteMutation = useDeleteNewsMutation();
 
   const news = data?.content || [];
   const pagination = {
@@ -45,6 +47,17 @@ export default function NewsPage() {
     } catch (error) {
       console.error('Error toggling publish status:', error);
       toast.error('An error occurred. Please try again.');
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteMutation.mutateAsync(id);
+      toast.success('Article deleted successfully!');
+      setDeleteConfirmId(null);
+    } catch (error) {
+      console.error('Error deleting article:', error);
+      toast.error('Failed to delete article. Please try again.');
     }
   };
 
@@ -214,6 +227,12 @@ export default function NewsPage() {
                           >
                             {article.published ? 'Unpublish' : 'Publish'}
                           </button>
+                          <button
+                            onClick={() => setDeleteConfirmId(article.id!)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            Delete
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -292,6 +311,33 @@ export default function NewsPage() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Delete Article</h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete this article? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(deleteConfirmId)}
+                disabled={deleteMutation.isPending}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
