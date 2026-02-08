@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
     
     // Если есть access token - пропускаем
     if (accessToken) {
-      // Продолжаем с языковой логикой ниже
+      return NextResponse.next();
     } else if (refreshToken) {
       // Если нет access токена, но есть refresh - пытаемся обновить
       try {
@@ -30,10 +30,12 @@ export async function middleware(request: NextRequest) {
           // Refresh успешен - продолжаем и копируем новые cookies
           const response = NextResponse.next();
           
-          // Копируем cookies из refresh response
-          const setCookieHeader = refreshResponse.headers.get('set-cookie');
-          if (setCookieHeader) {
-            response.headers.set('set-cookie', setCookieHeader);
+          // Копируем ВСЕ Set-Cookie заголовки (их может быть несколько)
+          const setCookieHeaders = refreshResponse.headers.getSetCookie();
+          if (setCookieHeaders && setCookieHeaders.length > 0) {
+            setCookieHeaders.forEach((cookie) => {
+              response.headers.append('set-cookie', cookie);
+            });
           }
           
           // Добавляем язык в header

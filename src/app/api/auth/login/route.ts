@@ -26,13 +26,13 @@ export async function POST(request: NextRequest) {
     const nextResponse = NextResponse.json(data, { status: 200 });
     
     const isSecure = process.env.NODE_ENV === 'production';
-    const useHttpOnly = process.env.NODE_ENV === 'production';
     
-    const accessTokenMaxAge = data.expiresIn || 86400;
-    const refreshTokenMaxAge = 60 * 60 * 24 * 7;
+    // expiresIn приходит в миллисекундах, конвертируем в секунды для cookie maxAge
+    const accessTokenMaxAge = data.expiresIn ? Math.floor(data.expiresIn / 1000) : 3600; // 1 час по дефолту
+    const refreshTokenMaxAge = 60 * 60 * 24 * 30; // 30 дней
     
     nextResponse.cookies.set('access_token', data.accessToken, {
-      httpOnly: useHttpOnly,
+      httpOnly: true, // Всегда httpOnly для безопасности
       secure: isSecure,
       sameSite: 'lax',
       maxAge: accessTokenMaxAge,
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     });
 
     nextResponse.cookies.set('refresh_token', data.refreshToken, {
-      httpOnly: useHttpOnly,
+      httpOnly: true, // Всегда httpOnly для безопасности
       secure: isSecure,
       sameSite: 'lax',
       maxAge: refreshTokenMaxAge,
