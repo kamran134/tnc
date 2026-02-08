@@ -39,9 +39,11 @@ export function usePublishNewsMutation() {
 
   return useMutation({
     mutationFn: (id: number) => adminNewsService.publish(id),
-    onSuccess: () => {
+    onSuccess: (_, id) => {
       // Инвалидируем все списки новостей
       queryClient.invalidateQueries({ queryKey: adminNewsKeys.lists() });
+      // Инвалидируем конкретную новость
+      queryClient.invalidateQueries({ queryKey: adminNewsKeys.detail(id) });
     },
   });
 }
@@ -51,8 +53,9 @@ export function useUnpublishNewsMutation() {
 
   return useMutation({
     mutationFn: (id: number) => adminNewsService.unpublish(id),
-    onSuccess: () => {
+    onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: adminNewsKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: adminNewsKeys.detail(id) });
     },
   });
 }
@@ -62,8 +65,9 @@ export function useDeleteNewsMutation() {
 
   return useMutation({
     mutationFn: (id: number) => adminNewsService.delete(id),
-    onSuccess: () => {
+    onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: adminNewsKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: adminNewsKeys.detail(id) });
     },
   });
 }
