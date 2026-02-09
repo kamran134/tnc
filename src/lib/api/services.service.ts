@@ -21,7 +21,7 @@ export const servicesService = {
   // Get services by category
   async getByCategory(category: string, lang: LanguageCode = 'az'): Promise<ServiceDto[]> {
     try {
-      const response = await apiClient.get<ServiceDto[]>(`/services/by-category/${category}`, {
+      const response = await apiClient.get<ServiceDto[]>(`/services/categories/${category}`, {
         params: { lang },
       });
       return response.data;
