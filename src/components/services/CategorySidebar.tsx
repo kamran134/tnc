@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ServiceCategoryUserDto, LanguageCode } from '@/types/api'
 import { serviceCategoriesService } from '@/lib/api'
 import { useTranslations } from '@/hooks/useTranslations'
+import { getServiceCategoryIconByName } from '@/lib/icons/service-category-icons'
 
 interface CategorySidebarProps {
   currentCategoryCode: string
@@ -72,6 +73,7 @@ export default function CategorySidebar({ currentCategoryCode }: CategorySidebar
         {/* Category links */}
         {categories.map((category) => {
           const isActive = category.code === currentCategoryCode
+          const Icon = getServiceCategoryIconByName(category.iconUrl);
           
           return (
             <Link
@@ -83,13 +85,8 @@ export default function CategorySidebar({ currentCategoryCode }: CategorySidebar
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
-              {category.iconUrl ? (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  src={category.iconUrl}
-                  alt={category.name}
-                  className="w-5 h-5 object-contain"
-                />
+              {Icon ? (
+                <Icon className="w-5 h-5 text-current" />
               ) : (
                 <div className="w-5 h-5 bg-gray-200 rounded"></div>
               )}

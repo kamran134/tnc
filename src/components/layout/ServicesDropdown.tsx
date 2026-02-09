@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ServiceCategoryUserDto, LanguageCode } from '@/types/api'
 import { serviceCategoriesService } from '@/lib/api'
 import { useTranslations } from '@/hooks/useTranslations'
+import { getServiceCategoryIconByName } from '@/lib/icons/service-category-icons'
 
 interface ServicesDropdownProps {
   isMobile?: boolean
@@ -96,32 +97,29 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
               </div>
             ) : (
               <>
-                {categories.map((category) => (
-                  <Link
-                    key={category.id}
-                    href={`/${lang}/services/${category.code}`}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors duration-150"
-                    onClick={handleItemClick}
-                  >
-                    {category.iconUrl ? (
+                {categories.map((category) => {
+                  const Icon = getServiceCategoryIconByName(category.iconUrl);
+                  
+                  return (
+                    <Link
+                      key={category.id}
+                      href={`/${lang}/services/${category.code}`}
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors duration-150"
+                      onClick={handleItemClick}
+                    >
                       <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={category.iconUrl}
-                          alt={category.name}
-                          className="w-6 h-6 object-contain"
-                        />
+                        {Icon ? (
+                          <Icon className="w-6 h-6 text-primary-600" />
+                        ) : (
+                          <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                        )}
                       </div>
-                    ) : (
-                      <div className="flex-shrink-0 w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
-                        <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                    )}
-                    <span className="text-gray-700 font-medium">{category.name}</span>
-                  </Link>
-                ))}
+                      <span className="text-gray-700 font-medium">{category.name}</span>
+                    </Link>
+                  );
+                })}
                 
                 {/* Разделитель и ссылка на все услуги */}
                 <div className="border-t border-gray-100 mt-2 pt-2">
@@ -186,24 +184,21 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
               </Link>
               
               {/* Категории */}
-              {categories.map((category) => (
-                <Link
-                  key={category.id}
-                  href={`/${lang}/services/${category.code}`}
-                  className="flex items-center gap-2 py-2 text-gray-600 hover:text-primary-600 text-sm"
-                  onClick={handleItemClick}
-                >
-                  {category.iconUrl && (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={category.iconUrl}
-                      alt={category.name}
-                      className="w-4 h-4 object-contain"
-                    />
-                  )}
-                  <span>{category.name}</span>
-                </Link>
-              ))}
+              {categories.map((category) => {
+                const Icon = getServiceCategoryIconByName(category.iconUrl);
+                
+                return (
+                  <Link
+                    key={category.id}
+                    href={`/${lang}/services/${category.code}`}
+                    className="flex items-center gap-2 py-2 text-gray-600 hover:text-primary-600 text-sm"
+                    onClick={handleItemClick}
+                  >
+                    {Icon && <Icon className="w-4 h-4 text-current" />}
+                    <span>{category.name}</span>
+                  </Link>
+                );
+              })}
               
               {/* Все услуги */}
               <Link

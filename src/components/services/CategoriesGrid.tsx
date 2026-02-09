@@ -7,6 +7,7 @@ import { ServiceCategoryUserDto, LanguageCode } from '@/types/api'
 import { serviceCategoriesService } from '@/lib/api'
 import { useTranslations } from '@/hooks/useTranslations'
 import { LoadingSpinner, Alert } from '@/components/ui'
+import { getServiceCategoryIconByName } from '@/lib/icons/service-category-icons'
 
 export default function CategoriesGrid() {
   const [categories, setCategories] = useState<ServiceCategoryUserDto[]>([])
@@ -84,38 +85,36 @@ export default function CategoriesGrid() {
 
         {/* Сетка категорий */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {categories.map((category) => (
-            <Link
-              key={category.id}
-              href={`/${lang}/services/${category.code}`}
-              className="group"
-            >
-              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 h-full flex flex-col items-center text-center">
-                {/* Иконка категории */}
-                <div className="w-24 h-24 mb-6 bg-gradient-to-br from-primary-100 to-primary-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  {category.iconUrl ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={category.iconUrl}
-                      alt={category.name}
-                      className="w-16 h-16 object-contain"
-                    />
-                  ) : (
-                    <svg 
-                      className="w-16 h-16 text-primary-600" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                    >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
-                      />
-                    </svg>
-                  )}
-                </div>
+          {categories.map((category) => {
+            const Icon = getServiceCategoryIconByName(category.iconUrl);
+            
+            return (
+              <Link
+                key={category.id}
+                href={`/${lang}/services/${category.code}`}
+                className="group"
+              >
+                <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 h-full flex flex-col items-center text-center">
+                  {/* Иконка категории */}
+                  <div className="w-24 h-24 mb-6 bg-gradient-to-br from-primary-100 to-primary-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    {Icon ? (
+                      <Icon className="w-16 h-16 text-primary-600" />
+                    ) : (
+                      <svg 
+                        className="w-16 h-16 text-primary-600" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round" 
+                          strokeWidth={2} 
+                          d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
+                        />
+                      </svg>
+                    )}
+                  </div>
 
                 {/* Название категории */}
                 <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-300">
@@ -150,7 +149,8 @@ export default function CategoriesGrid() {
                 </div>
               </div>
             </Link>
-          ))}
+            );
+          })}
         </div>
 
         {/* Кнопка "Все услуги" */}

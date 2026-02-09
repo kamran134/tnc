@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ServiceCategoryUserDto, LanguageCode } from '@/types/api'
 import { serviceCategoriesService } from '@/lib/api'
 import { useTranslations } from '@/hooks/useTranslations'
+import { getServiceCategoryIconByName } from '@/lib/icons/service-category-icons'
 
 interface CategoryHeaderProps {
   categoryCode: string
@@ -86,16 +87,14 @@ export default function CategoryHeader({ categoryCode }: CategoryHeaderProps) {
         {/* Category Title */}
         <div className="flex items-center gap-6">
           {/* Icon */}
-          {category.iconUrl && (
-            <div className="hidden md:block w-20 h-20 bg-white/10 backdrop-blur-sm rounded-2xl p-4">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={category.iconUrl}
-                alt={category.name}
-                className="w-full h-full object-contain"
-              />
-            </div>
-          )}
+          {category.iconUrl && (() => {
+            const Icon = getServiceCategoryIconByName(category.iconUrl);
+            return Icon ? (
+              <div className="hidden md:block w-20 h-20 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                <Icon className="w-12 h-12 text-white" />
+              </div>
+            ) : null;
+          })()}
 
           {/* Title and Description */}
           <div className="flex-1">
