@@ -37,9 +37,9 @@ export default function TeamMemberCard({ member, index, isVisible, lang = 'az' }
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-primary-200">
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-sky-100 to-sky-200">
             <svg
-              className="w-32 h-32 text-primary-400"
+              className="w-32 h-32 text-sky-400"
               fill="currentColor"
               viewBox="0 0 24 24"
             >
@@ -133,7 +133,7 @@ export default function TeamMemberCard({ member, index, isVisible, lang = 'az' }
           {member.fullName}
         </h3>
         {member.position && (
-          <p className="text-primary-600 font-semibold mb-3">
+          <p className="text-sky-600 font-semibold mb-3">
             {member.position}
           </p>
         )}
@@ -144,7 +144,7 @@ export default function TeamMemberCard({ member, index, isVisible, lang = 'az' }
         )}
 
         {/* Click to view indicator */}
-        <div className="mt-4 flex items-center text-sm text-primary-600 font-medium">
+        <div className="mt-4 flex items-center text-sm text-sky-600 font-medium">
           <span>{viewMoreText}</span>
           <svg
             className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1"

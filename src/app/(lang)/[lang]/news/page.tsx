@@ -83,7 +83,7 @@ export default function NewsPage() {
                           {article.category && (
                             <>
                               <span>•</span>
-                              <span className="text-primary-600 font-medium">{article.category}</span>
+                              <span className="text-sky-600 font-medium">{article.category}</span>
                             </>
                           )}
                         </div>

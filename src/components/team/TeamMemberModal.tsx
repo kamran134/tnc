@@ -91,9 +91,9 @@ export default function TeamMemberModal({ member, isOpen, onClose, lang = 'az' }
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-primary-200">
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-sky-100 to-sky-200">
                     <svg
-                      className="w-32 h-32 text-primary-400"
+                      className="w-32 h-32 text-sky-400"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -102,7 +102,7 @@ export default function TeamMemberModal({ member, isOpen, onClose, lang = 'az' }
                   </div>
                 )}
                 {/* Decorative gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary-900/20 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-sky-900/20 to-transparent"></div>
               </div>
             </div>
 
@@ -114,7 +114,7 @@ export default function TeamMemberModal({ member, isOpen, onClose, lang = 'az' }
                   {member.fullName}
                 </h2>
                 {member.position && (
-                  <p className="text-xl text-primary-600 font-semibold">
+                  <p className="text-xl text-sky-600 font-semibold">
                     {member.position}
                   </p>
                 )}
@@ -125,7 +125,7 @@ export default function TeamMemberModal({ member, isOpen, onClose, lang = 'az' }
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                     <svg
-                      className="w-5 h-5 mr-2 text-primary-600"
+                      className="w-5 h-5 mr-2 text-sky-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -150,7 +150,7 @@ export default function TeamMemberModal({ member, isOpen, onClose, lang = 'az' }
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                     <svg
-                      className="w-5 h-5 mr-2 text-primary-600"
+                      className="w-5 h-5 mr-2 text-sky-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -182,7 +182,7 @@ export default function TeamMemberModal({ member, isOpen, onClose, lang = 'az' }
                       href={member.linkedinUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition-colors"
                     >
                       <svg
                         className="w-5 h-5"

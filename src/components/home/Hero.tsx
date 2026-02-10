@@ -79,19 +79,19 @@ export default function Hero({ companyInfo }: HeroProps) {
             </h2>
           )}
           <div className="text-center max-w-3xl mx-auto">
-            <p className="text-xl md:text-2xl mb-12 text-primary-100">
+            <p className="text-xl md:text-2xl mb-12 text-sky-100">
               {description}
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link
                 href={buttonUrl.startsWith('/') ? buttonUrl : `/${lang}/${buttonUrl}`}
-                className="bg-white text-primary-700 font-semibold py-4 px-10 rounded-lg hover:bg-gray-100 transition-colors duration-200 text-lg"
+                className="bg-white text-sky-700 font-semibold py-4 px-10 rounded-lg hover:bg-gray-100 transition-colors duration-200 text-lg"
               >
                 {buttonText}
               </Link>
               <Link
                 href={`/${lang}/contact`}
-                className="border-2 border-white text-white font-semibold py-4 px-10 rounded-lg hover:bg-white hover:text-primary-700 transition-colors duration-200 text-lg"
+                className="border-2 border-white text-white font-semibold py-4 px-10 rounded-lg hover:bg-white hover:text-sky-700 transition-colors duration-200 text-lg"
               >
                 {t('home.hero.getInTouch')}
               </Link>

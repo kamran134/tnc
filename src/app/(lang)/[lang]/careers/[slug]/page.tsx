@@ -57,7 +57,7 @@ export default function CareerDetail() {
             <Alert type="error" message={(error instanceof Error ? error.message : error) || 'Job posting not found'} />
             <button
               onClick={() => router.push(`/${lang}/careers`)}
-              className="mt-6 text-primary-600 hover:text-primary-700 font-medium"
+              className="mt-6 text-sky-600 hover:text-sky-700 font-medium"
             >
               ← Back to Careers
             </button>
@@ -78,11 +78,11 @@ export default function CareerDetail() {
             <nav className="mb-8 text-sm">
               <ol className="flex items-center space-x-2 text-gray-500">
                 <li>
-                  <Link href={`/${lang}`} className="hover:text-primary-600">Home</Link>
+                  <Link href={`/${lang}`} className="hover:text-sky-600">Home</Link>
                 </li>
                 <li>/</li>
                 <li>
-                  <Link href={`/${lang}/careers`} className="hover:text-primary-600">Careers</Link>
+                  <Link href={`/${lang}/careers`} className="hover:text-sky-600">Careers</Link>
                 </li>
                 <li>/</li>
                 <li className="text-gray-900">{career.title}</li>
@@ -122,7 +122,7 @@ export default function CareerDetail() {
             </div>
 
             {career.excerpt && (
-              <div className="text-xl text-gray-700 leading-relaxed mb-8 font-medium border-l-4 border-primary-500 pl-6">
+              <div className="text-xl text-gray-700 leading-relaxed mb-8 font-medium border-l-4 border-sky-500 pl-6">
                 {career.excerpt}
               </div>
             )}
@@ -160,7 +160,7 @@ export default function CareerDetail() {
               </p>
               <button
                 onClick={() => router.push(`/${lang}/contact`)}
-                className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
+                className="bg-sky-600 text-white px-8 py-3 rounded-lg hover:bg-sky-700 transition-colors font-semibold"
               >
                 Apply Now
               </button>
@@ -169,7 +169,7 @@ export default function CareerDetail() {
             <div className="pt-8 border-t border-gray-200">
               <button
                 onClick={() => router.push(`/${lang}/careers`)}
-                className="inline-flex items-center text-primary-600 hover:text-primary-700 font-semibold transition-colors"
+                className="inline-flex items-center text-sky-600 hover:text-sky-700 font-semibold transition-colors"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />

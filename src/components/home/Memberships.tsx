@@ -86,9 +86,9 @@ export default function Memberships({ lang = 'az' }: MembershipsProps) {
                     />
                   </div>
                 ) : (
-                  <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg
-                      className="w-8 h-8 text-primary-600"
+                      className="w-8 h-8 text-sky-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -111,7 +111,7 @@ export default function Memberships({ lang = 'az' }: MembershipsProps) {
                   </p>
                 )}
                 {membership.partnershipType && (
-                  <p className="text-sm text-primary-600 font-semibold mb-3">
+                  <p className="text-sm text-sky-600 font-semibold mb-3">
                     {membership.partnershipType}
                   </p>
                 )}
@@ -120,7 +120,7 @@ export default function Memberships({ lang = 'az' }: MembershipsProps) {
                     href={membership.websiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block mt-4 text-primary-600 hover:text-primary-700 text-sm font-medium"
+                    className="inline-block mt-4 text-sky-600 hover:text-sky-700 text-sm font-medium"
                   >
                     Visit Website →
                   </a>

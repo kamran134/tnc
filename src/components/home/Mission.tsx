@@ -34,11 +34,11 @@ export default function Mission({ companyInfo }: MissionProps) {
                     className={`text-center w-full md:w-64 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-16'}`}
                     style={{ transitionDelay: `${(index + 3) * 150}ms` }}
                   >
-                    <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       {Icon ? (
-                        <Icon className="w-6 h-6 text-primary-600" />
+                        <Icon className="w-6 h-6 text-sky-600" />
                       ) : (
-                        <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                       )}

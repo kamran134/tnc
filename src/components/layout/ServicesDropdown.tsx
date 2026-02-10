@@ -143,7 +143,7 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
         {/* Trigger */}
         <Link
           href={`/${lang}/services`}
-          className="text-gray-700 hover:text-primary-600 font-medium transition-colors duration-200 flex items-center gap-1"
+          className="text-gray-700 hover:text-sky-600 font-medium transition-colors duration-200 flex items-center gap-1"
         >
           {t('nav.services')}
           <svg
@@ -182,9 +182,9 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
                     >
                       <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
                         {Icon ? (
-                          <Icon className="w-6 h-6 text-primary-600" />
+                          <Icon className="w-6 h-6 text-sky-600" />
                         ) : (
-                          <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                           </svg>
                         )}
@@ -198,7 +198,7 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
                 <div className="border-t border-gray-100 mt-2 pt-2">
                   <Link
                     href={`/${lang}/services/all`}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors duration-150 text-primary-600 font-medium"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors duration-150 text-sky-600 font-medium"
                     onClick={handleItemClick}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,7 +222,7 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
       {/* Trigger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between py-2 text-gray-700 hover:text-primary-600 font-medium"
+        className="w-full flex items-center justify-between py-2 text-gray-700 hover:text-sky-600 font-medium"
       >
         <span>{t('nav.services')}</span>
         <svg
@@ -251,7 +251,7 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
               {/* Ссылка на главную страницу услуг */}
               <Link
                 href={`/${lang}/services`}
-                className="block py-2 text-gray-600 hover:text-primary-600 text-sm"
+                className="block py-2 text-gray-600 hover:text-sky-600 text-sm"
                 onClick={handleItemClick}
               >
                 {t('services.allCategories')}
@@ -265,7 +265,7 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
                   <Link
                     key={category.id}
                     href={`/${lang}/services/${category.code}`}
-                    className="flex items-center gap-2 py-2 text-gray-600 hover:text-primary-600 text-sm"
+                    className="flex items-center gap-2 py-2 text-gray-600 hover:text-sky-600 text-sm"
                     onClick={handleItemClick}
                   >
                     {Icon && <Icon className="w-4 h-4 text-current" />}
@@ -277,7 +277,7 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
               {/* Все услуги */}
               <Link
                 href={`/${lang}/services/all`}
-                className="block py-2 text-primary-600 hover:text-primary-700 text-sm font-medium"
+                className="block py-2 text-sky-600 hover:text-sky-700 text-sm font-medium"
                 onClick={handleItemClick}
               >
                 → {t('services.viewAll')}

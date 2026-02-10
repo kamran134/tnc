@@ -51,7 +51,7 @@ export default function Header() {
                 className="h-24 w-auto object-contain absolute"
               />
             ) : (
-              <span className="text-2xl font-bold text-primary-700">TnC</span>
+              <span className="text-2xl font-bold text-sky-700">TnC</span>
             )}
           </Link>
 
@@ -64,7 +64,7 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-gray-700 hover:text-primary-600 font-medium transition-colors duration-200"
+                  className="text-gray-700 hover:text-sky-600 font-medium transition-colors duration-200"
                 >
                   {item.name}
                 </Link>
@@ -108,7 +108,7 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="block py-2 text-gray-700 hover:text-primary-600 font-medium"
+                  className="block py-2 text-gray-700 hover:text-sky-600 font-medium"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}

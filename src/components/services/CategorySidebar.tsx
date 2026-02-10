@@ -81,7 +81,7 @@ export default function CategorySidebar({ currentCategoryCode }: CategorySidebar
               href={`/${lang}/services/${category.code}`}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                 isActive
-                  ? 'bg-primary-50 text-primary-700 font-semibold'
+                  ? 'bg-sky-50 text-sky-700 font-semibold'
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
@@ -99,7 +99,7 @@ export default function CategorySidebar({ currentCategoryCode }: CategorySidebar
         <div className="pt-3 mt-3 border-t border-gray-200">
           <Link
             href={`/${lang}/services/all`}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-primary-600 hover:bg-primary-50 transition-colors font-medium"
+            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sky-600 hover:bg-sky-50 transition-colors font-medium"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />

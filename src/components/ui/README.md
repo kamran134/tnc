@@ -148,7 +148,7 @@ The following pages have been refactored to use these UI components:
   <div className="container-max">
     <div className="text-center max-w-4xl mx-auto">
       <h1 className="text-4xl md:text-5xl font-bold mb-6">News & Insights</h1>
-      <p className="text-xl md:text-2xl text-primary-100">
+      <p className="text-xl md:text-2xl text-sky-100">
         Stay updated with the latest tax, legal, and business insights
       </p>
     </div>
