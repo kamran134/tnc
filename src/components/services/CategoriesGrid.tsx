@@ -96,12 +96,12 @@ export default function CategoriesGrid() {
               >
                 <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 h-full flex flex-col items-center text-center">
                   {/* Иконка категории */}
-                  <div className="w-24 h-24 mb-6 bg-gradient-to-br from-primary-100 to-primary-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-24 h-24 mb-6 bg-gradient-to-br from-sky-100 to-sky-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     {Icon ? (
-                      <Icon className="w-16 h-16 text-primary-600" />
+                      <Icon className="w-16 h-16 text-sky-500" />
                     ) : (
                       <svg 
-                        className="w-16 h-16 text-primary-600" 
+                        className="w-16 h-16 text-sky-500" 
                         fill="none" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
@@ -117,7 +117,7 @@ export default function CategoriesGrid() {
                   </div>
 
                 {/* Название категории */}
-                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-300">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-sky-500 transition-colors duration-300">
                   {category.name}
                 </h3>
 
@@ -130,7 +130,7 @@ export default function CategoriesGrid() {
 
                 {/* Стрелка для визуального эффекта */}
                 <div className="mt-auto pt-4">
-                  <span className="inline-flex items-center text-primary-600 font-semibold group-hover:translate-x-2 transition-transform duration-300">
+                  <span className="inline-flex items-center text-sky-500 font-semibold group-hover:translate-x-2 transition-transform duration-300">
                     {t('services.viewDetails')}
                     <svg 
                       className="w-5 h-5 ml-2" 
@@ -157,7 +157,7 @@ export default function CategoriesGrid() {
         <div className="text-center mt-12">
           <Link
             href={`/${lang}/services/all`}
-            className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold px-8 py-4 rounded-lg transition-colors duration-300 shadow-lg hover:shadow-xl"
+            className="inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white font-semibold px-8 py-4 rounded-lg transition-colors duration-300 shadow-lg hover:shadow-xl"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
