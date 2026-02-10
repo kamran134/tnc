@@ -17,6 +17,7 @@ export default function CreateServicePage() {
   const [formData, setFormData] = useState({
     serviceCategoryId: null as number | null,
     iconUrl: '',
+    sortOrder: null as number | null,
     active: true,
     translations: [
       {
@@ -146,6 +147,21 @@ export default function CreateServicePage() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sort Order
+                </label>
+                <input
+                  type="number"
+                  value={formData.sortOrder ?? ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, sortOrder: e.target.value ? parseInt(e.target.value) : null }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900"
+                  placeholder="Leave empty for auto-numbering"
+                  min="0"
+                />
+                <p className="mt-1 text-xs text-gray-500">Leave empty for automatic numbering</p>
               </div>
               
               <ImageUpload

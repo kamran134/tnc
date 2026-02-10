@@ -38,14 +38,8 @@ export default function ServicesList({ categoryCode }: ServicesListProps) {
         ? await servicesService.getByCategory(categoryCode, lang)
         : await servicesService.getAll(lang)
       
-      
-      // Sort by displayOrder (ascending)
-      const sortedData = [...data].sort((a, b) => {
-        const orderA = a.displayOrder ?? Number.MAX_SAFE_INTEGER;
-        const orderB = b.displayOrder ?? Number.MAX_SAFE_INTEGER;
-        return orderA - orderB;
-      });
-      setServices(sortedData)
+      // Backend already returns services sorted by sortOrder
+      setServices(data)
     } catch (err: any) {
       console.error('Failed to load services:', err)
       console.error('Error details:', {

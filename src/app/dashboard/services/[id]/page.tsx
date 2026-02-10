@@ -21,6 +21,7 @@ interface ServiceData {
   id: number;
   serviceCategoryId: number | null;
   iconUrl: string | null;
+  sortOrder: number | null;
   active: boolean;
   translations: Translation[];
 }
@@ -37,6 +38,7 @@ export default function EditServicePage() {
   const [formData, setFormData] = useState({
     serviceCategoryId: null as number | null,
     iconUrl: '',
+    sortOrder: null as number | null,
     active: true,
     translations: [
       { languageCode: 'az', title: '', content: '', excerpt: '' },
@@ -62,6 +64,7 @@ export default function EditServicePage() {
         setFormData({
           serviceCategoryId: serviceData.serviceCategoryId || null,
           iconUrl: iconUrl,
+          sortOrder: serviceData.sortOrder || null,
           active: serviceData.active !== false,
           translations: [
             {
@@ -217,6 +220,21 @@ export default function EditServicePage() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sort Order
+                </label>
+                <input
+                  type="number"
+                  value={formData.sortOrder ?? ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, sortOrder: e.target.value ? parseInt(e.target.value) : null }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900"
+                  placeholder="Leave empty for auto-numbering"
+                  min="0"
+                />
+                <p className="mt-1 text-xs text-gray-500">Leave empty to keep current order</p>
               </div>
               
               <ImageUpload
