@@ -54,7 +54,7 @@ export default function CategoryHeader({ categoryCode }: CategoryHeaderProps) {
 
   if (!category) {
     return (
-      <section className="bg-gradient-to-r from-primary-600 to-primary-700 text-white py-12">
+      <section className="bg-gradient-to-r from-sky-400 to-sky-500 text-white py-12">
         <div className="container-max">
           <p className="text-white/90">{t('services.categoryNotFound')}</p>
         </div>
@@ -63,7 +63,7 @@ export default function CategoryHeader({ categoryCode }: CategoryHeaderProps) {
   }
 
   return (
-    <section className="bg-gradient-to-r from-primary-600 to-primary-700 text-white py-12">
+    <section className="bg-gradient-to-r from-sky-400 to-sky-500 text-white py-12">
       <div className="container-max">
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 text-sm mb-6 text-white/80">
@@ -90,7 +90,7 @@ export default function CategoryHeader({ categoryCode }: CategoryHeaderProps) {
           {category.iconUrl && (() => {
             const Icon = getServiceCategoryIconByName(category.iconUrl);
             return Icon ? (
-              <div className="hidden md:block w-20 h-20 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+              <div className="hidden md:flex w-20 h-20 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center">
                 <Icon className="w-12 h-12 text-white" />
               </div>
             ) : null;
