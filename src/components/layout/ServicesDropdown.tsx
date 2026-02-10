@@ -18,6 +18,9 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const mousePosRef = useRef({ x: 0, y: 0 })
+  const prevMousePosRef = useRef({ x: 0, y: 0 })
   const params = useParams()
   const lang = (params.lang as LanguageCode) || 'az'
   const { t } = useTranslations()
@@ -59,14 +62,83 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
     onItemClick?.()
   }
 
+  // Функция для вычисления направления движения курсора к дропдауну
+  const isMovingTowardsDropdown = () => {
+    if (!dropdownRef.current) return false
+
+    const dropdown = dropdownRef.current.querySelector('.dropdown-menu')
+    if (!dropdown) return false
+
+    const rect = dropdown.getBoundingClientRect()
+    const mouseX = mousePosRef.current.x
+    const mouseY = mousePosRef.current.y
+    const prevX = prevMousePosRef.current.x
+    const prevY = prevMousePosRef.current.y
+
+    // Создаём треугольную "зону безопасности" между курсором и дропдауном
+    // Если курсор движется в сторону этого треугольника - не закрываем меню
+    const upperRight = { x: rect.right, y: rect.top }
+    const lowerRight = { x: rect.right, y: rect.bottom }
+
+    // Вычисляем направление движения
+    const deltaX = mouseX - prevX
+    const deltaY = mouseY - prevY
+
+    // Если курсор движется вправо и вниз (в сторону меню) - оставляем открытым
+    const isMovingRight = deltaX > 0
+    const isMovingTowardsMenu = mouseX < rect.left && mouseY >= rect.top - 50 && mouseY <= rect.bottom + 50
+
+    return isMovingRight && isMovingTowardsMenu
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    prevMousePosRef.current = mousePosRef.current
+    mousePosRef.current = { x: e.clientX, y: e.clientY }
+  }
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+    setIsOpen(true)
+  }
+
+  const handleMouseLeave = () => {
+    // Проверяем направление движения курсора
+    if (isMovingTowardsDropdown()) {
+      // Даём больше времени если курсор движется к меню
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+      timeoutRef.current = setTimeout(() => {
+        setIsOpen(false)
+      }, 500)
+    } else {
+      // Быстро закрываем если курсор ушёл в другую сторону
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+      timeoutRef.current = setTimeout(() => {
+        setIsOpen(false)
+      }, 150)
+    }
+  }
+
+  // Очистка таймера при размонтировании
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
+
   // Desktop версия - dropdown с hover
   if (!isMobile) {
     return (
       <div
         ref={dropdownRef}
         className="relative"
-        onMouseEnter={() => setIsOpen(true)}
-        onMouseLeave={() => setIsOpen(false)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseMove={handleMouseMove}
       >
         {/* Trigger */}
         <Link
@@ -86,7 +158,8 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
 
         {/* Dropdown */}
         {isOpen && (
-          <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-50">
+          <div className="dropdown-menu absolute top-full left-0 mt-0 pt-2 w-72 z-50">
+            <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-2">
             {loading ? (
               <div className="px-4 py-3 text-gray-500 text-sm">
                 {t('common.loading')}...
@@ -136,6 +209,7 @@ export default function ServicesDropdown({ isMobile = false, onItemClick }: Serv
                 </div>
               </>
             )}
+            </div>
           </div>
         )}
       </div>
