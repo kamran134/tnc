@@ -33,14 +33,11 @@ export default function ServicesList({ categoryCode }: ServicesListProps) {
       setLoading(true)
       setError(null)
       
-      console.log('Loading services:', { categoryCode, lang })
-      
       // Если передан categoryCode - загружаем сервисы категории, иначе все
       const data = categoryCode 
         ? await servicesService.getByCategory(categoryCode, lang)
         : await servicesService.getAll(lang)
       
-      console.log('Loaded services:', data)
       
       // Sort by displayOrder (ascending)
       const sortedData = [...data].sort((a, b) => {
@@ -176,7 +173,7 @@ export default function ServicesList({ categoryCode }: ServicesListProps) {
                   <div className="flex-shrink-0 mt-6 lg:mt-0">
                     <Link
                       href={`/${lang}/contact?service=${encodeURIComponent(service.title)}`}
-                      className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 transition-colors duration-200"
+                      className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 transition-colors duration-200"
                     >
                       {lang === 'az' ? 'Konsultasiya almaq' : lang === 'en' ? 'Get Consultation' : lang === 'ru' ? 'Получить консультацию' : 'Get Consultation'}
                     </Link>

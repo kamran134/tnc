@@ -320,7 +320,7 @@ export default function ContactPage() {
                   </div>
                 </Card>
                 
-                <div className="bg-primary-50 p-8 rounded-lg">
+                {/* <div className="bg-primary-50 p-8 rounded-lg">
                   <h3 className="text-xl font-bold text-gray-900 mb-4">
                     {t('contact.scheduleConsultation')}
                   </h3>
@@ -330,7 +330,7 @@ export default function ContactPage() {
                   <Button>
                     {t('contact.bookConsultation')}
                   </Button>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

@@ -181,7 +181,7 @@ export default function CareersPage() {
               </div>
             )}
             
-            <div className="text-center mt-12">
+            {/* <div className="text-center mt-12">
               <Card>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">
                   {t('careers.noRightPosition')}
@@ -193,7 +193,7 @@ export default function CareersPage() {
                   {t('careers.submitResume')}
                 </Button>
               </Card>
-            </div>
+            </div> */}
           </div>
         </section>
       </main>
