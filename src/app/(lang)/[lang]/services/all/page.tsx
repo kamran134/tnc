@@ -1,3 +1,4 @@
+import { Metadata } from 'next'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import ServicesList from '@/components/services/ServicesList'
@@ -14,6 +15,28 @@ interface AllServicesPageProps {
 }
 
 const translations = { az, en, ru }
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tnc.az'
+
+export async function generateMetadata({ params }: AllServicesPageProps): Promise<Metadata> {
+  const { lang } = await params
+  const t = translations[lang]
+
+  return {
+    title: `${t.services.allServicesTitle} | TnC Tax & Consulting`,
+    description: t.services.allServicesDescription,
+    openGraph: {
+      title: `${t.services.allServicesTitle} | TnC Tax & Consulting`,
+      description: t.services.allServicesDescription,
+      url: `${siteUrl}/${lang}/services/all`,
+      images: [{ url: `${siteUrl}/og-image.svg`, width: 1200, height: 630 }],
+    },
+    twitter: {
+      title: `${t.services.allServicesTitle} | TnC Tax & Consulting`,
+      description: t.services.allServicesDescription,
+      images: [`${siteUrl}/og-image.svg`],
+    },
+  }
+}
 
 export default async function AllServicesPage({ params }: AllServicesPageProps) {
   const { lang } = await params
