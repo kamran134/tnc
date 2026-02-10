@@ -8,11 +8,12 @@ import LanguageTabs from '@/components/admin/LanguageTabs';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { adminServiceCategoriesService } from '@/lib/api';
 import type { ServiceCategoryAdminDto } from '@/types/api';
+import { useCreateServiceMutation } from '@/hooks/queries/useAdminServicesQueries';
 
 export default function CreateServicePage() {
   const router = useRouter();
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const createServiceMutation = useCreateServiceMutation();
   const [categories, setCategories] = useState<ServiceCategoryAdminDto[]>([]);
   const [formData, setFormData] = useState({
     serviceCategoryId: null as number | null,
@@ -56,7 +57,6 @@ export default function CreateServicePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
 
     try {
       // Фильтруем переводы - оставляем только те, где есть title или content
@@ -68,25 +68,13 @@ export default function CreateServicePage() {
       // Удаляем все пустые поля
       const cleanedData = removeEmptyFields(filteredData);
 
-      const response = await fetch('/api/admin/services', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cleanedData)
-      });
+      await createServiceMutation.mutateAsync(cleanedData);
 
-      if (response.ok) {
-        toast.success('Service created successfully!');
-        router.push('/dashboard/services');
-      } else {
-        const error = await response.json();
-        console.error('Failed to create service:', error);
-        toast.error('Failed to create service: ' + (error.message || 'Unknown error'));
-      }
-    } catch (error) {
+      toast.success('Service created successfully!');
+      router.push('/dashboard/services');
+    } catch (error: any) {
       console.error('Error creating service:', error);
-      toast.error('Error creating service');
-    } finally {
-      setIsLoading(false);
+      toast.error('Failed to create service: ' + (error?.message || 'Unknown error'));
     }
   };
 
@@ -248,10 +236,10 @@ export default function CreateServicePage() {
               </button>
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={createServiceMutation.isPending}
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
               >
-                {isLoading ? 'Creating...' : 'Create Service'}
+                {createServiceMutation.isPending ? 'Creating...' : 'Create Service'}
               </button>
             </div>
           </div>

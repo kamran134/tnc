@@ -8,6 +8,7 @@ import LanguageTabs from '@/components/admin/LanguageTabs';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { adminServiceCategoriesService } from '@/lib/api';
 import type { ServiceCategoryAdminDto } from '@/types/api';
+import { useUpdateServiceMutation } from '@/hooks/queries/useAdminServicesQueries';
 
 interface Translation {
   id?: number;
@@ -31,8 +32,8 @@ export default function EditServicePage() {
   const params = useParams();
   const serviceId = params.id as string;
   const toast = useToast();
+  const updateServiceMutation = useUpdateServiceMutation();
   
-  const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [categories, setCategories] = useState<ServiceCategoryAdminDto[]>([]);
   const [formData, setFormData] = useState({
@@ -113,7 +114,6 @@ export default function EditServicePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     
     try {
       // Фильтруем переводы - оставляем только те, где есть title или content
@@ -130,25 +130,16 @@ export default function EditServicePage() {
       // Always include iconUrl in the request (empty string if deleted, or the URL if present)
       cleanedData.iconUrl = iconUrl;
 
-      const response = await fetch(`/api/admin/services/${serviceId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cleanedData)
+      await updateServiceMutation.mutateAsync({
+        id: Number(serviceId),
+        data: cleanedData
       });
 
-      if (response.ok) {
-        toast.success('Service updated successfully!');
-        router.push('/dashboard/services');
-      } else {
-        const error = await response.json();
-        console.error('Failed to update service:', error);
-        toast.error('Failed to update service: ' + (error.message || 'Unknown error'));
-      }
-    } catch (error) {
+      toast.success('Service updated successfully!');
+      router.push('/dashboard/services');
+    } catch (error: any) {
       console.error('Error updating service:', error);
-      toast.error('Failed to update service');
-    } finally {
-      setIsLoading(false);
+      toast.error('Failed to update service: ' + (error?.message || 'Unknown error'));
     }
   };
 
@@ -313,10 +304,10 @@ export default function EditServicePage() {
           <div className="flex justify-end">
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={updateServiceMutation.isPending}
               className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Updating...' : 'Update Service'}
+              {updateServiceMutation.isPending ? 'Updating...' : 'Update Service'}
             </button>
           </div>
         </form>
