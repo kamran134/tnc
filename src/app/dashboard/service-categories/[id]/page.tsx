@@ -13,6 +13,7 @@ export default function EditServiceCategoryPage({ params }: { params: Promise<{ 
     code: string;
     iconUrl: string;
     active: boolean;
+    sortOrder?: number;
     translations: ServiceCategoryTranslationDto[];
   } | null>(null);
 
@@ -29,6 +30,7 @@ export default function EditServiceCategoryPage({ params }: { params: Promise<{ 
           code: category.code,
           iconUrl: category.iconUrl || '',
           active: category.active,
+          sortOrder: category.sortOrder,
           translations: [
             category.translations.find(t => t.languageCode === 'az') || { languageCode: 'az', name: '', description: '' },
             category.translations.find(t => t.languageCode === 'en') || { languageCode: 'en', name: '', description: '' },
@@ -197,6 +199,24 @@ export default function EditServiceCategoryPage({ params }: { params: Promise<{ 
             <label htmlFor="active" className="ml-2 text-sm font-medium text-gray-700">
               Active
             </label>
+          </div>
+
+          {/* Sort Order */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Sort Order
+            </label>
+            <input
+              type="number"
+              value={formData.sortOrder ?? ''}
+              onChange={(e) => setFormData({ ...formData, sortOrder: e.target.value ? parseInt(e.target.value) : undefined })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Leave empty for auto-numbering"
+              min="0"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Leave empty to auto-assign next available order
+            </p>
           </div>
 
           {/* Language Tabs */}

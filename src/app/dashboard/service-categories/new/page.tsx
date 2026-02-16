@@ -12,6 +12,7 @@ export default function NewServiceCategoryPage() {
     code: '',
     iconUrl: '',
     active: true,
+    sortOrder: undefined as number | undefined,
     translations: [
       { languageCode: 'az', name: '', description: '' },
       { languageCode: 'en', name: '', description: '' },
@@ -146,6 +147,24 @@ export default function NewServiceCategoryPage() {
             <label htmlFor="active" className="ml-2 text-sm font-medium text-gray-700">
               Active
             </label>
+          </div>
+
+          {/* Sort Order */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Sort Order
+            </label>
+            <input
+              type="number"
+              value={formData.sortOrder ?? ''}
+              onChange={(e) => setFormData({ ...formData, sortOrder: e.target.value ? parseInt(e.target.value) : undefined })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Leave empty for auto-numbering"
+              min="0"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Leave empty to auto-assign next available order
+            </p>
           </div>
 
           {/* Language Tabs */}

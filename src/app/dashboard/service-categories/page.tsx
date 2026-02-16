@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { ServiceCategoryAdminDto } from '@/types/api';
 import { adminServiceCategoriesService } from '@/lib/api';
 import { getServiceCategoryIconByName } from '@/lib/icons/service-category-icons';
@@ -35,6 +36,26 @@ export default function ServiceCategoriesPage() {
       await loadCategories();
     } catch (error: any) {
       alert(error.message || 'Failed to delete category');
+    }
+  };
+
+  const handleDragEnd = async (result: DropResult) => {
+    if (!result.destination) return;
+
+    const items = Array.from(categories);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    // Optimistic update
+    setCategories(items);
+
+    try {
+      await adminServiceCategoriesService.reorder(items.map(cat => cat.id));
+    } catch (error: any) {
+      console.error('Failed to reorder:', error);
+      alert(error.message || 'Failed to update order');
+      // Reload on error
+      await loadCategories();
     }
   };
 
@@ -95,93 +116,127 @@ export default function ServiceCategoriesPage() {
         ) : (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Languages</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {categories.map((category) => {
-                    const Icon = getServiceCategoryIconByName(category.iconUrl);
-                    const azTranslation = category.translations.find(t => t.languageCode === 'az');
-                    
-                    return (
-                      <tr key={category.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                              {Icon ? (
-                                <Icon className="w-5 h-5 text-blue-600" />
-                              ) : (
-                                <span className="text-gray-400 text-xs">?</span>
-                              )}
-                            </div>
-                            <div>
-                              <div className="text-sm font-medium text-gray-900">
-                                {azTranslation?.name || 'Untitled'}
-                              </div>
-                              {azTranslation?.description && (
-                                <div className="text-sm text-gray-500 truncate max-w-xs">
-                                  {azTranslation.description}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="font-mono text-sm text-gray-600">{category.code}</span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            category.active 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {category.active ? 'Active' : 'Inactive'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          {category.sortOrder || '-'}
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center space-x-1">
-                            {category.translations.map((t) => (
-                              <span
-                                key={t.languageCode}
-                                className="px-2 py-0.5 text-xs bg-blue-50 text-blue-700 rounded"
-                              >
-                                {t.languageCode.toUpperCase()}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-sm font-medium">
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => router.push(`/dashboard/service-categories/${category.id}`)}
-                              className="text-blue-600 hover:text-blue-900"
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">⋮⋮</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Languages</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <Droppable droppableId="categories">
+                    {(provided) => (
+                      <tbody
+                        className="bg-white divide-y divide-gray-200"
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                      >
+                        {categories.map((category, index) => {
+                          const Icon = getServiceCategoryIconByName(category.iconUrl);
+                          const azTranslation = category.translations.find(t => t.languageCode === 'az');
+                          
+                          return (
+                            <Draggable
+                              key={category.id.toString()}
+                              draggableId={category.id.toString()}
+                              index={index}
                             >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDelete(category.id)}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                              {(provided, snapshot) => (
+                                <tr
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  className={`hover:bg-gray-50 ${
+                                    snapshot.isDragging ? 'bg-blue-50 shadow-lg' : ''
+                                  }`}
+                                >
+                                  <td
+                                    className="px-3 py-4 text-center cursor-grab active:cursor-grabbing"
+                                    {...provided.dragHandleProps}
+                                  >
+                                    <span className="text-gray-400 hover:text-gray-600 text-lg">
+                                      ⋮⋮
+                                    </span>
+                                  </td>
+                                  <td className="px-6 py-4">
+                                    <div className="flex items-center space-x-3">
+                                      <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                                        {Icon ? (
+                                          <Icon className="w-5 h-5 text-blue-600" />
+                                        ) : (
+                                          <span className="text-gray-400 text-xs">?</span>
+                                        )}
+                                      </div>
+                                      <div>
+                                        <div className="text-sm font-medium text-gray-900">
+                                          {azTranslation?.name || 'Untitled'}
+                                        </div>
+                                        {azTranslation?.description && (
+                                          <div className="text-sm text-gray-500 truncate max-w-xs">
+                                            {azTranslation.description}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td className="px-6 py-4">
+                                    <span className="font-mono text-sm text-gray-600">{category.code}</span>
+                                  </td>
+                                  <td className="px-6 py-4">
+                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                      category.active 
+                                        ? 'bg-green-100 text-green-800' 
+                                        : 'bg-gray-100 text-gray-800'
+                                    }`}>
+                                      {category.active ? 'Active' : 'Inactive'}
+                                    </span>
+                                  </td>
+                                  <td className="px-6 py-4 text-sm text-gray-900">
+                                    {category.sortOrder || '-'}
+                                  </td>
+                                  <td className="px-6 py-4">
+                                    <div className="flex items-center space-x-1">
+                                      {category.translations.map((t) => (
+                                        <span
+                                          key={t.languageCode}
+                                          className="px-2 py-0.5 text-xs bg-blue-50 text-blue-700 rounded"
+                                        >
+                                          {t.languageCode.toUpperCase()}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </td>
+                                  <td className="px-6 py-4 text-sm font-medium">
+                                    <div className="flex space-x-2">
+                                      <button
+                                        onClick={() => router.push(`/dashboard/service-categories/${category.id}`)}
+                                        className="text-blue-600 hover:text-blue-900"
+                                      >
+                                        Edit
+                                      </button>
+                                      <button
+                                        onClick={() => handleDelete(category.id)}
+                                        className="text-red-600 hover:text-red-900"
+                                      >
+                                        Delete
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              )}
+                            </Draggable>
+                          );
+                        })}
+                        {provided.placeholder}
+                      </tbody>
+                    )}
+                  </Droppable>
+                </table>
+              </DragDropContext>
             </div>
           </div>
         )}

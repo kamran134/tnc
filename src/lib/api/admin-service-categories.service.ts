@@ -68,6 +68,15 @@ export const adminServiceCategoriesService = {
       throw handleApiError(error);
     }
   },
+
+  // Reorder categories
+  async reorder(ids: number[]): Promise<void> {
+    try {
+      await apiClient.post('/admin/service-categories/reorder', ids);
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  },
 };
 
 // Public API для категорий
