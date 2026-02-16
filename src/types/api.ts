@@ -326,6 +326,7 @@ export interface ServiceAdminDto {
   categoryName?: string;
   iconUrl?: string;
   sortOrder?: number;
+  categorySortOrder?: number;
   active?: boolean;
   translations: ServiceTranslationDto[];
   createdAt?: string;

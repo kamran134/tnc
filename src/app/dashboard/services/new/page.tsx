@@ -19,6 +19,7 @@ export default function CreateServicePage() {
     serviceCategoryId: null as number | null,
     iconUrl: '',
     sortOrder: null as number | null,
+    categorySortOrder: null as number | null,
     active: true,
     translations: [
       {
@@ -139,7 +140,7 @@ export default function CreateServicePage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Sort Order
+                  Global Sort Order
                 </label>
                 <input
                   type="number"
@@ -149,7 +150,22 @@ export default function CreateServicePage() {
                   placeholder="Leave empty for auto-numbering"
                   min="0"
                 />
-                <p className="mt-1 text-xs text-gray-500">Leave empty for automatic numbering</p>
+                <p className="mt-1 text-xs text-gray-500">Order among ALL services</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Category Sort Order
+                </label>
+                <input
+                  type="number"
+                  value={formData.categorySortOrder ?? ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, categorySortOrder: e.target.value ? parseInt(e.target.value) : null }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900"
+                  placeholder="Leave empty for auto-numbering"
+                  min="0"
+                />
+                <p className="mt-1 text-xs text-gray-500">Order within selected category</p>
               </div>
               
               <ImageUpload
