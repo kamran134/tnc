@@ -32,7 +32,10 @@ apiClient.interceptors.request.use(
     }
     
     // Clean empty fields from request data for POST, PUT, PATCH requests
-    if (config.data && ['post', 'put', 'patch'].includes(config.method?.toLowerCase() || '')) {
+    // Skip cleaning if data is an array (e.g., for reorder endpoints)
+    if (config.data && 
+        ['post', 'put', 'patch'].includes(config.method?.toLowerCase() || '') &&
+        !Array.isArray(config.data)) {
       config.data = removeEmptyFields(config.data);
     }
 
