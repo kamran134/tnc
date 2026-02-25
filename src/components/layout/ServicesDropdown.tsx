@@ -10,11 +10,10 @@ import { getServiceCategoryIconByName } from '@/lib/icons/service-category-icons
 
 interface ServicesDropdownProps {
   isMobile?: boolean
-  isTransparent?: boolean
   onItemClick?: () => void
 }
 
-export default function ServicesDropdown({ isMobile = false, isTransparent = false, onItemClick }: ServicesDropdownProps) {
+export default function ServicesDropdown({ isMobile = false, onItemClick }: ServicesDropdownProps) {
   const [categories, setCategories] = useState<ServiceCategoryUserDto[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -144,11 +143,7 @@ export default function ServicesDropdown({ isMobile = false, isTransparent = fal
         {/* Trigger */}
         <Link
           href={`/${lang}/services`}
-          className={`font-medium transition-colors duration-200 flex items-center gap-1 ${
-            isTransparent
-              ? 'text-white hover:text-sky-200 [text-shadow:0_1px_3px_rgba(0,0,0,0.5)]'
-              : 'text-gray-700 hover:text-sky-600'
-          }`}
+          className="text-gray-700 hover:text-sky-600 font-medium transition-colors duration-200 flex items-center gap-1"
         >
           {t('nav.services')}
           <svg

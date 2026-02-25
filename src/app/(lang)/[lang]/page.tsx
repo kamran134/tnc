@@ -21,7 +21,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       <Header />
-      <main className="snap-y snap-mandatory overflow-y-scroll h-screen">
+      <main className="snap-y snap-mandatory overflow-y-scroll" style={{ height: 'calc(100vh - 73px)' }}>
         <Hero companyInfo={companyInfo || null} />
         <Memberships lang={lang} />
         <Mission lang={lang} companyInfo={companyInfo || null} />

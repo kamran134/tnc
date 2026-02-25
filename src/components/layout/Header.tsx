@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useParams, usePathname } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import LanguageSwitcher from './LanguageSwitcher'
 import ServicesDropdown from './ServicesDropdown'
@@ -12,14 +12,9 @@ import { companyInfoService } from '@/lib/api'
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [companyInfo, setCompanyInfo] = useState<CompanyInfoDto | null>(null)
-  const [scrolled, setScrolled] = useState(false)
   const params = useParams();
-  const pathname = usePathname();
   const lang = (params.lang as string) || 'az';
   const { t } = useTranslations();
-
-  // Transparent only on home pages (e.g. /az, /en, /ru)
-  const isHeroPage = /^\/(az|en|ru)\/?$/.test(pathname ?? '');
 
   useEffect(() => {
     const fetchCompanyInfo = async () => {
@@ -33,23 +28,6 @@ export default function Header() {
     fetchCompanyInfo();
   }, [lang]);
 
-  // On non-hero pages always solid; on hero page track the snap-scroll container
-  useEffect(() => {
-    if (!isHeroPage) {
-      setScrolled(true);
-      return;
-    }
-    setScrolled(false);
-    const main = document.querySelector('main');
-    if (!main) return;
-    const handleScroll = () => setScrolled(main.scrollTop > 80);
-    main.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => main.removeEventListener('scroll', handleScroll);
-  }, [isHeroPage]);
-
-  const isTransparent = isHeroPage && !scrolled;
-
   const navigation = [
     { name: t('nav.home'), href: `/${lang}`, hasDropdown: false },
     { name: t('nav.services'), href: `/${lang}/services`, hasDropdown: true },
@@ -61,11 +39,7 @@ export default function Header() {
   ]
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isTransparent ? 'bg-transparent' : 'bg-white shadow-md'
-      }`}
-    >
+    <header className="bg-white sticky top-0 z-50">
       <nav className="container-max">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
@@ -75,10 +49,9 @@ export default function Header() {
                 src={companyInfo.logoUrl}
                 alt={companyInfo.companyName}
                 className="h-24 w-auto object-contain absolute"
-                style={isTransparent ? { filter: 'brightness(0) invert(1) drop-shadow(0 1px 4px rgba(0,0,0,0.5))' } : undefined}
               />
             ) : (
-              <span className={`text-2xl font-bold ${isTransparent ? 'text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.5)]' : 'text-sky-700'}`}>TnC</span>
+              <span className="text-2xl font-bold text-sky-700">TnC</span>
             )}
           </Link>
 
@@ -86,27 +59,23 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => (
               item.hasDropdown ? (
-                <ServicesDropdown key={item.name} isTransparent={isTransparent} />
+                <ServicesDropdown key={item.name} />
               ) : (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`font-medium transition-colors duration-200 ${
-                    isTransparent
-                      ? 'text-white hover:text-sky-200 [text-shadow:0_1px_3px_rgba(0,0,0,0.5)]'
-                      : 'text-gray-700 hover:text-sky-600'
-                  }`}
+                  className="text-gray-700 hover:text-sky-600 font-medium transition-colors duration-200"
                 >
                   {item.name}
                 </Link>
               )
             ))}
-            <LanguageSwitcher isTransparent={isTransparent} />
+            <LanguageSwitcher />
           </div>
 
           {/* Mobile menu button */}
           <button
-            className={`md:hidden p-2 ${isTransparent ? 'text-white' : 'text-gray-700'}`}
+            className="md:hidden p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <svg
@@ -127,34 +96,27 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className={`md:hidden py-4 border-t space-y-2 ${
-            isTransparent
-              ? 'border-white/30 bg-black/50 backdrop-blur-sm'
-              : 'border-gray-100 bg-white'
-          }`}>
+          <div className="md:hidden py-4 border-t space-y-2">
             {navigation.map((item) => (
               item.hasDropdown ? (
                 <ServicesDropdown 
                   key={item.name}
                   isMobile={true}
-                  isTransparent={isTransparent}
                   onItemClick={() => setIsMenuOpen(false)}
                 />
               ) : (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`block py-2 font-medium ${
-                    isTransparent ? 'text-white hover:text-sky-200' : 'text-gray-700 hover:text-sky-600'
-                  }`}
+                  className="block py-2 text-gray-700 hover:text-sky-600 font-medium"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
               )
             ))}
-            <div className="pt-2 border-t border-inherit">
-              <LanguageSwitcher isTransparent={isTransparent} />
+            <div className="pt-2 border-t">
+              <LanguageSwitcher />
             </div>
           </div>
         )}
