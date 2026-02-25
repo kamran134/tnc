@@ -13,7 +13,7 @@ export default function MembershipsPage() {
   const router = useRouter();
   const toast = useToast();
 
-  const { data: memberships = [], isLoading, error } = useAdminMembershipsListQuery();
+  const { data: memberships = [], isLoading, isFetching, error } = useAdminMembershipsListQuery();
   const mutations = useAdminMembershipMutation();
 
   const getAzTitle = (membership: MembershipAdminDto) =>
@@ -46,7 +46,7 @@ export default function MembershipsPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || (isFetching && memberships.length === 0)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="flex items-center space-x-3">
