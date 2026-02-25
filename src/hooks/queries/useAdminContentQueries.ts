@@ -169,7 +169,7 @@ export function useAdminMembershipsListQuery() {
   return useQuery({
     queryKey: contentQueryKeys.memberships.list(),
     queryFn: () => adminMembershipsService.getAllAsList(),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
     gcTime: 10 * 60 * 1000,
   });
 }

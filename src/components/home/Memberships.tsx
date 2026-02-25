@@ -1,7 +1,6 @@
 'use client';
 
-import { LoadingSpinner, Alert } from '@/components/ui';
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { useEffect, useRef, useState } from 'react';
 import { LanguageCode } from '@/types/api';
 import { useMemberships } from '@/hooks/queries';
 
@@ -11,34 +10,31 @@ interface MembershipsProps {
 
 export default function Memberships({ lang = 'az' }: MembershipsProps) {
   const { data: memberships = [], isLoading, error } = useMemberships(lang as LanguageCode);
-  const { ref, isVisible } = useScrollAnimation();
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
-  if (isLoading) {
-    return (
-      <section className="snap-start section-padding bg-gray-50 flex items-center" style={{ minHeight: '100vh' }}>
-        <div className="container-max">
-          <LoadingSpinner />
-        </div>
-      </section>
+  // Re-run observer when memberships data arrives — fixes async load timing issue
+  useEffect(() => {
+    if (memberships.length === 0) return;
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setIsVisible(true);
+      },
+      { threshold: 0.1 }
     );
-  }
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [memberships.length]);
 
-  if (error) {
-    return (
-      <section className="snap-start section-padding bg-gray-50 flex items-center" style={{ minHeight: '100vh' }}>
-        <div className="container-max">
-          <Alert type="error" message="Failed to load memberships" />
-        </div>
-      </section>
-    );
-  }
-
-  if (memberships.length === 0) {
+  if (isLoading || error || memberships.length === 0) {
     return null;
   }
 
   return (
-    <section ref={ref as any} className="snap-start section-padding bg-gray-50 flex items-center" style={{ minHeight: '100vh' }}>
+    <section ref={sectionRef as any} className="snap-start section-padding bg-gray-50 flex items-center" style={{ minHeight: '100vh' }}>
       <div className="container-max">
         <div className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
