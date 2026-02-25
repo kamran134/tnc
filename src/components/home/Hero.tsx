@@ -104,7 +104,7 @@ export default function Hero(_: HeroProps) {
   const skeletonSection = (
     <section
       className="snap-start relative bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white flex items-center justify-center overflow-hidden"
-      style={{ height: '100vh' }}
+      style={{ height: 'calc(100vh - 73px)' }}
     >
       <div className="container-max relative z-10">
         <div className="text-center max-w-6xl mx-auto">
@@ -138,7 +138,7 @@ export default function Hero(_: HeroProps) {
   return (
     <section
       className="snap-start relative bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white overflow-hidden"
-      style={{ height: '100vh' }}
+      style={{ height: 'calc(100vh - 73px)' }}
     >
       {/* Background images â€” cross-fade between slides */}
       <div className="absolute inset-0">
