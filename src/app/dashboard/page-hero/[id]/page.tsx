@@ -45,6 +45,7 @@ export default function EditPageHeroPage() {
   const [formData, setFormData] = useState({
     pageTag: 'HOME' as PageTag,
     isActive: true,
+    sortOrder: 0,
     translations: [
       { languageCode: 'az', title: '', subtitle: '', heroDescription: '', buttonText: '', buttonUrl: '', backgroundImageUrl: '', heroImageUrl: '', metaTitle: '', metaDescription: '' },
       { languageCode: 'en', title: '', subtitle: '', heroDescription: '', buttonText: '', buttonUrl: '', backgroundImageUrl: '', heroImageUrl: '', metaTitle: '', metaDescription: '' },
@@ -57,6 +58,7 @@ export default function EditPageHeroPage() {
       setFormData({
         pageTag: heroData.pageTag,
         isActive: heroData.isActive,
+        sortOrder: heroData.sortOrder ?? 0,
         translations: [
           {
             languageCode: 'az',
@@ -109,7 +111,7 @@ export default function EditPageHeroPage() {
         translations: formData.translations.filter(t => t.title.trim())
       };
 
-      const cleanedData = removeEmptyFields(filteredData);
+      const cleanedData = removeEmptyFields(filteredData) as import('@/types/api').UpdatePageHeroRequest;
 
       await updateMutation.mutateAsync({ 
         id: Number(heroId), 
@@ -185,6 +187,18 @@ export default function EditPageHeroPage() {
                   disabled
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Sort Order</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={formData.sortOrder}
+                  onChange={(e) => setFormData(prev => ({ ...prev, sortOrder: parseInt(e.target.value, 10) || 0 }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900"
+                />
+                <p className="mt-1 text-xs text-gray-400">Lower value = displayed first (for HOME slider)</p>
               </div>
 
               <div>

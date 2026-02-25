@@ -7,6 +7,7 @@ export { servicesService } from './services.service';
 export { careersService } from './careers.service';
 export { contactService } from './contact.service';
 export { homeService, coreValuesService, membershipsService, companyInfoService } from './public.service';
+export { pageHeroService } from './page-hero.service';
 export { filesService } from './files.service';
 export { teamService } from './team.service';
 

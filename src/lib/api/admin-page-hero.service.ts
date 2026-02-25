@@ -27,11 +27,11 @@ export const adminPageHeroService = {
   },
 
   /**
-   * Get page hero by page tag
+   * Get all hero slides for a page tag (admin)
    */
-  async getByTag(pageTag: PageTag): Promise<PageHeroAdminDto> {
+  async getByTag(pageTag: PageTag): Promise<PageHeroAdminDto[]> {
     try {
-      const response = await apiClient.get<PageHeroAdminDto>(`/admin/page-hero/tag/${pageTag}`);
+      const response = await apiClient.get<PageHeroAdminDto[]>(`/admin/page-hero/tag/${pageTag}`);
       return response.data;
     } catch (error) {
       throw handleApiError(error);

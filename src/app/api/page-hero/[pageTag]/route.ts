@@ -12,7 +12,7 @@ export async function GET(
     const lang = searchParams.get('lang') || 'en';
 
     const response = await fetch(
-      `${BACKEND_URL}/page-hero/tag/${pageTag}?lang=${lang}`,
+      `${BACKEND_URL}/page-hero/${pageTag}?lang=${lang}`,
       {
         method: 'GET',
         headers: {

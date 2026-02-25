@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminPageHeroService } from '@/lib/api';
-import type { PageTag } from '@/types/api';
+import type { CreatePageHeroRequest, PageTag, UpdatePageHeroRequest } from '@/types/api';
 
 // Admin Page Hero Query Keys
 export const adminPageHeroKeys = {
@@ -65,7 +65,7 @@ export function useUpdatePageHeroMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) => 
+    mutationFn: ({ id, data }: { id: number; data: UpdatePageHeroRequest }) =>
       adminPageHeroService.update(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: adminPageHeroKeys.lists() });
@@ -78,7 +78,18 @@ export function useCreatePageHeroMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: any) => adminPageHeroService.create(data),
+    mutationFn: (data: CreatePageHeroRequest) => adminPageHeroService.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminPageHeroKeys.lists() });
+    },
+  });
+}
+
+export function useDeletePageHeroMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => adminPageHeroService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminPageHeroKeys.lists() });
     },

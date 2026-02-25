@@ -129,6 +129,7 @@ export interface PageHeroAdminDto {
   id?: number;
   pageTag: PageTag;
   isActive: boolean;
+  sortOrder: number;
   createdAt?: string;
   updatedAt?: string;
   translations: PageHeroTranslationDto[];
@@ -137,13 +138,32 @@ export interface PageHeroAdminDto {
 export interface CreatePageHeroRequest {
   pageTag: PageTag;
   isActive?: boolean;
+  sortOrder?: number;
   translations: PageHeroTranslationDto[];
 }
 
 export interface UpdatePageHeroRequest {
   pageTag?: PageTag;
   isActive?: boolean;
+  sortOrder?: number;
   translations: PageHeroTranslationDto[];
+}
+
+/** Public (user-facing) response for a single hero slide */
+export interface PageHeroUserDto {
+  id: number;
+  pageTag: PageTag;
+  sortOrder: number;
+  title: string;
+  subtitle?: string;
+  heroDescription?: string;
+  buttonText?: string;
+  buttonUrl?: string;
+  backgroundImageUrl?: string;
+  heroImageUrl?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  languageCode: string;
 }
 
 export interface CompanyInfoTranslationDto {
