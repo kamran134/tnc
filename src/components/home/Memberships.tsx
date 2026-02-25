@@ -42,12 +42,12 @@ export default function Memberships({ lang = 'az' }: MembershipsProps) {
       <div className="container-max">
         <div className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Our Professional Memberships
+            {lang === 'az' ? 'Tərəfdaşlarımız' : lang === 'ru' ? 'Наши партнеры' : 'Our Partners'}
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          {/* <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             We are proud members of leading international business organizations, ensuring we stay connected 
             with global best practices and opportunities.
-          </p>
+          </p> */}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
