@@ -104,7 +104,7 @@ export default function Hero(_: HeroProps) {
   const skeletonSection = (
     <section
       className="snap-start relative bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white flex items-center justify-center overflow-hidden"
-      style={{ height: 'calc(100vh - 73px)' }}
+      style={{ height: '100vh' }}
     >
       <div className="container-max relative z-10">
         <div className="text-center max-w-6xl mx-auto">
@@ -138,7 +138,7 @@ export default function Hero(_: HeroProps) {
   return (
     <section
       className="snap-start relative bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white overflow-hidden"
-      style={{ height: 'calc(100vh - 73px)' }}
+      style={{ height: '100vh' }}
     >
       {/* Background images â€” cross-fade between slides */}
       <div className="absolute inset-0">
@@ -163,8 +163,14 @@ export default function Hero(_: HeroProps) {
             )}
           </div>
         ))}
-        {/* Permanent gradient overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-sky-600/60 via-sky-500/50 to-blue-700/60" />
+        {/* Layer 1: universal dark scrim — guarantees white text contrast
+             regardless of how bright the client's uploaded image is */}
+        <div className="absolute inset-0 bg-black/50" />
+        {/* Layer 2: brand colour tint on top of the dark scrim */}
+        <div className="absolute inset-0 bg-gradient-to-br from-sky-600/35 via-sky-500/25 to-blue-700/35" />
+        {/* Layer 3: top-fade for the transparent header — extra darkening
+             over the nav area so menu items are always legible */}
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/40 to-transparent" />
       </div>
 
       {/* Text content â€” single block that animates in/out */}

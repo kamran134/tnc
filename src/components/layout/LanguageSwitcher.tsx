@@ -23,7 +23,11 @@ const FlagIcon = ({ code, className = "w-5 h-5" }: { code: string; className?: s
   />
 );
 
-export default function LanguageSwitcher() {
+interface LanguageSwitcherProps {
+  isTransparent?: boolean;
+}
+
+export default function LanguageSwitcher({ isTransparent = false }: LanguageSwitcherProps) {
   const { locale, setLocale } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -45,14 +49,20 @@ export default function LanguageSwitcher() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+        className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
+          isTransparent ? 'hover:bg-white/20' : 'hover:bg-gray-100'
+        }`}
         aria-label="Change language"
       >
         <FlagIcon code={currentLang.flag} className="w-5 h-5" />
         <span className="text-lg hidden">{currentLang.flagEmoji}</span>
-        <span className="font-medium text-gray-700">{currentLang.name}</span>
+        <span className={`font-medium ${
+          isTransparent ? 'text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.5)]' : 'text-gray-700'
+        }`}>{currentLang.name}</span>
         <svg
-          className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''} ${
+            isTransparent ? 'text-white/80' : 'text-gray-500'
+          }`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
