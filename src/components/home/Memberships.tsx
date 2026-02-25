@@ -1,37 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { membershipsService, MembershipDto } from '@/lib/api';
 import { LoadingSpinner, Alert } from '@/components/ui';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { LanguageCode } from '@/types/api';
+import { useMemberships } from '@/hooks/queries';
 
 interface MembershipsProps {
   lang?: string;
 }
 
 export default function Memberships({ lang = 'az' }: MembershipsProps) {
-  const [memberships, setMemberships] = useState<MembershipDto[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: memberships = [], isLoading, error } = useMemberships(lang as LanguageCode);
   const { ref, isVisible } = useScrollAnimation();
-
-  useEffect(() => {
-    loadMemberships();
-  }, [lang]);
-
-  const loadMemberships = async () => {
-    try {
-      setIsLoading(true);
-      const data = await membershipsService.getAll(lang as LanguageCode);
-      setMemberships(data);
-      setError(null);
-    } catch (err) {
-      setError('Failed to load memberships');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -47,14 +27,14 @@ export default function Memberships({ lang = 'az' }: MembershipsProps) {
     return (
       <section className="snap-start section-padding bg-gray-50 flex items-center" style={{ minHeight: '100vh' }}>
         <div className="container-max">
-          <Alert type="error" message={error} />
+          <Alert type="error" message="Failed to load memberships" />
         </div>
       </section>
     );
   }
 
   if (memberships.length === 0) {
-    return null; // Don't show section if no memberships
+    return null;
   }
 
   return (

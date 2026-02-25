@@ -365,6 +365,27 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          <div 
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => router.push('/dashboard/memberships')}
+          >
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Memberships & Partners</h3>
+            </div>
+            <p className="text-gray-600 mb-4">Manage partner organizations and professional memberships</p>
+            <div className="flex items-center text-sm text-sky-600 font-medium">
+              <span>Manage Memberships</span>
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
             <div className="flex items-center mb-4">
               <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">

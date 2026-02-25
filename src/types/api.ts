@@ -71,6 +71,9 @@ export interface MembershipTranslationDto {
   title: string;
   content?: string;
   excerpt?: string;
+  servicesProvided?: string;
+  partnershipDetails?: string;
+  contactInfo?: string;
 }
 
 export interface CoreValueTranslationDto {
@@ -394,7 +397,10 @@ export interface MembershipAdminDto {
   name: string;
   fullName?: string;
   logoUrl?: string;
+  imageUrl?: string;
   websiteUrl?: string;
+  partnershipType?: string;
+  establishedDate?: string;
   sortOrder?: number;
   active?: boolean;
   translations: MembershipTranslationDto[];
