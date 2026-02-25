@@ -1,14 +1,17 @@
-'use client';
+﻿'use client';
 
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import type { PageHeroUserDto } from '@/types/api';
 
-const SLIDE_DURATION_MS = 5500;
-const FADE_DURATION_MS = 1100;
+// How long text stays fully visible before the leave animation starts
+const SLIDE_HOLD_MS = 5500;
+// Text leave animation duration (slides down + fades out)
+const TEXT_OUT_MS = 400;
+// Background cross-fade duration
+const BG_FADE_MS = 900;
 
 interface HeroProps {
   companyInfo?: unknown;
@@ -17,13 +20,25 @@ interface HeroProps {
 export default function Hero(_: HeroProps) {
   const params = useParams();
   const lang = (params.lang as string) || 'az';
-  const { ref, isVisible } = useScrollAnimation();
   const { t } = useTranslations();
 
   const [slides, setSlides] = useState<PageHeroUserDto[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [textVisible, setTextVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Tracks in-flight timeouts so we can cancel them on unmount / manual nav
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const clearTimeouts = () => {
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+  };
+
+  const schedule = (fn: () => void, delay: number) => {
+    const id = setTimeout(fn, delay);
+    timeoutsRef.current.push(id);
+    return id;
+  };
 
   useEffect(() => {
     const fetchSlides = async () => {
@@ -40,23 +55,43 @@ export default function Hero(_: HeroProps) {
       }
     };
     fetchSlides();
+    return clearTimeouts;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang]);
 
-  const advance = useCallback(() => {
-    setActiveIndex(i => (i + 1) % slides.length);
+  // Show text shortly after slides arrive
+  useEffect(() => {
+    if (slides.length === 0) return;
+    const id = setTimeout(() => setTextVisible(true), 250);
+    return () => clearTimeout(id);
   }, [slides.length]);
 
+  // Transition: text out â†’ bg swap â†’ text in
+  const transitionTo = useCallback((nextIndex: number) => {
+    clearTimeouts();
+    // 1. Text leaves
+    setTextVisible(false);
+    // 2. After text is gone â€” swap background
+    schedule(() => {
+      setActiveIndex(nextIndex);
+      // 3. After bg cross-fade â€” show new text
+      schedule(() => setTextVisible(true), BG_FADE_MS);
+    }, TEXT_OUT_MS);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-advance: timer starts when text becomes visible
   useEffect(() => {
-    if (slides.length <= 1) return;
-    timerRef.current = setTimeout(advance, SLIDE_DURATION_MS);
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [activeIndex, slides.length, advance]);
+    if (!textVisible || slides.length <= 1) return;
+    const id = setTimeout(() => {
+      transitionTo((activeIndex + 1) % slides.length);
+    }, SLIDE_HOLD_MS);
+    return () => clearTimeout(id);
+  }, [textVisible, activeIndex, slides.length, transitionTo]);
 
   const goTo = (index: number) => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    setActiveIndex(index);
+    if (index === activeIndex) return;
+    transitionTo(index);
   };
 
   const buildButtonUrl = (slide: PageHeroUserDto) => {
@@ -66,22 +101,22 @@ export default function Hero(_: HeroProps) {
     return `/${lang}${clean}`;
   };
 
-  if (isLoading) {
-    return (
-      <section
-        className="snap-start relative bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white flex items-center justify-center overflow-hidden"
-        style={{ height: 'calc(100vh - 73px)' }}
-      >
-        <div className="container-max relative z-10">
-          <div className="text-center max-w-6xl mx-auto">
-            <div className="h-16 bg-white/10 rounded-lg animate-pulse mb-12 mx-auto max-w-3xl" />
-            <div className="h-10 bg-white/10 rounded-lg animate-pulse mb-8 mx-auto max-w-2xl" />
-            <div className="h-8 bg-white/10 rounded-lg animate-pulse mb-12 mx-auto max-w-2xl" />
-          </div>
+  const skeletonSection = (
+    <section
+      className="snap-start relative bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white flex items-center justify-center overflow-hidden"
+      style={{ height: 'calc(100vh - 73px)' }}
+    >
+      <div className="container-max relative z-10">
+        <div className="text-center max-w-6xl mx-auto">
+          <div className="h-16 bg-white/10 rounded-lg animate-pulse mb-12 mx-auto max-w-3xl" />
+          <div className="h-10 bg-white/10 rounded-lg animate-pulse mb-8 mx-auto max-w-2xl" />
+          <div className="h-8 bg-white/10 rounded-lg animate-pulse mb-12 mx-auto max-w-2xl" />
         </div>
-      </section>
-    );
-  }
+      </div>
+    </section>
+  );
+
+  if (isLoading) return skeletonSection;
 
   const effectiveSlides: PageHeroUserDto[] = slides.length > 0 ? slides : [
     {
@@ -96,32 +131,28 @@ export default function Hero(_: HeroProps) {
     },
   ];
 
+  const currentSlide = effectiveSlides[activeIndex];
+  const buttonText = currentSlide.buttonText || 'Our Services';
+  const buttonUrl = buildButtonUrl(currentSlide);
+
   return (
     <section
-      ref={ref as React.RefObject<HTMLElement>}
       className="snap-start relative bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white overflow-hidden"
       style={{ height: 'calc(100vh - 73px)' }}
     >
-      {/* Each slide is a self-contained unit: background + overlay + text */}
-      {effectiveSlides.map((slide, i) => {
-        const isActive = i === activeIndex;
-        const buttonText = slide.buttonText || 'Our Services';
-        const buttonUrl = buildButtonUrl(slide);
-
-        return (
+      {/* Background images â€” cross-fade between slides */}
+      <div className="absolute inset-0">
+        {effectiveSlides.map((slide, i) => (
           <div
             key={slide.id ?? i}
-            aria-hidden={!isActive}
+            aria-hidden={i !== activeIndex}
             style={{
               position: 'absolute',
               inset: 0,
-              transition: `opacity ${FADE_DURATION_MS}ms ease-in-out`,
-              opacity: isActive ? 1 : 0,
-              pointerEvents: isActive ? 'auto' : 'none',
-              zIndex: isActive ? 1 : 0,
+              transition: `opacity ${BG_FADE_MS}ms ease-in-out`,
+              opacity: i === activeIndex ? 1 : 0,
             }}
           >
-            {/* Background image */}
             {slide.backgroundImageUrl && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -130,54 +161,56 @@ export default function Hero(_: HeroProps) {
                 className="absolute inset-0 w-full h-full object-cover"
               />
             )}
+          </div>
+        ))}
+        {/* Permanent gradient overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-sky-600/60 via-sky-500/50 to-blue-700/60" />
+      </div>
 
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-sky-600/60 via-sky-500/50 to-blue-700/60" />
+      {/* Text content â€” single block that animates in/out */}
+      <div
+        className="relative z-10 h-full flex items-center justify-center"
+        style={{
+          transition: `opacity ${TEXT_OUT_MS}ms ease-out, transform ${TEXT_OUT_MS}ms ease-out`,
+          opacity: textVisible ? 1 : 0,
+          transform: textVisible ? 'translateY(0)' : 'translateY(28px)',
+        }}
+      >
+        <div className="container-max w-full">
+          <div className="text-center max-w-6xl mx-auto">
+            <h1 className="text-5xl font-bold mb-12">{currentSlide.title}</h1>
 
-            {/* Text content */}
-            <div className="relative z-10 h-full flex items-center justify-center">
-              <div className="container-max w-full">
-                <div
-                  className={`text-center max-w-6xl mx-auto transition-all duration-1000 ease-out ${
-                    isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-                  }`}
+            {currentSlide.subtitle && (
+              <h2 className="text-3xl md:text-4xl font-semibold mb-8 text-sky-100">
+                {currentSlide.subtitle}
+              </h2>
+            )}
+
+            <div className="text-center max-w-3xl mx-auto">
+              {currentSlide.heroDescription && (
+                <p className="text-xl md:text-2xl mb-12 text-sky-100">
+                  {currentSlide.heroDescription}
+                </p>
+              )}
+
+              <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <Link
+                  href={buttonUrl}
+                  className="bg-white text-sky-700 font-semibold py-4 px-10 rounded-lg hover:bg-gray-100 transition-colors duration-200 text-lg"
                 >
-                  <h1 className="text-5xl font-bold mb-12">{slide.title}</h1>
-
-                  {slide.subtitle && (
-                    <h2 className="text-3xl md:text-4xl font-semibold mb-8 text-sky-100">
-                      {slide.subtitle}
-                    </h2>
-                  )}
-
-                  <div className="text-center max-w-3xl mx-auto">
-                    {slide.heroDescription && (
-                      <p className="text-xl md:text-2xl mb-12 text-sky-100">
-                        {slide.heroDescription}
-                      </p>
-                    )}
-
-                    <div className="flex flex-col sm:flex-row justify-center gap-4">
-                      <Link
-                        href={buttonUrl}
-                        className="bg-white text-sky-700 font-semibold py-4 px-10 rounded-lg hover:bg-gray-100 transition-colors duration-200 text-lg"
-                      >
-                        {buttonText}
-                      </Link>
-                      <Link
-                        href={`/${lang}/contact`}
-                        className="border-2 border-white text-white font-semibold py-4 px-10 rounded-lg hover:bg-white hover:text-sky-700 transition-colors duration-200 text-lg"
-                      >
-                        {t('home.hero.getInTouch')}
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+                  {buttonText}
+                </Link>
+                <Link
+                  href={`/${lang}/contact`}
+                  className="border-2 border-white text-white font-semibold py-4 px-10 rounded-lg hover:bg-white hover:text-sky-700 transition-colors duration-200 text-lg"
+                >
+                  {t('home.hero.getInTouch')}
+                </Link>
               </div>
             </div>
           </div>
-        );
-      })}
+        </div>
+      </div>
 
       {/* Navigation dots */}
       {effectiveSlides.length > 1 && (
