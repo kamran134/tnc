@@ -47,63 +47,47 @@ export default function Memberships({ lang = 'az' }: MembershipsProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {memberships.map((membership, index) => (
-            <div
-              key={membership.id}
-              className={`bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 rotate-12 scale-75'}`}
-              style={{ transitionDelay: `${index * 200}ms`, transformOrigin: 'bottom center' }}>
+          {memberships.map((membership, index) => {
+            const cardClass = `bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 rotate-12 scale-75'}`;
+            const cardStyle = { transitionDelay: `${index * 200}ms`, transformOrigin: 'bottom center' };
+            const cardContent = (
               <div className="text-center">
                 {membership.logoUrl ? (
-                  <div className="w-16 h-16 mx-auto mb-4">
-                    <img 
-                      src={membership.logoUrl} 
+                  <div className="w-32 h-32 mx-auto mb-4">
+                    <img
+                      src={membership.logoUrl}
                       alt={membership.title}
                       className="w-full h-full object-contain"
                     />
                   </div>
                 ) : (
-                  <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg
-                      className="w-8 h-8 text-sky-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-                      />
+                  <div className="w-32 h-32 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                     </svg>
                   </div>
                 )}
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  {membership.title}
-                </h3>
-                {membership.description && (
-                  <p className="text-sm text-gray-600 mb-3">
-                    {membership.description}
-                  </p>
-                )}
-                {membership.partnershipType && (
-                  <p className="text-sm text-sky-600 font-semibold mb-3">
-                    {membership.partnershipType}
-                  </p>
-                )}
-                {membership.websiteUrl && (
-                  <a
-                    href={membership.websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block mt-4 text-sky-600 hover:text-sky-700 text-sm font-medium"
-                  >
-                    Visit Website →
-                  </a>
-                )}
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{membership.title}</h3>
               </div>
-            </div>
-          ))}
+            );
+
+            return membership.websiteUrl ? (
+              <a
+                key={membership.id}
+                href={membership.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${cardClass} block cursor-pointer`}
+                style={cardStyle}
+              >
+                {cardContent}
+              </a>
+            ) : (
+              <div key={membership.id} className={cardClass} style={cardStyle}>
+                {cardContent}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
