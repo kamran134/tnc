@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { companyInfoService, membershipsService } from '@/lib/api';
+import { companyInfoService, membershipsService, serviceCategoriesService } from '@/lib/api';
 import { LanguageCode } from '@/types/api';
 
 // Query keys for public data
 export const publicQueryKeys = {
   companyInfo: (lang: LanguageCode) => ['public', 'company-info', lang] as const,
   memberships: (lang: LanguageCode) => ['public', 'memberships', lang] as const,
+  serviceCategories: (lang: string) => ['public', 'service-categories', lang] as const,
 };
 
 /**
@@ -35,6 +36,22 @@ export function useCompanyInfo(lang: LanguageCode = 'az') {
     refetchOnWindowFocus: false, // Don't refetch when window regains focus
     refetchOnReconnect: false, // Don't refetch on reconnect
     refetchOnMount: false, // CRITICAL: prevent SSR request spam on every page render
+  });
+}
+
+/**
+ * Hook for fetching service categories on public pages
+ */
+export function useServiceCategories(lang: string = 'az') {
+  return useQuery({
+    queryKey: publicQueryKeys.serviceCategories(lang),
+    queryFn: () => serviceCategoriesService.getAll(lang),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
   });
 }
 

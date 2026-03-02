@@ -4,6 +4,7 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import Hero from '@/components/home/Hero'
 import Memberships from '@/components/home/Memberships'
+import HomeServiceCategories from '@/components/home/HomeServiceCategories'
 import Mission from '@/components/home/Mission'
 import Vision from '@/components/home/Vision'
 import CoreValues from '@/components/home/CoreValues'
@@ -24,6 +25,7 @@ export default function HomePage() {
       <main className="snap-y snap-mandatory overflow-y-scroll" style={{ height: 'calc(100vh - 73px)' }}>
         <Hero companyInfo={companyInfo || null} />
         <Memberships lang={lang} />
+        <HomeServiceCategories lang={lang} />
         <Mission lang={lang} companyInfo={companyInfo || null} />
         <Vision lang={lang} companyInfo={companyInfo || null} />
         <CoreValues lang={lang} companyInfo={companyInfo || null} />
