@@ -54,9 +54,9 @@ export default function HomeServiceCategories({ lang = 'az' }: HomeServiceCatego
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          <p className="text-sky-400 text-sm font-semibold uppercase tracking-widest mb-3">
+          {/* <p className="text-sky-400 text-sm font-semibold uppercase tracking-widest mb-3">
             {lang === 'az' ? 'Nə edirik' : lang === 'ru' ? 'Что мы делаем' : 'What we do'}
-          </p>
+          </p> */}
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
               {title}
