@@ -109,9 +109,10 @@ export default function ServicesList({ categoryCode }: ServicesListProps) {
                       {service.title}
                     </h3>
                     {service.excerpt && (
-                      <p className="text-gray-600 mb-4">
-                        {service.excerpt}
-                      </p>
+                      <div
+                        className="text-gray-600 mb-4 prose prose-sm max-w-none rich-text-content"
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(service.excerpt) }}
+                      />
                     )}
                     <div 
                       className="text-gray-700 prose prose-sm max-w-none rich-text-content"

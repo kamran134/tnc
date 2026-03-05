@@ -134,9 +134,10 @@ export default function NewsDetail() {
             )}
 
             {news.excerpt && (
-              <div className="text-xl text-gray-700 leading-relaxed mb-8 font-medium border-l-4 border-sky-500 pl-6 italic">
-                {news.excerpt}
-              </div>
+              <div
+                className="text-xl text-gray-700 leading-relaxed mb-8 font-medium border-l-4 border-sky-500 pl-6 italic rich-text-content"
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(news.excerpt) }}
+              />
             )}
 
             <div className="prose prose-lg max-w-none">

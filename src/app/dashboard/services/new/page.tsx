@@ -216,11 +216,10 @@ export default function CreateServicePage() {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Short Description</label>
-                      <textarea
+                      <RichTextEditor
+                        key={`excerpt-${translation.languageCode}`}
                         value={translation.excerpt}
-                        onChange={(e) => updateTranslation(index, 'excerpt', e.target.value)}
-                        rows={2}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                        onChange={(value) => updateTranslation(index, 'excerpt', value)}
                         placeholder={translation.languageCode === 'az' ? 'Qısa təsvir...' : translation.languageCode === 'en' ? 'Brief service description...' : 'Краткое описание...'}
                       />
                     </div>

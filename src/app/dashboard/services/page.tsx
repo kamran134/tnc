@@ -194,7 +194,7 @@ export default function ServicesPage() {
                             {translation?.title || 'No title'}
                           </div>
                           <div className="text-sm text-gray-500 truncate max-w-xs">
-                            {translation?.excerpt || translation?.content?.substring(0, 100) + '...'}
+                            {translation?.excerpt ? translation.excerpt.replace(/<[^>]*>/g, '') : (translation?.content?.replace(/<[^>]*>/g, '')?.substring(0, 100) || '') + '...'}
                           </div>
                         </div>
                       </td>

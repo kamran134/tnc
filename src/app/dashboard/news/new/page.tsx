@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 export default function CreateNewsPage() {
   const router = useRouter();
@@ -199,13 +200,11 @@ export default function CreateNewsPage() {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
-                      <textarea
+                      <RichTextEditor
+                        key={translation.languageCode}
                         value={translation.content}
-                        onChange={(e) => updateTranslation(index, 'content', e.target.value)}
-                        rows={8}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                        onChange={(value) => updateTranslation(index, 'content', value)}
                         placeholder={translation.languageCode === 'az' ? 'Məqalənin məzmunu...' : translation.languageCode === 'en' ? 'Article content...' : 'Содержание статьи...'}
-                        required={translation.languageCode === 'az'}
                       />
                     </div>
                   </div>
