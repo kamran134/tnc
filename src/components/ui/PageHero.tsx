@@ -38,7 +38,9 @@ export default function PageHero({
         const response = await fetch(`/api/page-hero/${pageTag}?lang=${lang}`);
         if (response.ok) {
           const data = await response.json();
-          setHeroData(data);
+          // Backend returns an array; take the first active entry
+          const first = Array.isArray(data) ? data[0] ?? null : data;
+          setHeroData(first);
         } else {
           console.log(`Page hero API returned ${response.status}, using fallback`);
         }

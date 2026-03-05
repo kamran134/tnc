@@ -23,7 +23,9 @@ export default function ServiceHero() {
         const response = await fetch(`/api/page-hero/SERVICES?lang=${lang}`);
         if (response.ok) {
           const data = await response.json();
-          setHeroData(data);
+          // Backend returns an array; take the first active entry
+          const first = Array.isArray(data) ? data[0] ?? null : data;
+          setHeroData(first);
         }
       } catch (error) {
         console.error('Error fetching hero data:', error);
