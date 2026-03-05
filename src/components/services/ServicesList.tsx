@@ -7,6 +7,7 @@ import { LoadingSpinner, Alert, Card } from '@/components/ui'
 import { ServiceDto, LanguageCode } from '@/types/api'
 import { servicesService } from '@/lib/api'
 import { useTranslations } from '@/hooks/useTranslations'
+import { sanitizeHtml } from '@/lib/sanitize'
 
 interface ServicesListProps {
   categoryCode?: string
@@ -114,7 +115,7 @@ export default function ServicesList({ categoryCode }: ServicesListProps) {
                     )}
                     <div 
                       className="text-gray-700 prose prose-sm max-w-none rich-text-content"
-                      dangerouslySetInnerHTML={{ __html: service.content }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(service.content) }}
                     />
                     <style jsx global>{`
                       .rich-text-content h1,

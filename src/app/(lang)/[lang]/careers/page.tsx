@@ -8,6 +8,7 @@ import { PageHero, LoadingSpinner, Alert, Button, Card, EmptyState } from '@/com
 import { LanguageCode } from '@/types/api'
 import { useTranslations } from '@/hooks/useTranslations'
 import { useCareersListQuery } from '@/hooks/queries'
+import { sanitizeHtml } from '@/lib/sanitize'
 
 export default function CareersPage() {
   const { t } = useTranslations();
@@ -162,7 +163,7 @@ export default function CareersPage() {
                             <h4 className="font-semibold text-gray-900 mb-2">{t('careers.requirements')}:</h4>
                             <div 
                               className="text-gray-700 prose prose-sm max-w-none"
-                              dangerouslySetInnerHTML={{ __html: job.requirements }}
+                              dangerouslySetInnerHTML={{ __html: sanitizeHtml(job.requirements) }}
                             />
                           </div>
                         )}

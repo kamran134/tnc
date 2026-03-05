@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer';
 import { LoadingSpinner, Alert } from '@/components/ui';
 import { LanguageCode } from '@/types/api';
 import { useCareerBySlugQuery } from '@/hooks/queries';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 export default function CareerDetail() {
   const params = useParams();
@@ -131,7 +132,7 @@ export default function CareerDetail() {
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Job Description</h2>
               <div 
                 className="prose prose-lg max-w-none text-gray-700 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: career.content }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(career.content) }}
               />
             </div>
 
@@ -140,7 +141,7 @@ export default function CareerDetail() {
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Requirements</h2>
                 <div 
                   className="prose prose-lg max-w-none text-gray-700 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: career.requirements }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(career.requirements) }}
                 />
               </div>
             )}

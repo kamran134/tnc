@@ -8,6 +8,7 @@ import Footer from '@/components/layout/Footer';
 import { LoadingSpinner, Alert } from '@/components/ui';
 import { LanguageCode } from '@/types/api';
 import { useNewsBySlugQuery } from '@/hooks/queries';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 export default function NewsDetail() {
   const params = useParams();
@@ -141,7 +142,7 @@ export default function NewsDetail() {
             <div className="prose prose-lg max-w-none">
               <div 
                 className="text-gray-700 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: news.content }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(news.content) }}
               />
             </div>
 
