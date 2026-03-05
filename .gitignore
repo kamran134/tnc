@@ -45,6 +45,3 @@ ssl/
 uploads/
 postgres-data/
 logs/
-
-package-lock.json
-yarn.lock
