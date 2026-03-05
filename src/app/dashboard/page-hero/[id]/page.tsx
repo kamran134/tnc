@@ -7,6 +7,7 @@ import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 import { PageHeroAdminDto, PageTag } from '@/types/api';
 import { useAdminPageHeroDetailQuery, useUpdatePageHeroMutation } from '@/hooks/queries';
+import { decodeHtmlEntities } from '@/lib/sanitize';
 
 const PAGE_TAG_LABELS: Record<PageTag, string> = {
   HOME: 'Home Page',
@@ -62,39 +63,39 @@ export default function EditPageHeroPage() {
         translations: [
           {
             languageCode: 'az',
-            title: heroData.translations?.find((t: any) => t.languageCode === 'az')?.title || '',
-            subtitle: heroData.translations?.find((t: any) => t.languageCode === 'az')?.subtitle || '',
-            heroDescription: heroData.translations?.find((t: any) => t.languageCode === 'az')?.heroDescription || '',
-            buttonText: heroData.translations?.find((t: any) => t.languageCode === 'az')?.buttonText || '',
+            title: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'az')?.title) || '',
+            subtitle: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'az')?.subtitle) || '',
+            heroDescription: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'az')?.heroDescription) || '',
+            buttonText: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'az')?.buttonText) || '',
             buttonUrl: heroData.translations?.find((t: any) => t.languageCode === 'az')?.buttonUrl || '',
             backgroundImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'az')?.backgroundImageUrl || '',
             heroImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'az')?.heroImageUrl || '',
-            metaTitle: heroData.translations?.find((t: any) => t.languageCode === 'az')?.metaTitle || '',
-            metaDescription: heroData.translations?.find((t: any) => t.languageCode === 'az')?.metaDescription || ''
+            metaTitle: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'az')?.metaTitle) || '',
+            metaDescription: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'az')?.metaDescription) || ''
           },
           {
             languageCode: 'en',
-            title: heroData.translations?.find((t: any) => t.languageCode === 'en')?.title || '',
-            subtitle: heroData.translations?.find((t: any) => t.languageCode === 'en')?.subtitle || '',
-            heroDescription: heroData.translations?.find((t: any) => t.languageCode === 'en')?.heroDescription || '',
-            buttonText: heroData.translations?.find((t: any) => t.languageCode === 'en')?.buttonText || '',
+            title: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'en')?.title) || '',
+            subtitle: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'en')?.subtitle) || '',
+            heroDescription: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'en')?.heroDescription) || '',
+            buttonText: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'en')?.buttonText) || '',
             buttonUrl: heroData.translations?.find((t: any) => t.languageCode === 'en')?.buttonUrl || '',
             backgroundImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'en')?.backgroundImageUrl || '',
             heroImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'en')?.heroImageUrl || '',
-            metaTitle: heroData.translations?.find((t: any) => t.languageCode === 'en')?.metaTitle || '',
-            metaDescription: heroData.translations?.find((t: any) => t.languageCode === 'en')?.metaDescription || ''
+            metaTitle: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'en')?.metaTitle) || '',
+            metaDescription: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'en')?.metaDescription) || ''
           },
           {
             languageCode: 'ru',
-            title: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.title || '',
-            subtitle: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.subtitle || '',
-            heroDescription: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.heroDescription || '',
-            buttonText: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.buttonText || '',
+            title: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'ru')?.title) || '',
+            subtitle: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'ru')?.subtitle) || '',
+            heroDescription: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'ru')?.heroDescription) || '',
+            buttonText: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'ru')?.buttonText) || '',
             buttonUrl: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.buttonUrl || '',
             backgroundImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.backgroundImageUrl || '',
             heroImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.heroImageUrl || '',
-            metaTitle: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.metaTitle || '',
-            metaDescription: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.metaDescription || ''
+            metaTitle: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'ru')?.metaTitle) || '',
+            metaDescription: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'ru')?.metaDescription) || ''
           }
         ]
       });

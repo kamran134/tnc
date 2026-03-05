@@ -1,5 +1,22 @@
 import DOMPurify from 'isomorphic-dompurify';
 
+/**
+ * Decodes HTML entities in plain text strings returned by the backend
+ * (e.g. "&amp;" → "&", "&lt;" → "<").
+ * Safe to call on the server and in client components.
+ */
+export function decodeHtmlEntities(str: string | undefined | null): string {
+  if (!str) return str ?? '';
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, '\u00a0');
+}
+
 export function sanitizeHtml(dirty: string): string {
   return DOMPurify.sanitize(dirty, {
     ALLOWED_TAGS: [

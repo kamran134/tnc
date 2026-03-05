@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import type { PageHeroUserDto } from '@/types/api';
+import { decodeHtmlEntities } from '@/lib/sanitize';
 
 // How long text stays fully visible before the leave animation starts
 const SLIDE_HOLD_MS = 5500;
@@ -132,7 +133,7 @@ export default function Hero(_: HeroProps) {
   ];
 
   const currentSlide = effectiveSlides[activeIndex];
-  const buttonText = currentSlide.buttonText || 'Our Services';
+  const buttonText = decodeHtmlEntities(currentSlide.buttonText) || 'Our Services';
   const buttonUrl = buildButtonUrl(currentSlide);
 
   return (
@@ -184,18 +185,18 @@ export default function Hero(_: HeroProps) {
       >
         <div className="container-max w-full">
           <div className="text-center max-w-6xl mx-auto">
-            <h1 className="text-5xl font-bold mb-12">{currentSlide.title}</h1>
+            <h1 className="text-5xl font-bold mb-12">{decodeHtmlEntities(currentSlide.title)}</h1>
 
             {currentSlide.subtitle && (
               <h2 className="text-3xl md:text-4xl font-semibold mb-8 text-sky-100">
-                {currentSlide.subtitle}
+                {decodeHtmlEntities(currentSlide.subtitle)}
               </h2>
             )}
 
             <div className="text-center max-w-3xl mx-auto">
               {currentSlide.heroDescription && (
                 <p className="text-xl md:text-2xl mb-12 text-sky-100">
-                  {currentSlide.heroDescription}
+                  {decodeHtmlEntities(currentSlide.heroDescription)}
                 </p>
               )}
 

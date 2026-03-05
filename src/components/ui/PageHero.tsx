@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { PageTag } from '@/types/api';
+import { decodeHtmlEntities } from '@/lib/sanitize';
 
 interface PageHeroProps {
   pageTag: PageTag;
@@ -56,8 +57,8 @@ export default function PageHero({
 
   const bgClass = 'bg-gradient-to-r from-sky-400 to-sky-500';
 
-  const title = heroData?.title || fallbackTitle;
-  const description = heroData?.heroDescription || heroData?.subtitle || fallbackDescription;
+  const title = decodeHtmlEntities(heroData?.title) || fallbackTitle;
+  const description = decodeHtmlEntities(heroData?.heroDescription) || decodeHtmlEntities(heroData?.subtitle) || fallbackDescription;
 
   if (isLoading) {
     return (
@@ -81,7 +82,7 @@ export default function PageHero({
           </h1>
           {heroData?.subtitle && heroData.subtitle !== title && (
             <p className="text-2xl md:text-3xl text-white/90 mb-4 font-medium">
-              {heroData.subtitle}
+              {decodeHtmlEntities(heroData.subtitle)}
             </p>
           )}
           <p className="text-xl md:text-2xl text-white/80">
@@ -93,7 +94,7 @@ export default function PageHero({
                 href={heroData.buttonUrl}
                 className="inline-block px-8 py-3 bg-white text-sky-600 font-semibold rounded-lg hover:bg-white/90 transition-colors"
               >
-                {heroData.buttonText}
+                {decodeHtmlEntities(heroData.buttonText)}
               </a>
             </div>
           )}

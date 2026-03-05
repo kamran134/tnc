@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { decodeHtmlEntities } from '@/lib/sanitize';
 
 interface HeroData {
   title: string;
@@ -37,9 +38,9 @@ export default function ServiceHero() {
     fetchHeroData();
   }, [lang]);
 
-  const title = heroData?.title || 'Our Professional Services';
-  const subtitle = heroData?.subtitle || '';
-  const description = heroData?.heroDescription || 'Comprehensive tax, legal, and consulting solutions tailored to your business needs';
+  const title = decodeHtmlEntities(heroData?.title) || 'Our Professional Services';
+  const subtitle = decodeHtmlEntities(heroData?.subtitle) || '';
+  const description = decodeHtmlEntities(heroData?.heroDescription) || 'Comprehensive tax, legal, and consulting solutions tailored to your business needs';
 
   if (isLoading) {
     return (

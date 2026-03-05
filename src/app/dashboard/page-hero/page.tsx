@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { PageHeroAdminDto, PageTag } from '@/types/api';
 import { useToast } from '@/components/ui';
+import { decodeHtmlEntities } from '@/lib/sanitize';
 import {
   useAdminPageHeroListQuery,
   useActivatePageHeroMutation,
@@ -41,7 +42,7 @@ export default function PageHeroManagementPage() {
   };
 
   const handleDelete = async (hero: PageHeroAdminDto) => {
-    const label = getTranslation(hero)?.title || `#${hero.id}`;
+    const label = decodeHtmlEntities(getTranslation(hero)?.title) || `#${hero.id}`;
     if (!confirm(`Delete slide "${label}"? This cannot be undone.`)) return;
     try {
       await deleteMutation.mutateAsync(hero.id!);
@@ -124,10 +125,10 @@ export default function PageHeroManagementPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm font-medium text-gray-900 max-w-xs truncate">
-                        {translation?.title || <span className="text-gray-400 italic">—</span>}
+                        {decodeHtmlEntities(translation?.title) || <span className="text-gray-400 italic">—</span>}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                        {translation?.subtitle || <span className="text-gray-300">—</span>}
+                        {decodeHtmlEntities(translation?.subtitle) || <span className="text-gray-300">—</span>}
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-xs font-semibold text-gray-600">
