@@ -89,6 +89,7 @@ jobs:
         port: ${{ secrets.PORT }}
         source: "docker-compose.yml,nginx.conf"
         target: "/opt/tnc-website"
+        overwrite: true
 
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.0.3
