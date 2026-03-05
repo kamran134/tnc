@@ -77,6 +77,19 @@ jobs:
     if: github.ref == 'refs/heads/main'
     
     steps:
+    - name: Checkout code for compose file
+      uses: actions/checkout@v4
+
+    - name: Copy docker-compose.yml to server
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.HOST_HETZNER }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY_2 }}
+        port: ${{ secrets.PORT }}
+        source: "docker-compose.yml,nginx.conf"
+        target: "/opt/tnc-website"
+
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -85,26 +98,33 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY_2 }}
         port: ${{ secrets.PORT }}
         script: |
-          # Переход в директорию проекта
           cd /opt/tnc-website
-          
+
+          # Записываем .env файл из GitHub Secrets (перезаписываем при каждом деплое)
+          cat > .env << 'EOF'
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          EOF
+          chmod 600 .env
+
           # Авторизация в GitHub Container Registry
           echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          
+
           # Остановка текущих контейнеров
           docker compose -f docker-compose.yml down app
-          
+
           # Загрузка нового образа из GHCR
           docker compose -f docker-compose.yml pull
-          
+
           # Запуск новых контейнеров с обновленным образом
           docker compose -f docker-compose.yml up -d app
-          
+
           # Очистка старых образов для экономии места
           docker image prune -f
-          
+
           # Проверка состояния контейнеров
           docker compose -f docker-compose.yml ps
-          
+
           # Показать логи для проверки запуска
           docker compose -f docker-compose.yml logs app --tail=20
