@@ -14,8 +14,8 @@ export function useScrollAnimation() {
         }
       },
       {
-        threshold: 0.3,
-        rootMargin: '0px'
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
       }
     );
 
