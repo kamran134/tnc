@@ -1,13 +1,13 @@
 # Dockerfile для TnC Tax & Consulting Website
 # Multi-stage сборка для оптимизации размера образа
 
-# Базовый образ для сборки - используем более новую версию
-FROM node:20-alpine AS base
+# Базовый образ для сборки - используем Debian-slim вместо Alpine
+# Alpine использует musl libc, из-за чего SWC (компилятор Next.js) может
+# генерировать некорректный код (ошибки returnNaN, /app/let и т.д.)
+FROM node:20-slim AS base
 
 # Установка зависимостей только когда необходимо
 FROM base AS deps
-# Добавление libc6-compat для совместимости с Alpine
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Копирование файлов зависимостей
@@ -48,6 +48,9 @@ ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
 
 ARG BACKEND_URL
 ENV BACKEND_URL=${BACKEND_URL}
+
+# Установка wget для healthcheck (в slim-образе не включён по умолчанию)
+RUN apt-get update && apt-get install -y --no-install-recommends wget && rm -rf /var/lib/apt/lists/*
 
 # Создание пользователя nextjs для безопасности
 RUN addgroup --system --gid 1001 nodejs

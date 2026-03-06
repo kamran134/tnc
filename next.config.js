@@ -50,6 +50,9 @@ const nextConfig = {
   },
   // Отключаем source maps в проде для ускорения сборки
   productionBrowserSourceMaps: false,
+  // Отключаем SWC минификацию — используем Terser вместо SWC
+  // Исправляет баг с returnNaN и /app/let на Alpine/musl
+  swcMinify: false,
 }
 
 module.exports = nextConfig
