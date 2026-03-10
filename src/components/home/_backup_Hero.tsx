@@ -1,11 +1,11 @@
-﻿'use client';
+'use client';
 
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import type { PageHeroUserDto } from '@/types/api';
-import { decodeHtmlEntities, sanitizeHtml } from '@/lib/sanitize';
+import { decodeHtmlEntities } from '@/lib/sanitize';
 
 // How long text stays fully visible before the leave animation starts
 const SLIDE_HOLD_MS = 5500;
@@ -67,15 +67,15 @@ export default function Hero(_: HeroProps) {
     return () => clearTimeout(id);
   }, [slides.length]);
 
-  // Transition: text out â†’ bg swap â†’ text in
+  // Transition: text out → bg swap → text in
   const transitionTo = useCallback((nextIndex: number) => {
     clearTimeouts();
     // 1. Text leaves
     setTextVisible(false);
-    // 2. After text is gone â€” swap background
+    // 2. After text is gone – swap background
     schedule(() => {
       setActiveIndex(nextIndex);
-      // 3. After bg cross-fade â€” show new text
+      // 3. After bg cross-fade – show new text
       schedule(() => setTextVisible(true), BG_FADE_MS);
     }, TEXT_OUT_MS);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,7 +141,7 @@ export default function Hero(_: HeroProps) {
       className="snap-start relative bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white overflow-hidden"
       style={{ height: 'calc(100vh - 73px)' }}
     >
-      {/* Background images â€” cross-fade between slides */}
+      {/* Background images – cross-fade between slides */}
       <div className="absolute inset-0">
         {effectiveSlides.map((slide, i) => (
           <div
@@ -164,17 +164,12 @@ export default function Hero(_: HeroProps) {
             )}
           </div>
         ))}
-        {/* Layer 1: universal dark scrim — guarantees white text contrast
-             regardless of how bright the client's uploaded image is */}
         <div className="absolute inset-0 bg-black/50" />
-        {/* Layer 2: brand colour tint on top of the dark scrim */}
         <div className="absolute inset-0 bg-gradient-to-br from-sky-600/35 via-sky-500/25 to-blue-700/35" />
-        {/* Layer 3: top-fade for the transparent header — extra darkening
-             over the nav area so menu items are always legible */}
         <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/40 to-transparent" />
       </div>
 
-      {/* Text content â€” single block that animates in/out */}
+      {/* Text content */}
       <div
         className="relative z-10 h-full flex items-center justify-center"
         style={{
@@ -185,28 +180,19 @@ export default function Hero(_: HeroProps) {
       >
         <div className="container-max w-full">
           <div className="text-center max-w-6xl mx-auto">
-            <div
-              role="heading"
-              aria-level={1}
-              className="hero-rte text-5xl font-bold mb-12"
-              dangerouslySetInnerHTML={{ __html: sanitizeHtml(currentSlide.title) }}
-            />
+            <h1 className="text-5xl font-bold mb-12">{decodeHtmlEntities(currentSlide.title)}</h1>
 
             {currentSlide.subtitle && (
-              <div
-                role="heading"
-                aria-level={2}
-                className="hero-rte text-3xl md:text-4xl font-semibold mb-8 text-sky-100"
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(currentSlide.subtitle) }}
-              />
+              <h2 className="text-3xl md:text-4xl font-semibold mb-8 text-sky-100">
+                {decodeHtmlEntities(currentSlide.subtitle)}
+              </h2>
             )}
 
             <div className="text-center max-w-3xl mx-auto">
               {currentSlide.heroDescription && (
-                <div
-                  className="hero-rte text-xl md:text-2xl mb-12 text-sky-100"
-                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(currentSlide.heroDescription) }}
-                />
+                <p className="text-xl md:text-2xl mb-12 text-sky-100">
+                  {decodeHtmlEntities(currentSlide.heroDescription)}
+                </p>
               )}
 
               <div className="flex flex-col sm:flex-row justify-center gap-4">

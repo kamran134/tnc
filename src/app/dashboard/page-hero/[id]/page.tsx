@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 import { PageHeroAdminDto, PageTag } from '@/types/api';
 import { useAdminPageHeroDetailQuery, useUpdatePageHeroMutation } from '@/hooks/queries';
 import { decodeHtmlEntities } from '@/lib/sanitize';
@@ -63,9 +64,9 @@ export default function EditPageHeroPage() {
         translations: [
           {
             languageCode: 'az',
-            title: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'az')?.title) || '',
-            subtitle: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'az')?.subtitle) || '',
-            heroDescription: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'az')?.heroDescription) || '',
+            title: heroData.translations?.find((t: any) => t.languageCode === 'az')?.title || '',
+            subtitle: heroData.translations?.find((t: any) => t.languageCode === 'az')?.subtitle || '',
+            heroDescription: heroData.translations?.find((t: any) => t.languageCode === 'az')?.heroDescription || '',
             buttonText: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'az')?.buttonText) || '',
             buttonUrl: heroData.translations?.find((t: any) => t.languageCode === 'az')?.buttonUrl || '',
             backgroundImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'az')?.backgroundImageUrl || '',
@@ -75,9 +76,9 @@ export default function EditPageHeroPage() {
           },
           {
             languageCode: 'en',
-            title: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'en')?.title) || '',
-            subtitle: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'en')?.subtitle) || '',
-            heroDescription: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'en')?.heroDescription) || '',
+            title: heroData.translations?.find((t: any) => t.languageCode === 'en')?.title || '',
+            subtitle: heroData.translations?.find((t: any) => t.languageCode === 'en')?.subtitle || '',
+            heroDescription: heroData.translations?.find((t: any) => t.languageCode === 'en')?.heroDescription || '',
             buttonText: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'en')?.buttonText) || '',
             buttonUrl: heroData.translations?.find((t: any) => t.languageCode === 'en')?.buttonUrl || '',
             backgroundImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'en')?.backgroundImageUrl || '',
@@ -87,9 +88,9 @@ export default function EditPageHeroPage() {
           },
           {
             languageCode: 'ru',
-            title: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'ru')?.title) || '',
-            subtitle: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'ru')?.subtitle) || '',
-            heroDescription: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'ru')?.heroDescription) || '',
+            title: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.title || '',
+            subtitle: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.subtitle || '',
+            heroDescription: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.heroDescription || '',
             buttonText: decodeHtmlEntities(heroData.translations?.find((t: any) => t.languageCode === 'ru')?.buttonText) || '',
             buttonUrl: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.buttonUrl || '',
             backgroundImageUrl: heroData.translations?.find((t: any) => t.languageCode === 'ru')?.backgroundImageUrl || '',
@@ -109,7 +110,7 @@ export default function EditPageHeroPage() {
     try {
       const filteredData = {
         ...formData,
-        translations: formData.translations.filter(t => t.title.trim())
+        translations: formData.translations.filter(t => t.title.replace(/<[^>]*>/g, '').trim())
       };
 
       const cleanedData = removeEmptyFields(filteredData) as import('@/types/api').UpdatePageHeroRequest;
@@ -228,35 +229,39 @@ export default function EditPageHeroPage() {
                 return (
                   <div className="space-y-4 pt-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
-                      <input
-                        type="text"
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Title {activeLanguage === 'az' && <span className="text-red-500">*</span>}
+                      </label>
+                      <p className="text-xs text-gray-400 mb-2">Max ~150 visible characters — supports bold, italic, underline, font size, alignment, color</p>
+                      <RichTextEditor
+                        toolbarType="title"
+                        maxLength={150}
                         value={translation.title}
-                        onChange={(e) => updateTranslation(activeIndex, 'title', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                        onChange={(v) => updateTranslation(activeIndex, 'title', v)}
                         placeholder={`Hero title in ${activeLanguage.toUpperCase()}`}
-                        required={activeLanguage === 'az'}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
-                      <input
-                        type="text"
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle</label>
+                      <p className="text-xs text-gray-400 mb-2">Max ~400 visible characters — supports bold, italic, underline, font size, alignment, color</p>
+                      <RichTextEditor
+                        toolbarType="subtitle"
+                        maxLength={400}
                         value={translation.subtitle}
-                        onChange={(e) => updateTranslation(activeIndex, 'subtitle', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                        onChange={(v) => updateTranslation(activeIndex, 'subtitle', v)}
                         placeholder={`Hero subtitle in ${activeLanguage.toUpperCase()}`}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                      <textarea
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                      <p className="text-xs text-gray-400 mb-2">Max ~1800 visible characters — supports full formatting (headers, lists, links, colors, etc.)</p>
+                      <RichTextEditor
+                        toolbarType="full"
+                        maxLength={1800}
                         value={translation.heroDescription}
-                        onChange={(e) => updateTranslation(activeIndex, 'heroDescription', e.target.value)}
-                        rows={4}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                        onChange={(v) => updateTranslation(activeIndex, 'heroDescription', v)}
                         placeholder={`Hero description in ${activeLanguage.toUpperCase()}`}
                       />
                     </div>

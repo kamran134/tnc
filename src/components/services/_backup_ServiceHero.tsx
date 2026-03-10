@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { sanitizeHtml } from '@/lib/sanitize';
+import { decodeHtmlEntities } from '@/lib/sanitize';
 
 interface HeroData {
   title: string;
@@ -38,9 +38,9 @@ export default function ServiceHero() {
     fetchHeroData();
   }, [lang]);
 
-  const rawTitle = heroData?.title || 'Our Professional Services';
-  const rawSubtitle = heroData?.subtitle || '';
-  const rawDescription = heroData?.heroDescription || 'Comprehensive tax, legal, and consulting solutions tailored to your business needs';
+  const title = decodeHtmlEntities(heroData?.title) || 'Our Professional Services';
+  const subtitle = decodeHtmlEntities(heroData?.subtitle) || '';
+  const description = decodeHtmlEntities(heroData?.heroDescription) || 'Comprehensive tax, legal, and consulting solutions tailored to your business needs';
 
   if (isLoading) {
     return (
@@ -59,24 +59,17 @@ export default function ServiceHero() {
     <section className="bg-gradient-to-r from-sky-400 to-sky-500 text-white section-padding">
       <div className="container-max">
         <div className="text-center max-w-4xl mx-auto">
-          <div
-            role="heading"
-            aria-level={1}
-            className="hero-rte text-4xl md:text-5xl font-bold mb-6"
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(rawTitle) }}
-          />
-          {rawSubtitle && rawSubtitle !== rawTitle && (
-            <div
-              role="heading"
-              aria-level={2}
-              className="hero-rte text-2xl md:text-3xl font-semibold mb-4 text-white/90"
-              dangerouslySetInnerHTML={{ __html: sanitizeHtml(rawSubtitle) }}
-            />
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            {title}
+          </h1>
+          {subtitle && subtitle !== title && (
+            <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-white/90">
+              {subtitle}
+            </h2>
           )}
-          <div
-            className="hero-rte text-xl md:text-2xl text-white/80"
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(rawDescription) }}
-          />
+          <p className="text-xl md:text-2xl text-white/80">
+            {description}
+          </p>
         </div>
       </div>
     </section>

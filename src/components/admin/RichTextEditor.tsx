@@ -1,112 +1,149 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import 'quill/dist/quill.snow.css';
+
+export type RichTextToolbarType = 'title' | 'subtitle' | 'full';
 
 interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   className?: string;
+  /** Controls which toolbar is rendered. Defaults to 'full'. */
+  toolbarType?: RichTextToolbarType;
+  /** When set, shows a character counter below the editor (counts plain-text length). */
+  maxLength?: number;
 }
 
-const modules = {
-  toolbar: [
-    [{ 'header': [1, 2, 3, false] }],
-    ['bold', 'italic', 'underline', 'strike'],
-    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-    [{ 'indent': '-1'}, { 'indent': '+1' }],
-    ['link'],
-    [{ 'color': [] }, { 'background': [] }],
-    [{ 'align': [] }],
-    ['clean']
-  ],
-};
+// Title: size, bold, italic, underline, align, color
+const TITLE_TOOLBAR = [
+  [{ 'size': ['small', false, 'large', 'huge'] }],
+  ['bold', 'italic', 'underline'],
+  [{ 'align': [] }],
+  [{ 'color': [] }],
+  ['clean'],
+];
 
-export default function RichTextEditor({ value, onChange, placeholder, className }: RichTextEditorProps) {
+// Subtitle: same as title
+const SUBTITLE_TOOLBAR = TITLE_TOOLBAR;
+
+// Full: all options
+const FULL_TOOLBAR = [
+  [{ 'header': [1, 2, 3, false] }],
+  [{ 'size': ['small', false, 'large', 'huge'] }],
+  ['bold', 'italic', 'underline', 'strike'],
+  [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+  [{ 'indent': '-1' }, { 'indent': '+1' }],
+  [{ 'align': [] }],
+  ['link'],
+  [{ 'color': [] }, { 'background': [] }],
+  ['clean'],
+];
+
+function getToolbar(type: RichTextToolbarType) {
+  if (type === 'title') return TITLE_TOOLBAR;
+  if (type === 'subtitle') return SUBTITLE_TOOLBAR;
+  return FULL_TOOLBAR;
+}
+
+function getMinHeight(type: RichTextToolbarType) {
+  return type === 'full' ? 180 : 72;
+}
+
+/** Strip HTML tags to count visible characters */
+function plainTextLength(html: string): number {
+  if (!html || html === '<p><br></p>') return 0;
+  return html.replace(/<[^>]*>/g, '').length;
+}
+
+export default function RichTextEditor({
+  value,
+  onChange,
+  placeholder,
+  className,
+  toolbarType = 'full',
+  maxLength,
+}: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const quillRef = useRef<any>(null);
   const isInitializing = useRef(false);
+  const [charCount, setCharCount] = useState(() => plainTextLength(value));
+
+  const minH = getMinHeight(toolbarType);
 
   useEffect(() => {
     if (!editorRef.current || isInitializing.current) return;
-    
+
     isInitializing.current = true;
 
-    // Динамически импортируем Quill только на клиенте
     import('quill').then((Quill) => {
       if (!editorRef.current || quillRef.current) return;
 
       const QuillClass = Quill.default;
-      
-      // Создаём экземпляр Quill
+
       const quill = new QuillClass(editorRef.current, {
         theme: 'snow',
-        modules,
+        modules: { toolbar: getToolbar(toolbarType) },
         placeholder: placeholder || 'Enter text...',
       });
 
-      // Устанавливаем начальное значение
       if (value) {
         quill.clipboard.dangerouslyPasteHTML(value);
       }
 
-      // Слушаем изменения
       quill.on('text-change', () => {
         const html = quill.root.innerHTML;
-        // Не вызываем onChange если контент пустой
-        if (html === '<p><br></p>') {
-          onChange('');
-        } else {
-          onChange(html);
-        }
+        const isEmpty = html === '<p><br></p>';
+        const result = isEmpty ? '' : html;
+        setCharCount(plainTextLength(result));
+        onChange(result);
       });
 
       quillRef.current = quill;
     });
 
-    // Cleanup
     return () => {
       if (quillRef.current) {
         quillRef.current = null;
       }
       isInitializing.current = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Обновляем содержимое при изменении value извне
+  // Sync value when changed externally (e.g. language tab switch)
   useEffect(() => {
     if (!quillRef.current) return;
-    
+
     const currentContent = quillRef.current.root.innerHTML;
     const normalizedCurrent = currentContent === '<p><br></p>' ? '' : currentContent;
     const normalizedValue = value || '';
-    
+
     if (normalizedCurrent !== normalizedValue) {
       const selection = quillRef.current.getSelection();
       quillRef.current.clipboard.dangerouslyPasteHTML(normalizedValue);
+      setCharCount(plainTextLength(normalizedValue));
       if (selection) {
         quillRef.current.setSelection(selection);
       }
     }
   }, [value]);
 
+  const isOverLimit = maxLength !== undefined && charCount > maxLength;
+
   return (
-    <div className={`rich-text-editor ${className || ''}`}>
+    <div className={`rich-text-editor rte-${toolbarType} ${className || ''}`}>
       <div ref={editorRef} />
+
+      {maxLength !== undefined && (
+        <p className={`mt-1 text-xs text-right ${isOverLimit ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+          {charCount} / {maxLength}
+        </p>
+      )}
+
       <style jsx global>{`
-        .rich-text-editor .ql-container {
-          min-height: 200px;
-          font-size: 14px;
-          background-color: rgb(249 250 251);
-        }
-        .rich-text-editor .ql-editor {
-          min-height: 200px;
-          color: rgb(17 24 39);
-        }
-        .rich-text-editor .ql-editor.ql-blank::before {
-          color: rgb(156 163 175);
-        }
+        /* ── Shared ── */
         .rich-text-editor .ql-toolbar {
           background-color: white;
           border: 1px solid rgb(209 213 219);
@@ -115,6 +152,28 @@ export default function RichTextEditor({ value, onChange, placeholder, className
         .rich-text-editor .ql-container {
           border: 1px solid rgb(209 213 219);
           border-radius: 0 0 0.5rem 0.5rem;
+          font-size: 14px;
+          background-color: rgb(249 250 251);
+        }
+        .rich-text-editor .ql-editor {
+          color: rgb(17 24 39);
+        }
+        .rich-text-editor .ql-editor.ql-blank::before {
+          color: rgb(156 163 175);
+        }
+
+        /* ── Title / Subtitle (compact) ── */
+        .rte-title .ql-container,
+        .rte-title .ql-editor,
+        .rte-subtitle .ql-container,
+        .rte-subtitle .ql-editor {
+          min-height: ${minH}px;
+        }
+
+        /* ── Full (description) ── */
+        .rte-full .ql-container,
+        .rte-full .ql-editor {
+          min-height: 180px;
         }
       `}</style>
     </div>

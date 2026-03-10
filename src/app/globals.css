@@ -37,6 +37,29 @@ body {
   }
 }
 
+/* ─── Quill rich-text styles for public rendering ─── */
+/* Font sizes set by Quill editor */
+.ql-size-small  { font-size: 0.75em; }
+.ql-size-large  { font-size: 1.5em; }
+.ql-size-huge   { font-size: 2.5em; }
+
+/* Alignment classes set by Quill editor */
+.ql-align-center  { text-align: center; }
+.ql-align-right   { text-align: right; }
+.ql-align-justify { text-align: justify; }
+
+/* Hero rich-text container:
+   Quill wraps everything in <p> tags. Inside a heading-style
+   div we want zero paragraph margins so layout stays clean. */
+.hero-rte p {
+  margin: 0;
+}
+.hero-rte p + p {
+  margin-top: 0.2em;
+}
+/* Inherit the container colour/weight from the parent element */
+.hero-rte em     { font-style: italic; }
+
 @layer utilities {
   @keyframes float {
     0%, 100% {

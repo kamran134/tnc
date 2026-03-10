@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
-import RichTextEditor from '@/components/admin/RichTextEditor';
 import { PageTag } from '@/types/api';
 import { useCreatePageHeroMutation } from '@/hooks/queries';
 
@@ -65,7 +64,7 @@ export default function CreatePageHeroPage() {
 
     const filteredData = {
       ...formData,
-      translations: formData.translations.filter(t => t.title.replace(/<[^>]*>/g, '').trim()),
+      translations: formData.translations.filter(t => t.title.trim()),
     };
 
     if (filteredData.translations.length === 0) {
@@ -165,39 +164,37 @@ export default function CreatePageHeroPage() {
                 return (
                   <div className="space-y-4 pt-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Title {activeLanguage === 'az' && <span className="text-red-500">*</span>}
                       </label>
-                      <p className="text-xs text-gray-400 mb-2">Max ~150 visible characters — supports bold, italic, underline, font size, alignment, color</p>
-                      <RichTextEditor
-                        toolbarType="title"
-                        maxLength={150}
+                      <input
+                        type="text"
                         value={t.title}
-                        onChange={(v) => updateTranslation(activeIndex, 'title', v)}
+                        onChange={(e) => updateTranslation(activeIndex, 'title', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder={`Hero title in ${activeLanguage.toUpperCase()}`}
+                        required={activeLanguage === 'az'}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle</label>
-                      <p className="text-xs text-gray-400 mb-2">Max ~400 visible characters — supports bold, italic, underline, font size, alignment, color</p>
-                      <RichTextEditor
-                        toolbarType="subtitle"
-                        maxLength={400}
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
+                      <input
+                        type="text"
                         value={t.subtitle}
-                        onChange={(v) => updateTranslation(activeIndex, 'subtitle', v)}
+                        onChange={(e) => updateTranslation(activeIndex, 'subtitle', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder={`Hero subtitle in ${activeLanguage.toUpperCase()}`}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                      <p className="text-xs text-gray-400 mb-2">Max ~1800 visible characters — supports full formatting (headers, lists, links, colors, etc.)</p>
-                      <RichTextEditor
-                        toolbarType="full"
-                        maxLength={1800}
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                      <textarea
                         value={t.heroDescription}
-                        onChange={(v) => updateTranslation(activeIndex, 'heroDescription', v)}
+                        onChange={(e) => updateTranslation(activeIndex, 'heroDescription', e.target.value)}
+                        rows={4}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder={`Hero description in ${activeLanguage.toUpperCase()}`}
                       />
                     </div>
