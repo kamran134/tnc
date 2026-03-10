@@ -11,8 +11,7 @@ async function registerAlignStyle() {
   if (alignRegistered) return;
   alignRegistered = true;
   const Quill = (await import('quill')).default;
-  // @ts-ignore – attributors/style/align is part of Quill's internals
-  const AlignStyle = Quill.import('attributors/style/align');
+  const AlignStyle = Quill.import('attributors/style/align') as any;
   Quill.register(AlignStyle, true);
 }
 
