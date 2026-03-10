@@ -18,6 +18,8 @@ interface PageHeroData {
   heroDescription?: string;
   buttonText?: string;
   buttonUrl?: string;
+  backgroundImageUrl?: string;
+  heroImageUrl?: string;
 }
 
 export default function PageHero({ 
@@ -55,6 +57,7 @@ export default function PageHero({
     fetchHeroData();
   }, [pageTag, lang]);
 
+  const hasBackgroundImage = !!heroData?.backgroundImageUrl;
   const bgClass = 'bg-gradient-to-r from-sky-400 to-sky-500';
 
   const rawTitle = heroData?.title || fallbackTitle;
@@ -75,8 +78,24 @@ export default function PageHero({
   }
 
   return (
-    <section className={`${bgClass} text-white section-padding`}>
-      <div className="container-max">
+    <section className={`relative ${hasBackgroundImage ? '' : bgClass} text-white section-padding overflow-hidden`}>
+      {/* Background image layer (per-language) */}
+      {hasBackgroundImage && (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={heroData.backgroundImageUrl}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* Dark scrim for text contrast */}
+          <div className="absolute inset-0 bg-black/50" />
+          {/* Brand colour tint */}
+          <div className="absolute inset-0 bg-gradient-to-r from-sky-600/30 to-sky-500/20" />
+        </>
+      )}
+
+      <div className="container-max relative z-10">
         <div className="text-center max-w-4xl mx-auto">
           <div
             role="heading"
