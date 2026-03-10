@@ -1,161 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { ImageUpload, useToast } from '@/components/ui';
-import { removeEmptyFields } from '@/lib/utils/cleanup';
-import LanguageTabs from '@/components/admin/LanguageTabs';
-import RichTextEditor from '@/components/admin/RichTextEditor';
-import { adminServiceCategoriesService } from '@/lib/api';
-import type { ServiceCategoryAdminDto } from '@/types/api';
-import { useUpdateServiceMutation } from '@/hooks/queries/useAdminServicesQueries';
-
-interface Translation {
-  id?: number;
-  languageCode: string;
-  title: string;
-  content: string;
-  excerpt: string;
-}
-
-interface ServiceData {
-  id: number;
-  serviceCategoryId: number | null;
-  iconUrl: string | null;
-  sortOrder: number | null;
-  categorySortOrder: number | null;
-  active: boolean;
-  translations: Translation[];
-}
+import { useParams, useRouter } from 'next/navigation';
+import ServiceEditForm from '@/components/admin/ServiceEditForm';
+import { useAdminServiceDetailQuery } from '@/hooks/queries/useAdminServicesQueries';
 
 export default function EditServicePage() {
-  const router = useRouter();
   const params = useParams();
-  const serviceId = params.id as string;
-  const toast = useToast();
-  const updateServiceMutation = useUpdateServiceMutation();
-  
-  const [isLoadingData, setIsLoadingData] = useState(true);
-  const [categories, setCategories] = useState<ServiceCategoryAdminDto[]>([]);
-  const [formData, setFormData] = useState({
-    serviceCategoryId: null as number | null,
-    iconUrl: '',
-    sortOrder: null as number | null,
-    categorySortOrder: null as number | null,
-    active: true,
-    translations: [
-      { languageCode: 'az', title: '', content: '', excerpt: '' },
-      { languageCode: 'en', title: '', content: '', excerpt: '' },
-      { languageCode: 'ru', title: '', content: '', excerpt: '' },
-    ] as Translation[]
-  });
+  const router = useRouter();
+  const serviceId = params?.id as string;
 
-  // Load service data
-  useEffect(() => {
-    const loadService = async () => {
-      try {
-        const response = await fetch(`/api/admin/services/${serviceId}`);
-        if (!response.ok) throw new Error('Failed to load service');
-        const serviceData: ServiceData = await response.json();
-        
-        // Конвертируем iconUrl из /api/files/ в /uploads/
-        let iconUrl = serviceData.iconUrl || '';
-        if (iconUrl && iconUrl.includes('/api/files/')) {
-          iconUrl = iconUrl.replace(/^https?:\/\/[^\/]+/, '').replace('/api/files/', '/uploads/');
-        }
-        
-        setFormData({
-          serviceCategoryId: serviceData.serviceCategoryId || null,
-          iconUrl: iconUrl,
-          sortOrder: serviceData.sortOrder || null,
-          categorySortOrder: serviceData.categorySortOrder || null,
-          active: serviceData.active !== false,
-          translations: [
-            {
-              languageCode: 'az',
-              title: serviceData.translations?.find((t: Translation) => t.languageCode === 'az')?.title || '',
-              content: serviceData.translations?.find((t: Translation) => t.languageCode === 'az')?.content || '',
-              excerpt: serviceData.translations?.find((t: Translation) => t.languageCode === 'az')?.excerpt || ''
-            },
-            {
-              languageCode: 'en',
-              title: serviceData.translations?.find((t: Translation) => t.languageCode === 'en')?.title || '',
-              content: serviceData.translations?.find((t: Translation) => t.languageCode === 'en')?.content || '',
-              excerpt: serviceData.translations?.find((t: Translation) => t.languageCode === 'en')?.excerpt || ''
-            },
-            {
-              languageCode: 'ru',
-              title: serviceData.translations?.find((t: Translation) => t.languageCode === 'ru')?.title || '',
-              content: serviceData.translations?.find((t: Translation) => t.languageCode === 'ru')?.content || '',
-              excerpt: serviceData.translations?.find((t: Translation) => t.languageCode === 'ru')?.excerpt || ''
-            }
-          ]
-        });
-      } catch (error) {
-        console.error('Failed to load service:', error);
-        toast.error('Failed to load service');
-      } finally {
-        setIsLoadingData(false);
-      }
-    };
-    loadService();
-  }, [serviceId, toast]);
+  const { data: serviceData, isLoading, error } = useAdminServiceDetailQuery(serviceId);
 
-  // Load categories
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const data = await adminServiceCategoriesService.getAllAsList();
-        setCategories(data);
-      } catch (error) {
-        console.error('Failed to load categories:', error);
-        toast.error('Failed to load categories');
-      }
-    };
-    loadCategories();
-  }, [toast]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      // Фильтруем переводы - оставляем только те, где есть title или content
-      const filteredData = {
-        ...formData,
-        translations: formData.translations.filter(t => t.title.trim() || t.content.trim())
-      };
-
-      // Удаляем все пустые поля EXCEPT iconUrl
-      // If iconUrl is empty string (deleted), we want to send it as empty string to backend
-      const { iconUrl, ...restData } = filteredData;
-      const cleanedData: any = removeEmptyFields(restData);
-      
-      // Always include iconUrl in the request (empty string if deleted, or the URL if present)
-      cleanedData.iconUrl = iconUrl;
-
-      await updateServiceMutation.mutateAsync({
-        id: Number(serviceId),
-        data: cleanedData
-      });
-
-      toast.success('Service updated successfully!');
-      router.push('/dashboard/services');
-    } catch (error: any) {
-      console.error('Error updating service:', error);
-      toast.error('Failed to update service: ' + (error?.message || 'Unknown error'));
-    }
-  };
-
-  const updateTranslation = (langIndex: number, field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      translations: prev.translations.map((t, i) => 
-        i === langIndex ? { ...t, [field]: value } : t
-      )
-    }));
-  };
-
-  if (isLoadingData) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -166,169 +22,36 @@ export default function EditServicePage() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Edit Service</h1>
-              <p className="text-gray-600">Update service information and translations</p>
-            </div>
-            <div className="flex space-x-3">
-              <button
-                onClick={() => router.push('/dashboard/services')}
-                className="px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                ← Back to Services
-              </button>
-            </div>
-          </div>
+  if (error || !serviceData) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <svg
+            className="mx-auto h-12 w-12 text-red-500 mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            {error instanceof Error ? error.message : 'Service not found'}
+          </h3>
+          <button
+            onClick={() => router.push('/dashboard/services')}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Back to Services
+          </button>
         </div>
       </div>
+    );
+  }
 
-      {/* Form */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* General Info */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">General Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Category <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={formData.serviceCategoryId || ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, serviceCategoryId: e.target.value ? parseInt(e.target.value) : null }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900"
-                  required
-                >
-                  <option value="">Select Category</option>
-                  {categories.filter(c => c.active).map(category => (
-                    <option key={category.id} value={category.id}>
-                      {category.translations.find(t => t.languageCode === 'en')?.name || 
-                       category.translations.find(t => t.languageCode === 'az')?.name || 
-                       category.code}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Global Sort Order
-                </label>
-                <input
-                  type="number"
-                  value={formData.sortOrder ?? ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, sortOrder: e.target.value ? parseInt(e.target.value) : null }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900"
-                  placeholder="Leave empty for auto-numbering"
-                  min="0"
-                />
-                <p className="mt-1 text-xs text-gray-500">Order among ALL services</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Category Sort Order
-                </label>
-                <input
-                  type="number"
-                  value={formData.categorySortOrder ?? ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, categorySortOrder: e.target.value ? parseInt(e.target.value) : null }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900"
-                  placeholder="Leave empty for auto-numbering"
-                  min="0"
-                />
-                <p className="mt-1 text-xs text-gray-500">Order within selected category</p>
-              </div>
-              
-              <ImageUpload
-                value={formData.iconUrl}
-                onChange={(iconUrl: string) => setFormData(prev => ({ ...prev, iconUrl }))}
-                fileType="SERVICE_IMAGE"
-                label="Service Icon"
-                description="Icon or image for the service"
-                className="md:col-span-2"
-              />
-
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="active"
-                  checked={formData.active}
-                  onChange={(e) => setFormData(prev => ({ ...prev, active: e.target.checked }))}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="active" className="ml-2 text-sm font-medium text-gray-700">
-                  Active service
-                </label>
-              </div>
-            </div>
-          </div>
-
-          {/* Translations */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Translations</h2>
-            <LanguageTabs>
-              {(activeLanguage, index) => {
-                const translation = formData.translations[index];
-                
-                return (
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Service Title</label>
-                      <input
-                        type="text"
-                        value={translation.title}
-                        onChange={(e) => updateTranslation(index, 'title', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                        placeholder={translation.languageCode === 'az' ? 'Xidmətin adı...' : translation.languageCode === 'en' ? 'Service title...' : 'Название услуги...'}
-                        minLength={5}
-                        required={translation.languageCode === 'az'}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Short Description</label>
-                      <RichTextEditor
-                        key={`excerpt-${translation.languageCode}`}
-                        value={translation.excerpt}
-                        onChange={(value) => updateTranslation(index, 'excerpt', value)}
-                        placeholder={translation.languageCode === 'az' ? 'Qısa təsvir...' : translation.languageCode === 'en' ? 'Brief service description...' : 'Краткое описание...'}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Detailed Description</label>
-                      <RichTextEditor
-                        key={translation.languageCode}
-                        value={translation.content}
-                        onChange={(value) => updateTranslation(index, 'content', value)}
-                        placeholder={translation.languageCode === 'az' ? 'Xidmətin ətraflı təsviri...' : translation.languageCode === 'en' ? 'Detailed service description...' : 'Подробное описание услуги...'}
-                      />
-                    </div>
-                  </div>
-                );
-              }}
-            </LanguageTabs>
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              disabled={updateServiceMutation.isPending}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {updateServiceMutation.isPending ? 'Updating...' : 'Update Service'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
+  return <ServiceEditForm initialData={serviceData} />;
 }
