@@ -3,6 +3,19 @@
 import { useEffect, useRef, useState } from 'react';
 import 'quill/dist/quill.snow.css';
 
+// Register the style-based align attributor ONCE (module scope, runs on first import).
+// This makes Quill output  style="text-align: right"  instead of  class="ql-align-right",
+// which means alignment survives clipboard.dangerouslyPasteHTML round-trips reliably.
+let alignRegistered = false;
+async function registerAlignStyle() {
+  if (alignRegistered) return;
+  alignRegistered = true;
+  const Quill = (await import('quill')).default;
+  // @ts-ignore – attributors/style/align is part of Quill's internals
+  const AlignStyle = Quill.import('attributors/style/align');
+  Quill.register(AlignStyle, true);
+}
+
 export type RichTextToolbarType = 'title' | 'subtitle' | 'full';
 
 interface RichTextEditorProps {
@@ -77,8 +90,10 @@ export default function RichTextEditor({
 
     isInitializing.current = true;
 
-    import('quill').then((Quill) => {
+    import('quill').then(async (Quill) => {
       if (!editorRef.current || quillRef.current) return;
+
+      await registerAlignStyle();
 
       const QuillClass = Quill.default;
 

@@ -43,7 +43,8 @@ body {
 .ql-size-large  { font-size: 1.5em; }
 .ql-size-huge   { font-size: 2.5em; }
 
-/* Alignment classes set by Quill editor */
+/* Alignment – Quill now writes inline style="text-align:…" (style attributor),
+   so these class-based rules are kept only as fallback for legacy content. */
 .ql-align-center  { text-align: center; }
 .ql-align-right   { text-align: right; }
 .ql-align-justify { text-align: justify; }
