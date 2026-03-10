@@ -5,10 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
+import RichTextEditor from '@/components/admin/RichTextEditor';
+import { useCreateCareerMutation } from '@/hooks/queries';
 
 export default function CreateCareerPage() {
   const router = useRouter();
   const toast = useToast();
+  const createMutation = useCreateCareerMutation();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     location: '',
@@ -21,20 +24,26 @@ export default function CreateCareerPage() {
       {
         languageCode: 'az' as const,
         title: '',
+        position: '',
         content: '',
-        excerpt: ''
+        excerpt: '',
+        requirements: ''
       },
       {
         languageCode: 'en' as const,
         title: '',
+        position: '',
         content: '',
-        excerpt: ''
+        excerpt: '',
+        requirements: ''
       },
       {
         languageCode: 'ru' as const,
         title: '',
+        position: '',
         content: '',
-        excerpt: ''
+        excerpt: '',
+        requirements: ''
       }
     ]
   });
@@ -44,32 +53,19 @@ export default function CreateCareerPage() {
     setIsLoading(true);
 
     try {
-      // Фильтруем переводы - оставляем только те, где есть title или content
       const filteredData = {
         ...formData,
         translations: formData.translations.filter(t => t.title.trim() || t.content.trim())
       };
 
-      // Удаляем все пустые поля
       const cleanedData = removeEmptyFields(filteredData);
 
-      const response = await fetch('/api/admin/careers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cleanedData)
-      });
-
-      if (response.ok) {
-        toast.success('Job posting created successfully!');
-        router.push('/dashboard/careers');
-      } else {
-        const error = await response.json();
-        console.error('Failed to create career:', error);
-        toast.error('Failed to create job posting: ' + (error.message || 'Unknown error'));
-      }
+      await createMutation.mutateAsync(cleanedData);
+      toast.success('Job posting created successfully!');
+      router.push('/dashboard/careers');
     } catch (error) {
       console.error('Error creating career:', error);
-      toast.error('Error creating job posting');
+      toast.error('Failed to create job posting. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -202,9 +198,20 @@ export default function CreateCareerPage() {
                         value={translation.title}
                         onChange={(e) => updateTranslation(index, 'title', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                        placeholder={translation.languageCode === 'az' ? 'İş vakansiyalarının adı...' : translation.languageCode === 'en' ? 'Job title...' : 'Название вакансии...'}
-                        minLength={5}
+                        placeholder={translation.languageCode === 'az' ? 'İş vakansiyasının adı...' : translation.languageCode === 'en' ? 'Job title...' : 'Название вакансии...'}
+                        minLength={2}
                         required={translation.languageCode === 'az'}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Position</label>
+                      <input
+                        type="text"
+                        value={translation.position}
+                        onChange={(e) => updateTranslation(index, 'position', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                        placeholder={translation.languageCode === 'az' ? 'Vəzifə adı...' : translation.languageCode === 'en' ? 'Position name...' : 'Название должности...'}
                       />
                     </div>
 
@@ -221,13 +228,21 @@ export default function CreateCareerPage() {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Job Description</label>
-                      <textarea
+                      <RichTextEditor
+                        key={`content-${translation.languageCode}`}
                         value={translation.content}
-                        onChange={(e) => updateTranslation(index, 'content', e.target.value)}
-                        rows={8}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                        placeholder={translation.languageCode === 'az' ? 'Ətraflı təsvir, tələblər və məsuliyyətlər...' : translation.languageCode === 'en' ? 'Detailed job description, requirements, and responsibilities...' : 'Подробное описание, требования и обязанности...'}
-                        required={translation.languageCode === 'az'}
+                        onChange={(value) => updateTranslation(index, 'content', value)}
+                        placeholder={translation.languageCode === 'az' ? 'Ətraflı iş təsviri...' : translation.languageCode === 'en' ? 'Detailed job description...' : 'Подробное описание работы...'}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Requirements</label>
+                      <RichTextEditor
+                        key={`requirements-${translation.languageCode}`}
+                        value={translation.requirements}
+                        onChange={(value) => updateTranslation(index, 'requirements', value)}
+                        placeholder={translation.languageCode === 'az' ? 'Tələblər...' : translation.languageCode === 'en' ? 'Requirements...' : 'Требования...'}
                       />
                     </div>
                   </div>

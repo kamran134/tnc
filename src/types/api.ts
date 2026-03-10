@@ -63,6 +63,7 @@ export interface CareerTranslationDto {
   content: string;
   excerpt?: string;
   requirements?: string;
+  position?: string;
 }
 
 export interface MembershipTranslationDto {

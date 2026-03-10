@@ -6,7 +6,7 @@ import type { CareerAdminDto } from '@/types/api';
 export const adminCareersKeys = {
   all: ['admin', 'careers'] as const,
   lists: () => [...adminCareersKeys.all, 'list'] as const,
-  list: (params?: { page?: number; size?: number }) =>
+  list: (params?: Record<string, any>) =>
     [...adminCareersKeys.lists(), params] as const,
   details: () => [...adminCareersKeys.all, 'detail'] as const,
   detail: (id: string | number) => [...adminCareersKeys.details(), id] as const,
@@ -16,6 +16,10 @@ export const adminCareersKeys = {
 export function useAdminCareersListQuery(params?: {
   page?: number;
   size?: number;
+  title?: string;
+  location?: string;
+  employmentType?: string;
+  active?: boolean;
 }) {
   return useQuery({
     queryKey: adminCareersKeys.list(params),
@@ -64,6 +68,46 @@ export function useUpdateCareerMutation() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: adminCareersKeys.lists() });
       queryClient.invalidateQueries({ queryKey: adminCareersKeys.detail(variables.id) });
+    },
+  });
+}
+
+export function useActivateCareerMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => adminCareersService.activate(id),
+    onSuccess: (_, id) => {
+      queryClient.setQueriesData<any>({ queryKey: adminCareersKeys.lists() }, (old: any) => {
+        if (!old?.content) return old;
+        return {
+          ...old,
+          content: old.content.map((career: any) =>
+            career.id === id ? { ...career, active: true } : career
+          ),
+        };
+      });
+      queryClient.invalidateQueries({ queryKey: adminCareersKeys.detail(id) });
+    },
+  });
+}
+
+export function useDeactivateCareerMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => adminCareersService.deactivate(id),
+    onSuccess: (_, id) => {
+      queryClient.setQueriesData<any>({ queryKey: adminCareersKeys.lists() }, (old: any) => {
+        if (!old?.content) return old;
+        return {
+          ...old,
+          content: old.content.map((career: any) =>
+            career.id === id ? { ...career, active: false } : career
+          ),
+        };
+      });
+      queryClient.invalidateQueries({ queryKey: adminCareersKeys.detail(id) });
     },
   });
 }

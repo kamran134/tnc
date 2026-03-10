@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { CareerAdminDto } from '@/types/api';
-import { useAdminCareersListQuery, useDeleteCareerMutation } from '@/hooks/queries';
+import { useAdminCareersListQuery, useDeleteCareerMutation, useActivateCareerMutation, useDeactivateCareerMutation } from '@/hooks/queries';
 
 export default function CareersPage() {
   const router = useRouter();
@@ -12,8 +12,18 @@ export default function CareersPage() {
   const [locationFilter, setLocationFilter] = useState('');
   const [employmentTypeFilter, setEmploymentTypeFilter] = useState('');
   
-  const { data, isLoading } = useAdminCareersListQuery({ page, size: 10 });
+  const queryParams = useMemo(() => ({
+    page,
+    size: 10,
+    ...(searchTerm && { title: searchTerm }),
+    ...(locationFilter && { location: locationFilter }),
+    ...(employmentTypeFilter && { employmentType: employmentTypeFilter }),
+  }), [page, searchTerm, locationFilter, employmentTypeFilter]);
+
+  const { data, isLoading } = useAdminCareersListQuery(queryParams);
   const deleteCareerMutation = useDeleteCareerMutation();
+  const activateMutation = useActivateCareerMutation();
+  const deactivateMutation = useDeactivateCareerMutation();
   
   const careers = data?.content || [];
   const pagination = {
@@ -215,10 +225,22 @@ export default function CareersPage() {
                             Edit
                           </button>
                           <button
-                            onClick={() => router.push(`/dashboard/careers/${job.id}/applications`)}
-                            className="text-green-600 hover:text-green-900"
+                            onClick={() => {
+                              if (job.active) {
+                                deactivateMutation.mutate(job.id!);
+                              } else {
+                                activateMutation.mutate(job.id!);
+                              }
+                            }}
+                            className={job.active ? 'text-yellow-600 hover:text-yellow-900' : 'text-green-600 hover:text-green-900'}
                           >
-                            Applications
+                            {job.active ? 'Deactivate' : 'Activate'}
+                          </button>
+                          <button
+                            onClick={() => handleDelete(job.id!)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            Delete
                           </button>
                         </div>
                       </td>
