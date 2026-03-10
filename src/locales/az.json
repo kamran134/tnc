@@ -106,7 +106,21 @@
     "noRightPosition": "Uyğun vəzifə görmürsünüz?",
     "submitResumeDesc": "Biz həmişə istedadlı şəxsləri komandamıza qatmaq istəyirik. Bizə CV göndərin və missiyamıza necə töhfə verə biləcəyinizi bildirin.",
     "submitResume": "CV Göndərin",
-    "errorLoading": "İş vakansiyalarını yükləmək alınmadı"
+    "errorLoading": "İş vakansiyalarını yükləmək alınmadı",
+    "location": "Məkan",
+    "type": "Növ",
+    "salary": "Maaş",
+    "jobDescription": "İş Təsviri",
+    "applicationDeadline": "Müraciət Son Tarixi",
+    "interestedInPosition": "Bu vəzifə ilə maraqlanırsınız?",
+    "interestedDescription": "Sizdən eşitmək istərdik! Bizimlə əlaqə saxlamaq üçün aşağıdakı düyməyə basın.",
+    "applyNow": "İndi Müraciət Et",
+    "backToCareers": "Karyeraya Qayıt",
+    "fullTime": "Tam Ştat",
+    "partTime": "Yarım Ştat",
+    "contract": "Müqavilə",
+    "remote": "Uzaqdan",
+    "notFound": "Vakansiya tapılmadı"
   },
   "contact": {
     "title": "Bizimlə Əlaqə",

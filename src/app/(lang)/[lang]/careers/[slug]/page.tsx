@@ -6,10 +6,18 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { LoadingSpinner, Alert } from '@/components/ui';
 import { LanguageCode } from '@/types/api';
+import { useTranslations } from '@/hooks/useTranslations';
 import { useCareerBySlugQuery } from '@/hooks/queries';
 import { sanitizeHtml } from '@/lib/sanitize';
 
+const localeMap: Record<string, string> = {
+  az: 'az-AZ',
+  en: 'en-US',
+  ru: 'ru-RU',
+};
+
 export default function CareerDetail() {
+  const { t } = useTranslations();
   const params = useParams();
   const router = useRouter();
   const lang = params.lang as LanguageCode;
@@ -18,7 +26,7 @@ export default function CareerDetail() {
   const { data: career, isLoading: loading, error } = useCareerBySlugQuery(slug, lang);
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(localeMap[lang] || 'en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -26,11 +34,11 @@ export default function CareerDetail() {
   };
 
   const getEmploymentTypeLabel = (type?: string) => {
-    const types: { [key: string]: string } = {
-      'FULL_TIME': 'Full Time',
-      'PART_TIME': 'Part Time',
-      'CONTRACT': 'Contract',
-      'REMOTE': 'Remote'
+    const types: Record<string, string> = {
+      'FULL_TIME': t('careers.fullTime'),
+      'PART_TIME': t('careers.partTime'),
+      'CONTRACT': t('careers.contract'),
+      'REMOTE': t('careers.remote'),
     };
     return type ? types[type] || type : '';
   };
@@ -55,12 +63,12 @@ export default function CareerDetail() {
         <Header />
         <main className="section-padding">
           <div className="container-max">
-            <Alert type="error" message={(error instanceof Error ? error.message : error) || 'Job posting not found'} />
+            <Alert type="error" message={(error instanceof Error ? error.message : error) || t('careers.notFound')} />
             <button
               onClick={() => router.push(`/${lang}/careers`)}
               className="mt-6 text-sky-600 hover:text-sky-700 font-medium"
             >
-              ← Back to Careers
+              ← {t('careers.backToCareers')}
             </button>
           </div>
         </main>
@@ -79,11 +87,11 @@ export default function CareerDetail() {
             <nav className="mb-8 text-sm">
               <ol className="flex items-center space-x-2 text-gray-500">
                 <li>
-                  <Link href={`/${lang}`} className="hover:text-sky-600">Home</Link>
+                  <Link href={`/${lang}`} className="hover:text-sky-600">{t('nav.home')}</Link>
                 </li>
                 <li>/</li>
                 <li>
-                  <Link href={`/${lang}/careers`} className="hover:text-sky-600">Careers</Link>
+                  <Link href={`/${lang}/careers`} className="hover:text-sky-600">{t('nav.careers')}</Link>
                 </li>
                 <li>/</li>
                 <li className="text-gray-900">{career.title}</li>
@@ -96,13 +104,13 @@ export default function CareerDetail() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 pb-8 border-b border-gray-200">
               <div className="flex flex-col">
-                <span className="text-sm text-gray-500 mb-1">Location</span>
+                <span className="text-sm text-gray-500 mb-1">{t('careers.location')}</span>
                 <span className="font-medium text-gray-900">{career.location}</span>
               </div>
               
               {career.employmentType && (
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-500 mb-1">Type</span>
+                  <span className="text-sm text-gray-500 mb-1">{t('careers.type')}</span>
                   <span className="font-medium text-gray-900">
                     {getEmploymentTypeLabel(career.employmentType)}
                   </span>
@@ -111,13 +119,13 @@ export default function CareerDetail() {
               
               {career.salaryRange && (
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-500 mb-1">Salary</span>
+                  <span className="text-sm text-gray-500 mb-1">{t('careers.salary')}</span>
                   <span className="font-medium text-gray-900">{career.salaryRange}</span>
                 </div>
               )}
               
               <div className="flex flex-col">
-                <span className="text-sm text-gray-500 mb-1">Posted</span>
+                <span className="text-sm text-gray-500 mb-1">{t('careers.posted')}</span>
                 <span className="font-medium text-gray-900">{formatDate(career.postDate)}</span>
               </div>
             </div>
@@ -129,7 +137,7 @@ export default function CareerDetail() {
             )}
 
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Job Description</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('careers.jobDescription')}</h2>
               <div 
                 className="prose prose-lg max-w-none text-gray-700 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: sanitizeHtml(career.content) }}
@@ -138,7 +146,7 @@ export default function CareerDetail() {
 
             {career.requirements && (
               <div className="mb-12">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Requirements</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('careers.requirements')}</h2>
                 <div 
                   className="prose prose-lg max-w-none text-gray-700 leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: sanitizeHtml(career.requirements) }}
@@ -149,21 +157,21 @@ export default function CareerDetail() {
             {career.expiryDate && new Date(career.expiryDate) > new Date() && (
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8">
                 <p className="text-amber-800">
-                  <span className="font-semibold">Application Deadline:</span> {formatDate(career.expiryDate)}
+                  <span className="font-semibold">{t('careers.applicationDeadline')}:</span> {formatDate(career.expiryDate)}
                 </p>
               </div>
             )}
 
             <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-8 mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Interested in this position?</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('careers.interestedInPosition')}</h2>
               <p className="text-gray-700 mb-6">
-                We&apos;d love to hear from you! Click the button below to get in touch with us.
+                {t('careers.interestedDescription')}
               </p>
               <button
                 onClick={() => router.push(`/${lang}/contact`)}
                 className="bg-sky-600 text-white px-8 py-3 rounded-lg hover:bg-sky-700 transition-colors font-semibold"
               >
-                Apply Now
+                {t('careers.applyNow')}
               </button>
             </div>
 
@@ -175,7 +183,7 @@ export default function CareerDetail() {
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
-                Back to Careers
+                {t('careers.backToCareers')}
               </button>
             </div>
           </div>

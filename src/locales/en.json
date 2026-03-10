@@ -106,7 +106,21 @@
     "noRightPosition": "Don't See the Right Position?",
     "submitResumeDesc": "We're always looking for talented individuals to join our team. Send us your resume and let us know how you can contribute to our mission.",
     "submitResume": "Submit Your Resume",
-    "errorLoading": "Failed to load job openings"
+    "errorLoading": "Failed to load job openings",
+    "location": "Location",
+    "type": "Type",
+    "salary": "Salary",
+    "jobDescription": "Job Description",
+    "applicationDeadline": "Application Deadline",
+    "interestedInPosition": "Interested in this position?",
+    "interestedDescription": "We'd love to hear from you! Click the button below to get in touch with us.",
+    "applyNow": "Apply Now",
+    "backToCareers": "Back to Careers",
+    "fullTime": "Full Time",
+    "partTime": "Part Time",
+    "contract": "Contract",
+    "remote": "Remote",
+    "notFound": "Job posting not found"
   },
   "contact": {
     "title": "Contact Us",

@@ -19,8 +19,10 @@ export default function CareersPage() {
   
   const jobOpenings = data?.content || [];
 
+  const localeMap: Record<string, string> = { az: 'az-AZ', en: 'en-US', ru: 'ru-RU' };
+
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(localeMap[lang] || 'en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -114,7 +116,7 @@ export default function CareersPage() {
                   >
                     <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
                       <div className="flex-1">
-                        <Link href={`/${job.languageCode}/careers/${job.slug}`}>
+                        <Link href={`/${lang}/careers/${job.slug}`}>
                           <h3 className="text-2xl font-bold text-gray-900 mb-2 hover:text-sky-600 transition-colors cursor-pointer">
                             {job.title}
                           </h3>
@@ -170,7 +172,7 @@ export default function CareersPage() {
                       </div>
                       
                       <div className="lg:ml-8">
-                        <Link href={`/${job.languageCode}/careers/${job.slug}`}>
+                        <Link href={`/${lang}/careers/${job.slug}`}>
                           <Button>
                             {t('careers.viewDetails')}
                           </Button>
