@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { pageTag } = await params;
     const { searchParams } = new URL(request.url);
-    const lang = searchParams.get('lang') || 'en';
+    const lang = searchParams.get('lang') || 'az';
 
     const response = await fetch(
       `${BACKEND_URL}/api/page-hero/${pageTag}?lang=${lang}`,

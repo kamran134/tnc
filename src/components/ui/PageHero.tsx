@@ -33,7 +33,7 @@ export default function PageHero({
   const [isLoading, setIsLoading] = useState(true);
 
   // Определяем язык из URL
-  const lang = pathname?.startsWith('/ru') ? 'ru' : pathname?.startsWith('/az') ? 'az' : 'en';
+  const lang = pathname?.startsWith('/en') ? 'en' : pathname?.startsWith('/ru') ? 'ru' : 'az';
 
   useEffect(() => {
     const fetchHeroData = async () => {

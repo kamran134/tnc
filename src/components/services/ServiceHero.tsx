@@ -14,7 +14,7 @@ interface HeroData {
 
 export default function ServiceHero() {
   const params = useParams();
-  const lang = (params.lang as string) || 'en';
+  const lang = (params.lang as string) || 'az';
   const [heroData, setHeroData] = useState<HeroData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 

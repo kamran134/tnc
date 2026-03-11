@@ -170,6 +170,7 @@ export default function CreatePageHeroPage() {
                       </label>
                       <p className="text-xs text-gray-400 mb-2">Max ~150 visible characters — supports bold, italic, underline, font size, alignment, color</p>
                       <RichTextEditor
+                        key={`title-${activeLanguage}`}
                         toolbarType="title"
                         maxLength={150}
                         value={t.title}
@@ -182,6 +183,7 @@ export default function CreatePageHeroPage() {
                       <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle</label>
                       <p className="text-xs text-gray-400 mb-2">Max ~400 visible characters — supports bold, italic, underline, font size, alignment, color</p>
                       <RichTextEditor
+                        key={`subtitle-${activeLanguage}`}
                         toolbarType="subtitle"
                         maxLength={400}
                         value={t.subtitle}
@@ -194,6 +196,7 @@ export default function CreatePageHeroPage() {
                       <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                       <p className="text-xs text-gray-400 mb-2">Max ~1800 visible characters — supports full formatting (headers, lists, links, colors, etc.)</p>
                       <RichTextEditor
+                        key={`desc-${activeLanguage}`}
                         toolbarType="full"
                         maxLength={1800}
                         value={t.heroDescription}
