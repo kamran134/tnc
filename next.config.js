@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['quill'],
   images: {
     // Разрешаем все локальные домены для разработки
     domains: ['localhost', '127.0.0.1'],
