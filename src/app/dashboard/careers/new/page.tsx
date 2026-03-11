@@ -25,6 +25,8 @@ export default function CreateCareerPage() {
         languageCode: 'az' as const,
         title: '',
         position: '',
+        company: '',
+        department: '',
         content: '',
         excerpt: '',
         requirements: ''
@@ -33,6 +35,8 @@ export default function CreateCareerPage() {
         languageCode: 'en' as const,
         title: '',
         position: '',
+        company: '',
+        department: '',
         content: '',
         excerpt: '',
         requirements: ''
@@ -41,6 +45,8 @@ export default function CreateCareerPage() {
         languageCode: 'ru' as const,
         title: '',
         position: '',
+        company: '',
+        department: '',
         content: '',
         excerpt: '',
         requirements: ''
@@ -213,6 +219,29 @@ export default function CreateCareerPage() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder={translation.languageCode === 'az' ? 'Vəzifə adı...' : translation.languageCode === 'en' ? 'Position name...' : 'Название должности...'}
                       />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
+                        <input
+                          type="text"
+                          value={translation.company}
+                          onChange={(e) => updateTranslation(index, 'company', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                          placeholder={translation.languageCode === 'az' ? 'Şirkət adı...' : translation.languageCode === 'en' ? 'Company name...' : 'Название компании...'}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
+                        <input
+                          type="text"
+                          value={translation.department}
+                          onChange={(e) => updateTranslation(index, 'department', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                          placeholder={translation.languageCode === 'az' ? 'Şöbə adı...' : translation.languageCode === 'en' ? 'Department name...' : 'Название отдела...'}
+                        />
+                      </div>
                     </div>
 
                     <div>

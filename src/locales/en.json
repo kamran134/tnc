@@ -120,7 +120,9 @@
     "partTime": "Part Time",
     "contract": "Contract",
     "remote": "Remote",
-    "notFound": "Job posting not found"
+    "notFound": "Job posting not found",
+    "company": "Company",
+    "department": "Department"
   },
   "contact": {
     "title": "Contact Us",

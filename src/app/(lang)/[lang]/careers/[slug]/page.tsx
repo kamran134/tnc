@@ -123,6 +123,20 @@ export default function CareerDetail() {
                   <span className="font-medium text-gray-900">{career.salaryRange}</span>
                 </div>
               )}
+
+              {career.company && (
+                <div className="flex flex-col">
+                  <span className="text-sm text-gray-500 mb-1">{t('careers.company')}</span>
+                  <span className="font-medium text-gray-900">{career.company}</span>
+                </div>
+              )}
+
+              {career.department && (
+                <div className="flex flex-col">
+                  <span className="text-sm text-gray-500 mb-1">{t('careers.department')}</span>
+                  <span className="font-medium text-gray-900">{career.department}</span>
+                </div>
+              )}
               
               <div className="flex flex-col">
                 <span className="text-sm text-gray-500 mb-1">{t('careers.posted')}</span>

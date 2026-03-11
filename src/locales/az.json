@@ -120,7 +120,9 @@
     "partTime": "Yarım Ştat",
     "contract": "Müqavilə",
     "remote": "Uzaqdan",
-    "notFound": "Vakansiya tapılmadı"
+    "notFound": "Vakansiya tapılmadı",
+    "company": "Şirkət",
+    "department": "Şöbə"
   },
   "contact": {
     "title": "Bizimlə Əlaqə",

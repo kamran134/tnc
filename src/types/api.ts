@@ -64,6 +64,8 @@ export interface CareerTranslationDto {
   excerpt?: string;
   requirements?: string;
   position?: string;
+  company?: string;
+  department?: string;
 }
 
 export interface MembershipTranslationDto {
@@ -227,6 +229,8 @@ export interface CareerDto {
   excerpt?: string;
   requirements?: string;
   position: string;
+  company?: string;
+  department?: string;
   location: string;
   employmentType?: string;
   salaryRange?: string;

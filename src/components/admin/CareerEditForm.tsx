@@ -18,6 +18,8 @@ interface Translation {
   excerpt: string;
   requirements: string;
   position: string;
+  company: string;
+  department: string;
 }
 
 interface CareerEditFormProps {
@@ -41,6 +43,8 @@ function buildFormData(data: CareerAdminDto) {
         excerpt: data.translations?.find((t) => t.languageCode === 'az')?.excerpt || '',
         requirements: data.translations?.find((t) => t.languageCode === 'az')?.requirements || '',
         position: data.translations?.find((t) => t.languageCode === 'az')?.position || '',
+        company: data.translations?.find((t) => t.languageCode === 'az')?.company || '',
+        department: data.translations?.find((t) => t.languageCode === 'az')?.department || '',
       },
       {
         id: data.translations?.find((t) => t.languageCode === 'en')?.id,
@@ -51,6 +55,8 @@ function buildFormData(data: CareerAdminDto) {
         excerpt: data.translations?.find((t) => t.languageCode === 'en')?.excerpt || '',
         requirements: data.translations?.find((t) => t.languageCode === 'en')?.requirements || '',
         position: data.translations?.find((t) => t.languageCode === 'en')?.position || '',
+        company: data.translations?.find((t) => t.languageCode === 'en')?.company || '',
+        department: data.translations?.find((t) => t.languageCode === 'en')?.department || '',
       },
       {
         id: data.translations?.find((t) => t.languageCode === 'ru')?.id,
@@ -61,6 +67,8 @@ function buildFormData(data: CareerAdminDto) {
         excerpt: data.translations?.find((t) => t.languageCode === 'ru')?.excerpt || '',
         requirements: data.translations?.find((t) => t.languageCode === 'ru')?.requirements || '',
         position: data.translations?.find((t) => t.languageCode === 'ru')?.position || '',
+        company: data.translations?.find((t) => t.languageCode === 'ru')?.company || '',
+        department: data.translations?.find((t) => t.languageCode === 'ru')?.department || '',
       },
     ] as Translation[],
   };
@@ -250,6 +258,41 @@ export default function CareerEditForm({ initialData }: CareerEditFormProps) {
                               : 'Название должности...'
                         }
                       />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
+                        <input
+                          type="text"
+                          value={translation.company}
+                          onChange={(e) => updateTranslation(index, 'company', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                          placeholder={
+                            translation.languageCode === 'az'
+                              ? 'Şirkət adı...'
+                              : translation.languageCode === 'en'
+                                ? 'Company name...'
+                                : 'Название компании...'
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
+                        <input
+                          type="text"
+                          value={translation.department}
+                          onChange={(e) => updateTranslation(index, 'department', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                          placeholder={
+                            translation.languageCode === 'az'
+                              ? 'Şöbə adı...'
+                              : translation.languageCode === 'en'
+                                ? 'Department name...'
+                                : 'Название отдела...'
+                          }
+                        />
+                      </div>
                     </div>
 
                     <div>
