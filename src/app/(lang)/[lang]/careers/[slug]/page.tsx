@@ -120,7 +120,9 @@ export default function CareerDetail() {
               {career.salaryRange && (
                 <div className="flex flex-col">
                   <span className="text-sm text-gray-500 mb-1">{t('careers.salary')}</span>
-                  <span className="font-medium text-gray-900">{career.salaryRange}</span>
+                  <span className="font-medium text-gray-900">
+                    {career.salaryRange === 'BY_NEGOTIATION' ? t('careers.byNegotiation') : career.salaryRange}
+                  </span>
                 </div>
               )}
 

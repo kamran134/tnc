@@ -122,7 +122,8 @@
     "remote": "Uzaqdan",
     "notFound": "Vakansiya tapılmadı",
     "company": "Şirkət",
-    "department": "Şöbə"
+    "department": "Şöbə",
+    "byNegotiation": "Razılaşma yolu ilə"
   },
   "contact": {
     "title": "Bizimlə Əlaqə",

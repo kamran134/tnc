@@ -122,7 +122,8 @@
     "remote": "Remote",
     "notFound": "Job posting not found",
     "company": "Company",
-    "department": "Department"
+    "department": "Department",
+    "byNegotiation": "By Agreement (Razılaşma yolu ilə)"
   },
   "contact": {
     "title": "Contact Us",

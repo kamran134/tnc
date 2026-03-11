@@ -196,11 +196,26 @@ export default function CareerEditForm({ initialData }: CareerEditFormProps) {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Salary Range</label>
                 <input
                   type="text"
-                  value={formData.salaryRange}
+                  value={formData.salaryRange === 'BY_NEGOTIATION' ? '' : formData.salaryRange}
                   onChange={(e) => setFormData((prev) => ({ ...prev, salaryRange: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                  placeholder="e.g., $50,000 - $70,000"
+                  disabled={formData.salaryRange === 'BY_NEGOTIATION'}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                  placeholder="e.g., 1000 - 2000 ₼"
                 />
+                <div className="mt-2 flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="byNegotiation"
+                    checked={formData.salaryRange === 'BY_NEGOTIATION'}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, salaryRange: e.target.checked ? 'BY_NEGOTIATION' : '' }))
+                    }
+                    className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="byNegotiation" className="text-sm text-gray-600">
+                    By Agreement <span className="text-gray-400">(Razılaşma yolu ilə)</span>
+                  </label>
+                </div>
               </div>
 
               <div>

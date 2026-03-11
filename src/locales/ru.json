@@ -122,7 +122,8 @@
     "remote": "Удалённая работа",
     "notFound": "Вакансия не найдена",
     "company": "Компания",
-    "department": "Отдел"
+    "department": "Отдел",
+    "byNegotiation": "По договорённости (Razılaşma yolu ilə)"
   },
   "contact": {
     "title": "Свяжитесь с нами",
