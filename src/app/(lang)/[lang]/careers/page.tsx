@@ -90,7 +90,7 @@ export default function CareersPage() {
         </section>
 
         {/* Current Openings */}
-        <section className="section-padding bg-gray-50">
+        <section id="open-positions" className="section-padding bg-gray-50">
           <div className="container-max">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
