@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { PageHero, LoadingSpinner, Alert, Button, Card, EmptyState } from '@/components/ui'
-import { LanguageCode } from '@/types/api'
+import { LanguageCode, NewsDto } from '@/types/api'
 import { useTranslations } from '@/hooks/useTranslations'
 import { useNewsListQuery } from '@/hooks/queries'
 
@@ -16,14 +16,25 @@ export default function NewsPage() {
   const params = useParams();
   const lang = (params.lang as LanguageCode) || 'az';
   const [currentPage, setCurrentPage] = useState(0);
+  const [allArticles, setAllArticles] = useState<NewsDto[]>([]);
 
-  const { data, isLoading: loading, error } = useNewsListQuery({ lang, page: currentPage, size: 10 });
-  
-  const newsArticles = data?.content || [];
-  const totalPages = data?.totalPages || 0;
-  const hasMore = !data?.last;
+  const { data, isLoading: loading, error } = useNewsListQuery({ lang, page: currentPage, size: 6 });
 
+  useEffect(() => {
+    if (data?.content) {
+      setAllArticles(prev =>
+        currentPage === 0 ? data.content : [...prev, ...data.content]
+      );
+    }
+  }, [data, currentPage]);
 
+  useEffect(() => {
+    setCurrentPage(0);
+    setAllArticles([]);
+  }, [lang]);
+
+  const totalElements = data?.totalElements || 0;
+  const hasMore = totalElements > 6 && !data?.last;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -57,12 +68,12 @@ export default function NewsPage() {
               </div>
             ) : error ? (
               <Alert type="error" message={error instanceof Error ? error.message : String(error)} className="mb-6" />
-            ) : newsArticles.length === 0 ? (
+            ) : allArticles.length === 0 && !loading ? (
               <EmptyState message={t('news.noArticles')} />
             ) : (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {newsArticles.map((article) => (
+                  {allArticles.map((article) => (
                     <Card key={article.id} hover className="overflow-hidden">
                       {article.imageUrl && (
                         <div className="relative h-48 w-full">
@@ -117,7 +128,7 @@ export default function NewsPage() {
                   </div>
                 )}
 
-                {!hasMore && newsArticles.length > 0 && (
+                {!hasMore && allArticles.length > 0 && (
                   <p className="text-center text-gray-500 mt-8">
                     {t('news.endOfNews')}
                   </p>
