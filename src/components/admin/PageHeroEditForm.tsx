@@ -280,7 +280,7 @@ export default function PageHeroEditForm({ initialData }: PageHeroEditFormProps)
                       />
                     </div>
 
-                    <div>
+                    {/* <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Hero Image URL</label>
                       <ImageUpload
                         value={translation.heroImageUrl}
@@ -288,7 +288,7 @@ export default function PageHeroEditForm({ initialData }: PageHeroEditFormProps)
                         fileType="COMPANY_LOGO"
                         label="Hero Image"
                       />
-                    </div>
+                    </div> */}
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Meta Title (SEO)</label>
