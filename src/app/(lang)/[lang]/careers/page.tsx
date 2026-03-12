@@ -22,11 +22,11 @@ export default function CareersPage() {
   const localeMap: Record<string, string> = { az: 'az-AZ', en: 'en-US', ru: 'ru-RU' };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(localeMap[lang] || 'en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
+    const d = new Date(dateString);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}.${month}.${year}`;
   }
 
   return (
