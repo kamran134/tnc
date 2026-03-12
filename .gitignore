@@ -45,3 +45,7 @@ ssl/
 uploads/
 postgres-data/
 logs/
+
+# backup files
+*.bak
+*.backup
