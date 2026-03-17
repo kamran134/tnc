@@ -151,5 +151,9 @@
     "scheduleConsultation": "Schedule a Consultation",
     "consultationDescription": "Ready to discuss your specific needs? Schedule a consultation with one of our experts.",
     "bookConsultation": "Book Consultation"
+  },
+  "about": {
+    "errorLoading": "Failed to load content",
+    "noSections": "Content coming soon…"
   }
 }

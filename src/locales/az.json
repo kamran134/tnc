@@ -151,5 +151,9 @@
     "scheduleConsultation": "Konsultasiya Planlaşdırın",
     "consultationDescription": "Xüsusi ehtiyaclarınızı müzakirə etməyə hazırsınız? Ekspertlərimizdən biri ilə konsultasiya təyin edin.",
     "bookConsultation": "Konsultasiya Sifariş Et"
+  },
+  "about": {
+    "errorLoading": "Məzmunu yükləmək alınmadı",
+    "noSections": "Məzmun tezliklə əlavə ediləcək…"
   }
 }

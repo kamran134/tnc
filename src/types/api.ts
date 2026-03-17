@@ -626,6 +626,44 @@ export interface ServiceCategoryUserDto {
   sortOrder?: number;
 }
 
+// About Section DTOs
+export interface AboutSectionTranslationDto {
+  id?: number;
+  languageCode: LanguageCode;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  imageUrl?: string;
+}
+
+export interface AboutSectionAdminDto {
+  id: number;
+  sortOrder: number;
+  createdAt?: string;
+  updatedAt?: string;
+  translations: AboutSectionTranslationDto[];
+}
+
+export interface AboutSectionUserDto {
+  id: number;
+  sortOrder: number;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  imageUrl?: string;
+}
+
+export interface AboutContentUserResponse {
+  sections: AboutSectionUserDto[];
+}
+
+export interface CreateAboutSectionRequest {
+  sortOrder?: number;
+  translations: AboutSectionTranslationDto[];
+}
+
+export type UpdateAboutSectionRequest = CreateAboutSectionRequest;
+
 // API Response Types
 export type PageNewsDto = Page<NewsDto>;
 export type PageCareerDto = Page<CareerDto>;

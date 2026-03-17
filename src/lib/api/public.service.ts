@@ -4,6 +4,7 @@ import {
   CoreValueDto,
   MembershipDto,
   CompanyInfoDto,
+  AboutContentUserResponse,
   LanguageCode,
 } from '@/types/api';
 
@@ -40,6 +41,19 @@ export const membershipsService = {
   async getAll(lang: LanguageCode = 'az'): Promise<MembershipDto[]> {
     try {
       const response = await apiClient.get<MembershipDto[]>('/memberships', {
+        params: { lang },
+      });
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  },
+};
+
+export const aboutContentService = {
+  async getSections(lang: LanguageCode = 'az'): Promise<AboutContentUserResponse> {
+    try {
+      const response = await apiClient.get<AboutContentUserResponse>('/about-content', {
         params: { lang },
       });
       return response.data;

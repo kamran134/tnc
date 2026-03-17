@@ -6,6 +6,7 @@ export * from './usePageHeroQueries';
 export * from './usePublicQueries';
 
 // Admin API Query Hooks
+export * from './useAdminAboutSectionsQueries';
 export * from './useAdminNewsQueries';
 export * from './useAdminCareersQueries';
 export * from './useAdminServicesQueries';

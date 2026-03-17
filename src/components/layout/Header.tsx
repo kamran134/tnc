@@ -30,6 +30,7 @@ export default function Header() {
 
   const navigation = [
     { name: t('nav.home'), href: `/${lang}`, hasDropdown: false },
+    { name: t('nav.about'), href: `/${lang}/about`, hasDropdown: false },
     { name: t('nav.services'), href: `/${lang}/services`, hasDropdown: true },
     { name: t('nav.team'), href: `/${lang}/team`, hasDropdown: false },
     { name: t('nav.news'), href: `/${lang}/news`, hasDropdown: false },
