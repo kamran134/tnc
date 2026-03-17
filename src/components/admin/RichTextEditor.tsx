@@ -80,6 +80,10 @@ export default function RichTextEditor({
   const editorRef = useRef<HTMLDivElement>(null);
   const quillRef = useRef<any>(null);
   const isInitializing = useRef(false);
+  const isProgrammaticUpdate = useRef(false);
+  // Always hold the latest onChange so the Quill listener never goes stale
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
   const [charCount, setCharCount] = useState(() => plainTextLength(value));
 
   const minH = getMinHeight(toolbarType);
@@ -107,11 +111,12 @@ export default function RichTextEditor({
       }
 
       quill.on('text-change', () => {
+        if (isProgrammaticUpdate.current) return;
         const html = quill.root.innerHTML;
         const isEmpty = html === '<p><br></p>';
         const result = isEmpty ? '' : html;
         setCharCount(plainTextLength(result));
-        onChange(result);
+        onChangeRef.current(result);
       });
 
       quillRef.current = quill;
@@ -135,12 +140,10 @@ export default function RichTextEditor({
     const normalizedValue = value || '';
 
     if (normalizedCurrent !== normalizedValue) {
-      const selection = quillRef.current.getSelection();
+      isProgrammaticUpdate.current = true;
       quillRef.current.clipboard.dangerouslyPasteHTML(normalizedValue);
+      isProgrammaticUpdate.current = false;
       setCharCount(plainTextLength(normalizedValue));
-      if (selection) {
-        quillRef.current.setSelection(selection);
-      }
     }
   }, [value]);
 
