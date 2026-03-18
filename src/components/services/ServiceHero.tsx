@@ -10,6 +10,7 @@ interface HeroData {
   heroDescription?: string;
   buttonText?: string;
   buttonUrl?: string;
+  backgroundImageUrl?: string;
 }
 
 export default function ServiceHero() {
@@ -41,6 +42,7 @@ export default function ServiceHero() {
   const rawTitle = heroData?.title || 'Our Professional Services';
   const rawSubtitle = heroData?.subtitle || '';
   const rawDescription = heroData?.heroDescription || 'Comprehensive tax, legal, and consulting solutions tailored to your business needs';
+  const hasBackgroundImage = !!heroData?.backgroundImageUrl;
 
   if (isLoading) {
     return (
@@ -56,8 +58,23 @@ export default function ServiceHero() {
   }
 
   return (
-    <section className="bg-gradient-to-r from-sky-400 to-sky-500 text-white section-padding">
-      <div className="container-max">
+    <section className={`relative ${hasBackgroundImage ? '' : 'bg-gradient-to-r from-sky-400 to-sky-500'} text-white section-padding overflow-hidden`}>
+      {/* Background image layer */}
+      {hasBackgroundImage && (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={heroData!.backgroundImageUrl}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* Dark scrim for text contrast */}
+          <div className="absolute inset-0 bg-black/50" />
+          {/* Brand colour tint */}
+          <div className="absolute inset-0 bg-gradient-to-r from-sky-600/30 to-sky-500/20" />
+        </>
+      )}
+      <div className="container-max relative z-10">
         <div className="text-center max-w-4xl mx-auto">
           <div
             role="heading"
