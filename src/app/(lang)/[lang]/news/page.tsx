@@ -21,17 +21,17 @@ export default function NewsPage() {
   const { data, isLoading: loading, error } = useNewsListQuery({ lang, page: currentPage, size: 6 });
 
   useEffect(() => {
+    setCurrentPage(0);
+    setAllArticles([]);
+  }, [lang]);
+
+  useEffect(() => {
     if (data?.content) {
       setAllArticles(prev =>
         currentPage === 0 ? data.content : [...prev, ...data.content]
       );
     }
   }, [data, currentPage]);
-
-  useEffect(() => {
-    setCurrentPage(0);
-    setAllArticles([]);
-  }, [lang]);
 
   const totalElements = data?.totalElements || 0;
   const hasMore = totalElements > 6 && !data?.last;
