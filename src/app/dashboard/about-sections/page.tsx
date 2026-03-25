@@ -6,6 +6,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea
 import { adminAboutSectionsService } from '@/lib/api';
 import { useToast } from '@/components/ui';
 import type { AboutSectionAdminDto } from '@/types/api';
+import { getTranslation, LANGUAGES } from '@/lib/utils/translations';
 
 export default function AboutSectionsPage() {
   const router = useRouter();
@@ -57,7 +58,7 @@ export default function AboutSectionsPage() {
   };
 
   const getAzTranslation = (section: AboutSectionAdminDto) =>
-    section.translations?.find((t) => t.languageCode === 'az') || section.translations?.[0];
+    getTranslation(section.translations);
 
   if (isLoading) {
     return (
@@ -196,7 +197,7 @@ export default function AboutSectionsPage() {
                                 {/* Languages */}
                                 <td className="px-6 py-4">
                                   <div className="flex gap-1">
-                                    {['az', 'en', 'ru'].map((lang) => {
+                                    {LANGUAGES.map((lang) => {
                                       const hasContent = section.translations?.some(
                                         (tr) => tr.languageCode === lang && (tr.title || tr.description)
                                       );

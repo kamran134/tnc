@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
+import { getTranslation, isDefaultLanguage } from '@/lib/utils/translations';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { useUpdateNewsMutation, usePublishNewsMutation, useUnpublishNewsMutation } from '@/hooks/queries';
@@ -38,24 +39,24 @@ function buildFormData(data: NewsAdminDto) {
     translations: [
       {
         languageCode: 'az',
-        title: data.translations?.find((t: any) => t.languageCode === 'az')?.title || '',
-        slug: data.translations?.find((t: any) => t.languageCode === 'az')?.slug || '',
-        content: data.translations?.find((t: any) => t.languageCode === 'az')?.content || '',
-        excerpt: data.translations?.find((t: any) => t.languageCode === 'az')?.excerpt || ''
+        title: getTranslation(data.translations, 'az')?.title || '',
+        slug: getTranslation(data.translations, 'az')?.slug || '',
+        content: getTranslation(data.translations, 'az')?.content || '',
+        excerpt: getTranslation(data.translations, 'az')?.excerpt || ''
       },
       {
         languageCode: 'en',
-        title: data.translations?.find((t: any) => t.languageCode === 'en')?.title || '',
-        slug: data.translations?.find((t: any) => t.languageCode === 'en')?.slug || '',
-        content: data.translations?.find((t: any) => t.languageCode === 'en')?.content || '',
-        excerpt: data.translations?.find((t: any) => t.languageCode === 'en')?.excerpt || ''
+        title: getTranslation(data.translations, 'en')?.title || '',
+        slug: getTranslation(data.translations, 'en')?.slug || '',
+        content: getTranslation(data.translations, 'en')?.content || '',
+        excerpt: getTranslation(data.translations, 'en')?.excerpt || ''
       },
       {
         languageCode: 'ru',
-        title: data.translations?.find((t: any) => t.languageCode === 'ru')?.title || '',
-        slug: data.translations?.find((t: any) => t.languageCode === 'ru')?.slug || '',
-        content: data.translations?.find((t: any) => t.languageCode === 'ru')?.content || '',
-        excerpt: data.translations?.find((t: any) => t.languageCode === 'ru')?.excerpt || ''
+        title: getTranslation(data.translations, 'ru')?.title || '',
+        slug: getTranslation(data.translations, 'ru')?.slug || '',
+        content: getTranslation(data.translations, 'ru')?.content || '',
+        excerpt: getTranslation(data.translations, 'ru')?.excerpt || ''
       }
     ] as Translation[]
   };
@@ -242,7 +243,7 @@ export default function NewsEditForm({ initialData }: NewsEditFormProps) {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder={translation.languageCode === 'az' ? 'Məqalənin başlığı...' : translation.languageCode === 'en' ? 'Article title...' : 'Название статьи...'}
                         minLength={5}
-                        required={translation.languageCode === 'az'}
+                        required={isDefaultLanguage(translation.languageCode)}
                       />
                     </div>
 

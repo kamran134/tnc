@@ -4,14 +4,12 @@ import { MembershipAdminDto, MembershipTranslationDto } from '@/types/api';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import { useAdminMembershipMutation } from '@/hooks/queries';
 import { useToast } from '@/components/ui';
+import { LANGUAGES, LANGUAGE_ORDER } from '@/lib/utils/translations';
 
 interface UseMembershipFormOptions {
   initialData?: MembershipAdminDto;
   isEdit?: boolean;
 }
-
-const LANGUAGES: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
-const LANGUAGE_ORDER = { az: 0, en: 1, ru: 2 } as const;
 
 function initializeTranslations(data?: MembershipAdminDto): MembershipTranslationDto[] {
   const existing = [...(data?.translations ?? [])];

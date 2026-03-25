@@ -8,6 +8,7 @@ import IconSelector from '@/components/admin/IconSelector';
 import { getMissionIcons, getVisionIcons } from '@/lib/icons/mission-vision-icons';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 import { useToast, ImageUpload, ConfirmModal } from '@/components/ui';
+import { LANGUAGES, isDefaultLanguage } from '@/lib/utils/translations';
 import { useCompanyInfoQuery, useCompanyInfoMutation } from '@/hooks/queries';
 
 const DEFAULT_FORM_DATA: CompanyInfoAdminDto = {
@@ -70,11 +71,10 @@ const DEFAULT_FORM_DATA: CompanyInfoAdminDto = {
 
 function normalizeCompanyInfo(data: CompanyInfoAdminDto): CompanyInfoAdminDto {
   // Ensure all 3 languages exist
-  const allLanguages: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
   const normalizedData = { ...data };
   
   if (normalizedData.translations) {
-    allLanguages.forEach(langCode => {
+    LANGUAGES.forEach(langCode => {
       if (!normalizedData.translations.find(t => t.languageCode === langCode)) {
         normalizedData.translations.push({
           languageCode: langCode,
@@ -428,14 +428,14 @@ export default function CompanyInfoPage() {
                 <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Address {translation.languageCode === 'az' ? '*' : ''}
+                  Address {isDefaultLanguage(translation.languageCode) ? '*' : ''}
                 </label>
                 <input
                   type="text"
                   value={translation.address}
                   onChange={(e) => updateTranslation(index, 'address', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
-                  required={translation.languageCode === 'az'}
+                  required={isDefaultLanguage(translation.languageCode)}
                 />
               </div>
 
@@ -475,7 +475,7 @@ export default function CompanyInfoPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Section Title {translation.languageCode === 'az' ? '*' : ''}
+                      Section Title {isDefaultLanguage(translation.languageCode) ? '*' : ''}
                     </label>
                     <input
                       type="text"
@@ -483,7 +483,7 @@ export default function CompanyInfoPage() {
                       onChange={(e) => updateTranslation(langIndex, 'missionTitle', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
                       placeholder="e.g., Our Mission"
-                      required={translation.languageCode === 'az'}
+                      required={isDefaultLanguage(translation.languageCode)}
                     />
                   </div>
                   <div>
@@ -556,7 +556,7 @@ export default function CompanyInfoPage() {
                           value={translation.missions?.[missionIndex]?.title || ''}
                           onChange={(e) => updateItem(langIndex, 'missions', missionIndex, 'title', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
-                          required={translation.languageCode === 'az'}
+                          required={isDefaultLanguage(translation.languageCode)}
                         />
                       </div>
                       <div>
@@ -567,7 +567,7 @@ export default function CompanyInfoPage() {
                           onChange={(e) => updateItem(langIndex, 'missions', missionIndex, 'description', e.target.value)}
                           rows={3}
                           className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900"
-                          required={translation.languageCode === 'az'}
+                          required={isDefaultLanguage(translation.languageCode)}
                         />
                       </div>
                     </div>
@@ -590,7 +590,7 @@ export default function CompanyInfoPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Section Title {translation.languageCode === 'az' ? '*' : ''}
+                      Section Title {isDefaultLanguage(translation.languageCode) ? '*' : ''}
                     </label>
                     <input
                       type="text"
@@ -598,7 +598,7 @@ export default function CompanyInfoPage() {
                       onChange={(e) => updateTranslation(langIndex, 'visionTitle', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 bg-gray-50 text-gray-900"
                       placeholder="e.g., Our Vision"
-                      required={translation.languageCode === 'az'}
+                      required={isDefaultLanguage(translation.languageCode)}
                     />
                   </div>
                   <div>
@@ -670,7 +670,7 @@ export default function CompanyInfoPage() {
                           value={translation.visions?.[visionIndex]?.title || ''}
                           onChange={(e) => updateItem(langIndex, 'visions', visionIndex, 'title', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-gray-50 text-gray-900"
-                          required={translation.languageCode === 'az'}
+                          required={isDefaultLanguage(translation.languageCode)}
                         />
                       </div>
                       <div>
@@ -681,7 +681,7 @@ export default function CompanyInfoPage() {
                           onChange={(e) => updateItem(langIndex, 'visions', visionIndex, 'description', e.target.value)}
                           rows={3}
                           className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500 bg-gray-50 text-gray-900"
-                          required={translation.languageCode === 'az'}
+                          required={isDefaultLanguage(translation.languageCode)}
                         />
                       </div>
                     </div>
@@ -703,7 +703,7 @@ export default function CompanyInfoPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Section Title {translation.languageCode === 'az' ? '*' : ''}
+                      Section Title {isDefaultLanguage(translation.languageCode) ? '*' : ''}
                     </label>
                     <input
                       type="text"
@@ -711,7 +711,7 @@ export default function CompanyInfoPage() {
                       onChange={(e) => updateTranslation(langIndex, 'valuesTitle', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 bg-gray-50 text-gray-900"
                       placeholder="e.g., Our Core Values"
-                      required={translation.languageCode === 'az'}
+                      required={isDefaultLanguage(translation.languageCode)}
                     />
                   </div>
                   <div>
@@ -771,7 +771,7 @@ export default function CompanyInfoPage() {
                           value={translation.values?.[valueIndex]?.title || ''}
                           onChange={(e) => updateItem(langIndex, 'values', valueIndex, 'title', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-gray-50 text-gray-900"
-                          required={translation.languageCode === 'az'}
+                          required={isDefaultLanguage(translation.languageCode)}
                         />
                       </div>
                       <div>
@@ -782,7 +782,7 @@ export default function CompanyInfoPage() {
                           onChange={(e) => updateItem(langIndex, 'values', valueIndex, 'description', e.target.value)}
                           rows={3}
                           className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 bg-gray-50 text-gray-900"
-                          required={translation.languageCode === 'az'}
+                          required={isDefaultLanguage(translation.languageCode)}
                         />
                       </div>
                     </div>

@@ -5,6 +5,7 @@ import { useMembershipForm } from '@/hooks/useMembershipForm';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 import { ImageUpload } from '@/components/ui';
 import { useRouter } from 'next/navigation';
+import { LANGUAGES } from '@/lib/utils/translations';
 
 interface MembershipFormProps {
   initialData?: MembershipAdminDto;
@@ -301,8 +302,7 @@ export default function MembershipForm({ initialData, isEdit = false }: Membersh
             </h2>
             <LanguageTabs>
               {(activeLanguage, languageIndex) => {
-                const languageCodes: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
-                const currentLangCode = languageCodes[languageIndex];
+                const currentLangCode = LANGUAGES[languageIndex];
                 const translationIndex = formData.translations.findIndex(
                   (t) => t.languageCode === currentLangCode,
                 );

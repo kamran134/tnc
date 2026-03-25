@@ -9,6 +9,7 @@ import RichTextEditor from '@/components/admin/RichTextEditor';
 import { PageHeroAdminDto, PageTag } from '@/types/api';
 import { useUpdatePageHeroMutation } from '@/hooks/queries';
 import { decodeHtmlEntities } from '@/lib/sanitize';
+import { getTranslation } from '@/lib/utils/translations';
 
 const PAGE_TAG_LABELS: Record<PageTag, string> = {
   HOME: 'Home Page',
@@ -46,39 +47,39 @@ function buildFormData(data: PageHeroAdminDto) {
     translations: [
       {
         languageCode: 'az',
-        title: data.translations?.find((t: any) => t.languageCode === 'az')?.title || '',
-        subtitle: data.translations?.find((t: any) => t.languageCode === 'az')?.subtitle || '',
-        heroDescription: data.translations?.find((t: any) => t.languageCode === 'az')?.heroDescription || '',
-        buttonText: decodeHtmlEntities(data.translations?.find((t: any) => t.languageCode === 'az')?.buttonText) || '',
-        buttonUrl: data.translations?.find((t: any) => t.languageCode === 'az')?.buttonUrl || '',
-        backgroundImageUrl: data.translations?.find((t: any) => t.languageCode === 'az')?.backgroundImageUrl || '',
-        heroImageUrl: data.translations?.find((t: any) => t.languageCode === 'az')?.heroImageUrl || '',
-        metaTitle: decodeHtmlEntities(data.translations?.find((t: any) => t.languageCode === 'az')?.metaTitle) || '',
-        metaDescription: decodeHtmlEntities(data.translations?.find((t: any) => t.languageCode === 'az')?.metaDescription) || ''
+        title: getTranslation(data.translations, 'az')?.title || '',
+        subtitle: getTranslation(data.translations, 'az')?.subtitle || '',
+        heroDescription: getTranslation(data.translations, 'az')?.heroDescription || '',
+        buttonText: decodeHtmlEntities(getTranslation(data.translations, 'az')?.buttonText) || '',
+        buttonUrl: getTranslation(data.translations, 'az')?.buttonUrl || '',
+        backgroundImageUrl: getTranslation(data.translations, 'az')?.backgroundImageUrl || '',
+        heroImageUrl: getTranslation(data.translations, 'az')?.heroImageUrl || '',
+        metaTitle: decodeHtmlEntities(getTranslation(data.translations, 'az')?.metaTitle) || '',
+        metaDescription: decodeHtmlEntities(getTranslation(data.translations, 'az')?.metaDescription) || ''
       },
       {
         languageCode: 'en',
-        title: data.translations?.find((t: any) => t.languageCode === 'en')?.title || '',
-        subtitle: data.translations?.find((t: any) => t.languageCode === 'en')?.subtitle || '',
-        heroDescription: data.translations?.find((t: any) => t.languageCode === 'en')?.heroDescription || '',
-        buttonText: decodeHtmlEntities(data.translations?.find((t: any) => t.languageCode === 'en')?.buttonText) || '',
-        buttonUrl: data.translations?.find((t: any) => t.languageCode === 'en')?.buttonUrl || '',
-        backgroundImageUrl: data.translations?.find((t: any) => t.languageCode === 'en')?.backgroundImageUrl || '',
-        heroImageUrl: data.translations?.find((t: any) => t.languageCode === 'en')?.heroImageUrl || '',
-        metaTitle: decodeHtmlEntities(data.translations?.find((t: any) => t.languageCode === 'en')?.metaTitle) || '',
-        metaDescription: decodeHtmlEntities(data.translations?.find((t: any) => t.languageCode === 'en')?.metaDescription) || ''
+        title: getTranslation(data.translations, 'en')?.title || '',
+        subtitle: getTranslation(data.translations, 'en')?.subtitle || '',
+        heroDescription: getTranslation(data.translations, 'en')?.heroDescription || '',
+        buttonText: decodeHtmlEntities(getTranslation(data.translations, 'en')?.buttonText) || '',
+        buttonUrl: getTranslation(data.translations, 'en')?.buttonUrl || '',
+        backgroundImageUrl: getTranslation(data.translations, 'en')?.backgroundImageUrl || '',
+        heroImageUrl: getTranslation(data.translations, 'en')?.heroImageUrl || '',
+        metaTitle: decodeHtmlEntities(getTranslation(data.translations, 'en')?.metaTitle) || '',
+        metaDescription: decodeHtmlEntities(getTranslation(data.translations, 'en')?.metaDescription) || ''
       },
       {
         languageCode: 'ru',
-        title: data.translations?.find((t: any) => t.languageCode === 'ru')?.title || '',
-        subtitle: data.translations?.find((t: any) => t.languageCode === 'ru')?.subtitle || '',
-        heroDescription: data.translations?.find((t: any) => t.languageCode === 'ru')?.heroDescription || '',
-        buttonText: decodeHtmlEntities(data.translations?.find((t: any) => t.languageCode === 'ru')?.buttonText) || '',
-        buttonUrl: data.translations?.find((t: any) => t.languageCode === 'ru')?.buttonUrl || '',
-        backgroundImageUrl: data.translations?.find((t: any) => t.languageCode === 'ru')?.backgroundImageUrl || '',
-        heroImageUrl: data.translations?.find((t: any) => t.languageCode === 'ru')?.heroImageUrl || '',
-        metaTitle: decodeHtmlEntities(data.translations?.find((t: any) => t.languageCode === 'ru')?.metaTitle) || '',
-        metaDescription: decodeHtmlEntities(data.translations?.find((t: any) => t.languageCode === 'ru')?.metaDescription) || ''
+        title: getTranslation(data.translations, 'ru')?.title || '',
+        subtitle: getTranslation(data.translations, 'ru')?.subtitle || '',
+        heroDescription: getTranslation(data.translations, 'ru')?.heroDescription || '',
+        buttonText: decodeHtmlEntities(getTranslation(data.translations, 'ru')?.buttonText) || '',
+        buttonUrl: getTranslation(data.translations, 'ru')?.buttonUrl || '',
+        backgroundImageUrl: getTranslation(data.translations, 'ru')?.backgroundImageUrl || '',
+        heroImageUrl: getTranslation(data.translations, 'ru')?.heroImageUrl || '',
+        metaTitle: decodeHtmlEntities(getTranslation(data.translations, 'ru')?.metaTitle) || '',
+        metaDescription: decodeHtmlEntities(getTranslation(data.translations, 'ru')?.metaDescription) || ''
       }
     ] as Translation[]
   };

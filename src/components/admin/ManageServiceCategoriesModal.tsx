@@ -6,6 +6,7 @@ import { adminServiceCategoriesService } from '@/lib/api';
 import { useToast } from '@/components/ui';
 import { ConfirmModal } from '@/components/ui';
 import { getServiceCategoryIconByName } from '@/lib/icons/service-category-icons';
+import { getTranslation } from '@/lib/utils/translations';
 import ServiceCategoryFormModal from './ServiceCategoryFormModal';
 
 interface ManageServiceCategoriesModalProps {
@@ -144,7 +145,7 @@ export default function ManageServiceCategoriesModal({
                 <div className="space-y-3">
                   {categories.map((category) => {
                     const Icon = getServiceCategoryIconByName(category.iconUrl);
-                    const azTranslation = category.translations.find(t => t.languageCode === 'az');
+                    const azTranslation = getTranslation(category.translations);
                     
                     return (
                       <div

@@ -9,6 +9,7 @@ import {
 } from '@/hooks/queries';
 import { useToast } from '@/components/ui';
 import { ConfirmModal } from '@/components/ui';
+import { getTranslation } from '@/lib/utils/translations';
 
 export default function MembershipsPage() {
   const router = useRouter();
@@ -19,8 +20,7 @@ export default function MembershipsPage() {
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
 
   const getAzTitle = (membership: MembershipAdminDto) =>
-    membership.translations?.find((t) => t.languageCode === 'az')?.title ||
-    membership.translations?.[0]?.title ||
+    getTranslation(membership.translations)?.title ||
     membership.fullName ||
     membership.name;
 

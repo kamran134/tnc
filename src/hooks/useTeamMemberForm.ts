@@ -7,6 +7,7 @@ import {
   useUpdateTeamMemberMutation,
 } from '@/hooks/queries';
 import { useToast } from '@/components/ui';
+import { LANGUAGES } from '@/lib/utils/translations';
 
 interface UseTeamMemberFormOptions {
   initialData?: TeamMemberAdminDto;
@@ -24,11 +25,10 @@ export function useTeamMemberForm({ initialData, isEdit = false }: UseTeamMember
 
   // Helper function to initialize translations
   const initializeTranslations = (data?: TeamMemberAdminDto): TeamMemberTranslationDto[] => {
-    const allLanguages: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
     const existingTranslations = [...(data?.translations || [])];
 
     // Ensure all 3 languages exist
-    allLanguages.forEach((langCode) => {
+    LANGUAGES.forEach((langCode) => {
       if (!existingTranslations.find((t) => t.languageCode === langCode)) {
         existingTranslations.push({
           languageCode: langCode,

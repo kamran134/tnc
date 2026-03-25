@@ -6,6 +6,7 @@ import { ImageUpload, useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import { isDefaultLanguage } from '@/lib/utils/translations';
 
 export default function CreateNewsPage() {
   const router = useRouter();
@@ -183,7 +184,7 @@ export default function CreateNewsPage() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder={translation.languageCode === 'az' ? 'Məqalənin başlığı...' : translation.languageCode === 'en' ? 'Article title...' : 'Название статьи...'}
                         minLength={5}
-                        required={translation.languageCode === 'az'}
+                        required={isDefaultLanguage(translation.languageCode)}
                       />
                     </div>
 

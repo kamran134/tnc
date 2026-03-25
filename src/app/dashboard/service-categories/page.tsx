@@ -8,6 +8,7 @@ import { adminServiceCategoriesService } from '@/lib/api';
 import { useToast } from '@/components/ui';
 import { ConfirmModal } from '@/components/ui';
 import { getServiceCategoryIconByName } from '@/lib/icons/service-category-icons';
+import { getTranslation } from '@/lib/utils/translations';
 
 export default function ServiceCategoriesPage() {
   const router = useRouter();
@@ -148,7 +149,7 @@ export default function ServiceCategoriesPage() {
                       >
                         {categories.map((category, index) => {
                           const Icon = getServiceCategoryIconByName(category.iconUrl);
-                          const azTranslation = category.translations.find(t => t.languageCode === 'az');
+                          const azTranslation = getTranslation(category.translations);
                           
                           return (
                             <Draggable

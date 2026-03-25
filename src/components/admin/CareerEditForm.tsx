@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui';
 import { removeEmptyFields } from '@/lib/utils/cleanup';
+import { getTranslation, isDefaultLanguage } from '@/lib/utils/translations';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { useUpdateCareerMutation, useActivateCareerMutation, useDeactivateCareerMutation } from '@/hooks/queries';
@@ -35,40 +36,40 @@ function buildFormData(data: CareerAdminDto) {
     active: data.active ?? true,
     translations: [
       {
-        id: data.translations?.find((t) => t.languageCode === 'az')?.id,
+        id: getTranslation(data.translations, 'az')?.id,
         languageCode: 'az',
-        title: data.translations?.find((t) => t.languageCode === 'az')?.title || '',
-        slug: data.translations?.find((t) => t.languageCode === 'az')?.slug || '',
-        content: data.translations?.find((t) => t.languageCode === 'az')?.content || '',
-        excerpt: data.translations?.find((t) => t.languageCode === 'az')?.excerpt || '',
-        requirements: data.translations?.find((t) => t.languageCode === 'az')?.requirements || '',
-        position: data.translations?.find((t) => t.languageCode === 'az')?.position || '',
-        company: data.translations?.find((t) => t.languageCode === 'az')?.company || '',
-        department: data.translations?.find((t) => t.languageCode === 'az')?.department || '',
+        title: getTranslation(data.translations, 'az')?.title || '',
+        slug: getTranslation(data.translations, 'az')?.slug || '',
+        content: getTranslation(data.translations, 'az')?.content || '',
+        excerpt: getTranslation(data.translations, 'az')?.excerpt || '',
+        requirements: getTranslation(data.translations, 'az')?.requirements || '',
+        position: getTranslation(data.translations, 'az')?.position || '',
+        company: getTranslation(data.translations, 'az')?.company || '',
+        department: getTranslation(data.translations, 'az')?.department || '',
       },
       {
-        id: data.translations?.find((t) => t.languageCode === 'en')?.id,
+        id: getTranslation(data.translations, 'en')?.id,
         languageCode: 'en',
-        title: data.translations?.find((t) => t.languageCode === 'en')?.title || '',
-        slug: data.translations?.find((t) => t.languageCode === 'en')?.slug || '',
-        content: data.translations?.find((t) => t.languageCode === 'en')?.content || '',
-        excerpt: data.translations?.find((t) => t.languageCode === 'en')?.excerpt || '',
-        requirements: data.translations?.find((t) => t.languageCode === 'en')?.requirements || '',
-        position: data.translations?.find((t) => t.languageCode === 'en')?.position || '',
-        company: data.translations?.find((t) => t.languageCode === 'en')?.company || '',
-        department: data.translations?.find((t) => t.languageCode === 'en')?.department || '',
+        title: getTranslation(data.translations, 'en')?.title || '',
+        slug: getTranslation(data.translations, 'en')?.slug || '',
+        content: getTranslation(data.translations, 'en')?.content || '',
+        excerpt: getTranslation(data.translations, 'en')?.excerpt || '',
+        requirements: getTranslation(data.translations, 'en')?.requirements || '',
+        position: getTranslation(data.translations, 'en')?.position || '',
+        company: getTranslation(data.translations, 'en')?.company || '',
+        department: getTranslation(data.translations, 'en')?.department || '',
       },
       {
-        id: data.translations?.find((t) => t.languageCode === 'ru')?.id,
+        id: getTranslation(data.translations, 'ru')?.id,
         languageCode: 'ru',
-        title: data.translations?.find((t) => t.languageCode === 'ru')?.title || '',
-        slug: data.translations?.find((t) => t.languageCode === 'ru')?.slug || '',
-        content: data.translations?.find((t) => t.languageCode === 'ru')?.content || '',
-        excerpt: data.translations?.find((t) => t.languageCode === 'ru')?.excerpt || '',
-        requirements: data.translations?.find((t) => t.languageCode === 'ru')?.requirements || '',
-        position: data.translations?.find((t) => t.languageCode === 'ru')?.position || '',
-        company: data.translations?.find((t) => t.languageCode === 'ru')?.company || '',
-        department: data.translations?.find((t) => t.languageCode === 'ru')?.department || '',
+        title: getTranslation(data.translations, 'ru')?.title || '',
+        slug: getTranslation(data.translations, 'ru')?.slug || '',
+        content: getTranslation(data.translations, 'ru')?.content || '',
+        excerpt: getTranslation(data.translations, 'ru')?.excerpt || '',
+        requirements: getTranslation(data.translations, 'ru')?.requirements || '',
+        position: getTranslation(data.translations, 'ru')?.position || '',
+        company: getTranslation(data.translations, 'ru')?.company || '',
+        department: getTranslation(data.translations, 'ru')?.department || '',
       },
     ] as Translation[],
   };
@@ -254,7 +255,7 @@ export default function CareerEditForm({ initialData }: CareerEditFormProps) {
                               : 'Название вакансии...'
                         }
                         minLength={2}
-                        required={translation.languageCode === 'az'}
+                        required={isDefaultLanguage(translation.languageCode)}
                       />
                     </div>
 

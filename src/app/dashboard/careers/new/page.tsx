@@ -7,6 +7,7 @@ import { removeEmptyFields } from '@/lib/utils/cleanup';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { useCreateCareerMutation } from '@/hooks/queries';
+import { isDefaultLanguage } from '@/lib/utils/translations';
 
 export default function CreateCareerPage() {
   const router = useRouter();
@@ -221,7 +222,7 @@ export default function CreateCareerPage() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder={translation.languageCode === 'az' ? 'İş vakansiyasının adı...' : translation.languageCode === 'en' ? 'Job title...' : 'Название вакансии...'}
                         minLength={2}
-                        required={translation.languageCode === 'az'}
+                        required={isDefaultLanguage(translation.languageCode)}
                       />
                     </div>
 

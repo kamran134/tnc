@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ServiceCategoryAdminDto, ServiceCategoryTranslationDto } from '@/types/api';
 import { adminServiceCategoriesService } from '@/lib/api';
 import { getServiceCategoryIcons } from '@/lib/icons/service-category-icons';
+import { getTranslation, LANGUAGES } from '@/lib/utils/translations';
 
 interface ServiceCategoryFormModalProps {
   isOpen: boolean;
@@ -42,9 +43,9 @@ export default function ServiceCategoryFormModal({
         sortOrder: category.sortOrder || 0,
         active: category.active,
         translations: [
-          category.translations.find(t => t.languageCode === 'az') || { languageCode: 'az', name: '', description: '' },
-          category.translations.find(t => t.languageCode === 'en') || { languageCode: 'en', name: '', description: '' },
-          category.translations.find(t => t.languageCode === 'ru') || { languageCode: 'ru', name: '', description: '' },
+          getTranslation(category.translations, 'az') || { languageCode: 'az', name: '', description: '' },
+          getTranslation(category.translations, 'en') || { languageCode: 'en', name: '', description: '' },
+          getTranslation(category.translations, 'ru') || { languageCode: 'ru', name: '', description: '' },
         ],
       });
     } else {
@@ -240,7 +241,7 @@ export default function ServiceCategoryFormModal({
                 Translations <span className="text-red-500">*</span>
               </label>
               <div className="flex space-x-2 border-b border-gray-200 mb-4">
-                {['az', 'en', 'ru'].map((lang) => (
+                {LANGUAGES.map((lang) => (
                   <button
                     key={lang}
                     type="button"

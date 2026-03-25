@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ImageUpload, useToast } from '@/components/ui';
-import { removeEmptyFields } from '@/lib/utils/cleanup';
+import { removeEmptyFields } from '@/lib/utils/cleanup';\nimport { getTranslation, isDefaultLanguage } from '@/lib/utils/translations';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { adminServiceCategoriesService } from '@/lib/api';
@@ -38,21 +38,21 @@ function buildFormData(data: ServiceAdminDto) {
     translations: [
       {
         languageCode: 'az',
-        title: data.translations?.find((t) => t.languageCode === 'az')?.title || '',
-        content: data.translations?.find((t) => t.languageCode === 'az')?.content || '',
-        excerpt: data.translations?.find((t) => t.languageCode === 'az')?.excerpt || ''
+        title: getTranslation(data.translations, 'az')?.title || '',
+        content: getTranslation(data.translations, 'az')?.content || '',
+        excerpt: getTranslation(data.translations, 'az')?.excerpt || ''
       },
       {
         languageCode: 'en',
-        title: data.translations?.find((t) => t.languageCode === 'en')?.title || '',
-        content: data.translations?.find((t) => t.languageCode === 'en')?.content || '',
-        excerpt: data.translations?.find((t) => t.languageCode === 'en')?.excerpt || ''
+        title: getTranslation(data.translations, 'en')?.title || '',
+        content: getTranslation(data.translations, 'en')?.content || '',
+        excerpt: getTranslation(data.translations, 'en')?.excerpt || ''
       },
       {
         languageCode: 'ru',
-        title: data.translations?.find((t) => t.languageCode === 'ru')?.title || '',
-        content: data.translations?.find((t) => t.languageCode === 'ru')?.content || '',
-        excerpt: data.translations?.find((t) => t.languageCode === 'ru')?.excerpt || ''
+        title: getTranslation(data.translations, 'ru')?.title || '',
+        content: getTranslation(data.translations, 'ru')?.content || '',
+        excerpt: getTranslation(data.translations, 'ru')?.excerpt || ''
       }
     ] as Translation[]
   };
@@ -163,8 +163,8 @@ export default function ServiceEditForm({ initialData }: ServiceEditFormProps) {
                   <option value="">Select Category</option>
                   {categories.filter(c => c.active).map(category => (
                     <option key={category.id} value={category.id}>
-                      {category.translations.find(t => t.languageCode === 'en')?.name || 
-                       category.translations.find(t => t.languageCode === 'az')?.name || 
+                      {getTranslation(category.translations, 'en')?.name || 
+                       getTranslation(category.translations)?.name || 
                        category.code}
                     </option>
                   ))}
@@ -243,7 +243,7 @@ export default function ServiceEditForm({ initialData }: ServiceEditFormProps) {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder={translation.languageCode === 'az' ? 'Xidmətin adı...' : translation.languageCode === 'en' ? 'Service title...' : 'Название услуги...'}
                         minLength={5}
-                        required={translation.languageCode === 'az'}
+                        required={isDefaultLanguage(translation.languageCode)}
                       />
                     </div>
 

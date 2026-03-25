@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ServiceCategoryTranslationDto } from '@/types/api';
 import { adminServiceCategoriesService } from '@/lib/api';
 import { getServiceCategoryIcons } from '@/lib/icons/service-category-icons';
+import { LANGUAGES } from '@/lib/utils/translations';
 
 export default function NewServiceCategoryPage() {
   const router = useRouter();
@@ -173,7 +174,7 @@ export default function NewServiceCategoryPage() {
               Translations <span className="text-red-500">*</span>
             </label>
             <div className="flex space-x-2 border-b border-gray-200 mb-4">
-              {['az', 'en', 'ru'].map((lang) => (
+              {LANGUAGES.map((lang) => (
                 <button
                   key={lang}
                   type="button"

@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { LANGUAGES, DEFAULT_LANGUAGE } from '@/lib/utils/translations';
 
-const locales = ['az', 'en', 'ru'];
-const defaultLocale = 'az';
+const locales = LANGUAGES;
+const defaultLocale = DEFAULT_LANGUAGE;
 
 // ЛОГИКА: авторизация для /dashboard + поддержка языков + автоматический refresh
 export async function middleware(request: NextRequest) {

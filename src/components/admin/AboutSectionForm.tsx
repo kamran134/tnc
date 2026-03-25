@@ -7,13 +7,12 @@ import { ImageUpload, useToast } from '@/components/ui';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { adminAboutSectionsService } from '@/lib/api';
 import type { AboutSectionAdminDto, AboutSectionTranslationDto, LanguageCode } from '@/types/api';
+import { LANGUAGES } from '@/lib/utils/translations';
 
 interface AboutSectionFormProps {
   initialData?: AboutSectionAdminDto;
   isEdit?: boolean;
 }
-
-const LANGUAGES: LanguageCode[] = ['az', 'en', 'ru'];
 
 const emptyTranslation = (lang: LanguageCode): AboutSectionTranslationDto => ({
   languageCode: lang,

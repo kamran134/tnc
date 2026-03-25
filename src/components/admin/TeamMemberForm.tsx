@@ -5,6 +5,7 @@ import { useTeamMemberForm } from '@/hooks/useTeamMemberForm';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 import { ImageUpload } from '@/components/ui';
 import { useRouter } from 'next/navigation';
+import { LANGUAGES } from '@/lib/utils/translations';
 
 interface TeamMemberFormProps {
   initialData?: TeamMemberAdminDto;
@@ -194,8 +195,7 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
             <LanguageTabs>
               {(activeLanguage, languageIndex) => {
                 // Map languageIndex to actual languageCode
-                const languageCodes: ('az' | 'en' | 'ru')[] = ['az', 'en', 'ru'];
-                const currentLangCode = languageCodes[languageIndex];
+                const currentLangCode = LANGUAGES[languageIndex];
                 
                 // Find translation by languageCode instead of array index
                 const translationIndex = formData.translations.findIndex(t => t.languageCode === currentLangCode);

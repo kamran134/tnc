@@ -2,57 +2,27 @@
 
 import { createContext, useContext, useState, useEffect, useMemo, useCallback, ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-
-type Locale = 'az' | 'en' | 'ru';
+import type { LanguageCode } from '@/types/api';
 
 interface LanguageContextType {
-  locale: Locale;
-  setLocale: (locale: Locale) => void;
-  t: (key: string) => string;
+  locale: LanguageCode;
+  setLocale: (locale: LanguageCode) => void;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
-
-// Простой словарь переводов (можно расширить)
-const translations: Record<Locale, Record<string, string>> = {
-  az: {
-    home: 'Ana səhifə',
-    services: 'Xidmətlər',
-    news: 'Xəbərlər',
-    careers: 'Karyera',
-    contact: 'Əlaqə',
-    about: 'Haqqımızda',
-  },
-  en: {
-    home: 'Home',
-    services: 'Services',
-    news: 'News',
-    careers: 'Careers',
-    contact: 'Contact',
-    about: 'About Us',
-  },
-  ru: {
-    home: 'Главная',
-    services: 'Услуги',
-    news: 'Новости',
-    careers: 'Карьера',
-    contact: 'Контакты',
-    about: 'О нас',
-  },
-};
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   
   // Определяем текущий язык из URL
-  const getLocaleFromPath = (path: string): Locale => {
+  const getLocaleFromPath = (path: string): LanguageCode => {
     if (path.startsWith('/en')) return 'en';
     if (path.startsWith('/ru')) return 'ru';
     return 'az'; // default
   };
 
-  const [locale, setLocaleState] = useState<Locale>(getLocaleFromPath(pathname));
+  const [locale, setLocaleState] = useState<LanguageCode>(getLocaleFromPath(pathname));
 
   useEffect(() => {
     const newLocale = getLocaleFromPath(pathname);
@@ -62,7 +32,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, [pathname, locale]);
 
   // Мемоизированная функция смены языка
-  const setLocale = useCallback((newLocale: Locale) => {
+  const setLocale = useCallback((newLocale: LanguageCode) => {
     // Получаем путь без языка
     // /az/news/article -> /news/article
     // /en -> /
@@ -79,14 +49,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     router.push(finalPath);
   }, [pathname, router]);
 
-  // Мемоизированная функция перевода
-  const t = useCallback((key: string): string => {
-    return translations[locale][key] || key;
-  }, [locale]);
-
   const contextValue = useMemo(
-    () => ({ locale, setLocale, t }),
-    [locale, setLocale, t]
+    () => ({ locale, setLocale }),
+    [locale, setLocale]
   );
 
   return (
