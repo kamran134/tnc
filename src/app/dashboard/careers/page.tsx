@@ -48,17 +48,19 @@ export default function CareersPage() {
 
   const getEmploymentTypeColor = (type?: string) => {
     switch (type) {
-      case 'FULL_TIME':
-        return 'bg-green-100 text-green-800';
-      case 'PART_TIME':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'CONTRACT':
-        return 'bg-blue-100 text-blue-800';
-      case 'REMOTE':
-        return 'bg-purple-100 text-purple-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+      case 'FULL_TIME':  return 'bg-green-100 text-green-800';
+      case 'PART_TIME':  return 'bg-yellow-100 text-yellow-800';
+      case 'CONTRACT':   return 'bg-blue-100 text-blue-800';
+      case 'REMOTE':     return 'bg-purple-100 text-purple-800';
+      default:           return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const EMPLOYMENT_TYPE_LABELS: Record<string, string> = {
+    FULL_TIME: 'Tam Ştat — Full Time — Полная занятость',
+    PART_TIME: 'Yarım Ştat — Part Time — Частичная занятость',
+    CONTRACT:  'Müqavilə — Contract — Контракт',
+    REMOTE:    'Uzaqdan — Remote — Удалённая работа',
   };
 
   const handlePageChange = (newPage: number) => {
@@ -158,10 +160,10 @@ export default function CareersPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900"
               >
                 <option value="">All Types</option>
-                <option value="FULL_TIME">Full Time</option>
-                <option value="PART_TIME">Part Time</option>
-                <option value="CONTRACT">Contract</option>
-                <option value="REMOTE">Remote</option>
+                <option value="FULL_TIME">Tam Ştat — Full Time — Полная занятость</option>
+                <option value="PART_TIME">Yarım Ştat — Part Time — Частичная занятость</option>
+                <option value="CONTRACT">Müqavilə — Contract — Контракт</option>
+                <option value="REMOTE">Uzaqdan — Remote — Удалённая работа</option>
               </select>
             </div>
             <div className="flex items-end">
@@ -209,7 +211,7 @@ export default function CareersPage() {
                       </td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getEmploymentTypeColor(job.employmentType)}`}>
-                          {job.employmentType?.replace('_', ' ') || 'Full Time'}
+                          {job.employmentType ? (EMPLOYMENT_TYPE_LABELS[job.employmentType] ?? job.employmentType) : 'Full Time'}
                         </span>
                       </td>
                       <td className="px-6 py-4">
