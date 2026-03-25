@@ -32,6 +32,7 @@ function buildFormData(data: CareerAdminDto) {
     location: data.location || '',
     employmentType: data.employmentType || 'FULL_TIME',
     salaryRange: data.salaryRange || '',
+    postDate: data.postDate ? data.postDate.slice(0, 16) : new Date().toISOString().slice(0, 16),
     expiryDate: data.expiryDate ? data.expiryDate.slice(0, 16) : '',
     active: data.active ?? true,
     translations: [
@@ -92,8 +93,9 @@ export default function CareerEditForm({ initialData }: CareerEditFormProps) {
     setIsLoading(true);
 
     try {
+      const { active, ...formDataWithoutActive } = formData;
       const filteredData = {
-        ...formData,
+        ...formDataWithoutActive,
         translations: formData.translations.filter((t) => t.title.trim() || t.content.trim()),
       };
 
@@ -174,7 +176,7 @@ export default function CareerEditForm({ initialData }: CareerEditFormProps) {
                   value={formData.location}
                   onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                  placeholder="e.g., Baku, Azerbaijan"
+                  placeholder="e.g., Bakı"
                   required
                 />
               </div>
@@ -186,10 +188,10 @@ export default function CareerEditForm({ initialData }: CareerEditFormProps) {
                   onChange={(e) => setFormData((prev) => ({ ...prev, employmentType: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900"
                 >
-                  <option value="FULL_TIME">Full Time</option>
-                  <option value="PART_TIME">Part Time</option>
-                  <option value="CONTRACT">Contract</option>
-                  <option value="REMOTE">Remote</option>
+                  <option value="FULL_TIME">Full Time — Tam iş günü — Полный день</option>
+                  <option value="PART_TIME">Part Time — Yarı iş günü — Неполный день</option>
+                  <option value="CONTRACT">Contract — Müqavilə — Контракт</option>
+                  <option value="REMOTE">Remote — Uzaqdan — Удалённо</option>
                 </select>
               </div>
 
@@ -217,6 +219,16 @@ export default function CareerEditForm({ initialData }: CareerEditFormProps) {
                     By Agreement <span className="text-gray-400">(Razılaşma yolu ilə)</span>
                   </label>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Publish Date</label>
+                <input
+                  type="datetime-local"
+                  value={formData.postDate}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, postDate: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900"
+                />
               </div>
 
               <div>

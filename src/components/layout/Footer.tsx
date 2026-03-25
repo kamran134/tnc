@@ -114,7 +114,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {currentYear} TnC Tax & Consulting. {t('footer.allRightsReserved')}</p>
+          <p>&copy; {currentYear} TnC Tax & Consulting (TnC). {t('footer.allRightsReserved')}</p>
         </div>
       </div>
     </footer>

@@ -123,7 +123,7 @@ export default function CreateCareerPage() {
                   value={formData.location}
                   onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
-                  placeholder="e.g., Baku, Azerbaijan"
+                  placeholder="e.g., Bakı"
                   minLength={5}
                   required
                 />
@@ -136,10 +136,10 @@ export default function CreateCareerPage() {
                   onChange={(e) => setFormData(prev => ({ ...prev, employmentType: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 text-gray-900"
                 >
-                  <option value="FULL_TIME">Full Time</option>
-                  <option value="PART_TIME">Part Time</option>
-                  <option value="CONTRACT">Contract</option>
-                  <option value="REMOTE">Remote</option>
+                  <option value="FULL_TIME">Full Time — Tam iş günü — Полный день</option>
+                  <option value="PART_TIME">Part Time — Yarı iş günü — Неполный день</option>
+                  <option value="CONTRACT">Contract — Müqavilə — Контракт</option>
+                  <option value="REMOTE">Remote — Uzaqdan — Удалённо</option>
                 </select>
               </div>
 
