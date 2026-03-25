@@ -88,11 +88,11 @@ export const adminFilesService = {
 export const filesService = {
   // Download file by type and name
   getDownloadUrl(fileType: string, fileName: string): string {
-    return `${apiClient.defaults.baseURL}/api/files/${fileType}/${fileName}`;
+    return `${apiClient.defaults.baseURL}/files/${fileType}/${fileName}`;
   },
 
   // Download file by ID
   getDownloadUrlById(id: number): string {
-    return `${apiClient.defaults.baseURL}/api/files/by-id/${id}`;
+    return `${apiClient.defaults.baseURL}/files/by-id/${id}`;
   },
 };
