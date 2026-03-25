@@ -9,11 +9,7 @@ export async function GET(request: NextRequest) {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('access_token')?.value;
 
-    console.log('🔐 [Admin Company Info API] GET request received');
-    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
-
     if (!accessToken) {
-      console.log('❌ No access token - returning 401');
       return NextResponse.json(
         { message: 'Not authenticated' },
         { status: 401 }
@@ -22,7 +18,6 @@ export async function GET(request: NextRequest) {
 
     // Проксируем запрос к Java бэкенду
     const backendUrl = `${BACKEND_URL}/api/admin/company-info`;
-    console.log('🚀 Proxying to backend:', backendUrl);
     
     const response = await fetch(backendUrl, {
       method: 'GET',
@@ -32,11 +27,8 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    console.log('📥 Backend response status:', response.status);
-
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Failed to fetch company info' }));
-      console.log('❌ Backend returned error:', error);
       return NextResponse.json(
         { message: error.message || 'Failed to fetch company info' },
         { status: response.status }
@@ -44,7 +36,6 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('✅ Company info fetched successfully');
     return NextResponse.json(data, { status: 200 });
 
   } catch (error) {
@@ -64,11 +55,7 @@ export async function POST(request: NextRequest) {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('access_token')?.value;
 
-    console.log('🔐 [Admin Company Info API] POST request received');
-    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
-
     if (!accessToken) {
-      console.log('❌ No access token - returning 401');
       return NextResponse.json(
         { message: 'Not authenticated' },
         { status: 401 }
@@ -77,7 +64,6 @@ export async function POST(request: NextRequest) {
     
     // Проксируем запрос к Java бэкенду
     const backendUrl = `${BACKEND_URL}/api/admin/company-info`;
-    console.log('🚀 Proxying to backend:', backendUrl);
     
     const response = await fetch(backendUrl, {
       method: 'POST',
@@ -88,11 +74,8 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(body),
     });
 
-    console.log('📥 Backend response status:', response.status);
-
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Failed to create company info' }));
-      console.log('❌ Backend returned error:', error);
       return NextResponse.json(
         { message: error.message || 'Failed to create company info' },
         { status: response.status }
@@ -100,7 +83,6 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('✅ Company info created successfully');
     return NextResponse.json(data, { status: 201 });
 
   } catch (error) {
@@ -120,11 +102,7 @@ export async function PUT(request: NextRequest) {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('access_token')?.value;
 
-    console.log('🔐 [Admin Company Info API] PUT request received');
-    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
-
     if (!accessToken) {
-      console.log('❌ No access token - returning 401');
       return NextResponse.json(
         { message: 'Not authenticated' },
         { status: 401 }
@@ -133,7 +111,6 @@ export async function PUT(request: NextRequest) {
     
     // Проксируем запрос к Java бэкенду
     const backendUrl = `${BACKEND_URL}/api/admin/company-info`;
-    console.log('🚀 Proxying to backend:', backendUrl);
     
     const response = await fetch(backendUrl, {
       method: 'PUT',
@@ -144,11 +121,8 @@ export async function PUT(request: NextRequest) {
       body: JSON.stringify(body),
     });
 
-    console.log('📥 Backend response status:', response.status);
-
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Failed to update company info' }));
-      console.log('❌ Backend returned error:', error);
       return NextResponse.json(
         { message: error.message || 'Failed to update company info' },
         { status: response.status }
@@ -156,7 +130,6 @@ export async function PUT(request: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('✅ Company info updated successfully');
     return NextResponse.json(data, { status: 200 });
 
   } catch (error) {
@@ -174,11 +147,7 @@ export async function DELETE(request: NextRequest) {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('access_token')?.value;
 
-    console.log('🔐 [Admin Company Info API] DELETE request received');
-    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
-
     if (!accessToken) {
-      console.log('❌ No access token - returning 401');
       return NextResponse.json(
         { message: 'Not authenticated' },
         { status: 401 }
@@ -187,7 +156,6 @@ export async function DELETE(request: NextRequest) {
     
     // Проксируем запрос к Java бэкенду
     const backendUrl = `${BACKEND_URL}/api/admin/company-info`;
-    console.log('🚀 Proxying to backend:', backendUrl);
     
     const response = await fetch(backendUrl, {
       method: 'DELETE',
@@ -197,18 +165,14 @@ export async function DELETE(request: NextRequest) {
       },
     });
 
-    console.log('📥 Backend response status:', response.status);
-
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Failed to delete company info' }));
-      console.log('❌ Backend returned error:', error);
       return NextResponse.json(
         { message: error.message || 'Failed to delete company info' },
         { status: response.status }
       );
     }
 
-    console.log('✅ Company info deleted successfully');
     return NextResponse.json({ message: 'Company info deleted successfully' }, { status: 200 });
 
   } catch (error) {

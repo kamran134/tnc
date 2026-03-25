@@ -44,11 +44,9 @@ export default function PageHero({
           // Backend returns an array; take the first active entry
           const first = Array.isArray(data) ? data[0] ?? null : data;
           setHeroData(first);
-        } else {
-          console.log(`Page hero API returned ${response.status}, using fallback`);
         }
       } catch (error) {
-        console.log('Error fetching page hero, using fallback:', error);
+        // Fallback to default hero on error
       } finally {
         setIsLoading(false);
       }

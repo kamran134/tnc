@@ -12,11 +12,7 @@ export async function GET(request: NextRequest) {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('access_token')?.value;
 
-    console.log('🔐 [Admin Services API] Request received');
-    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
-
     if (!accessToken) {
-      console.log('❌ No access token - returning 401');
       return NextResponse.json(
         { message: 'Not authenticated' },
         { status: 401 }
@@ -25,7 +21,6 @@ export async function GET(request: NextRequest) {
 
     // Проксируем запрос к Java бэкенду
     const backendUrl = `${BACKEND_URL}/api/admin/services?${params}`;
-    console.log('🚀 Proxying to backend:', backendUrl);
     
     const response = await fetch(backendUrl, {
       method: 'GET',
@@ -35,11 +30,8 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    console.log('📥 Backend response status:', response.status);
-
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Failed to fetch services' }));
-      console.log('❌ Backend returned error:', error);
       return NextResponse.json(
         { message: error.message || 'Failed to fetch services' },
         { status: response.status }
@@ -47,13 +39,9 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('✅ Services fetched successfully');
-    console.log('📊 Raw data structure:', data);
-    console.log('📊 Data has page object:', !!data.page);
     
     // Если данные приходят в формате {content, page}, нужно преобразовать в Spring Page формат
     if (data.page && !data.totalElements) {
-      console.log('🔄 Transforming data structure from {content, page} to Spring Page format');
       const transformedData = {
         content: data.content,
         totalElements: data.page.totalElements,
@@ -67,17 +55,9 @@ export async function GET(request: NextRequest) {
         sort: data.page.sort || [],
         pageable: data.page.pageable || {}
       };
-      console.log('✅ Transformed data:', transformedData);
       return NextResponse.json(transformedData, { status: 200 });
     }
     
-    console.log('📊 Data structure:', {
-      totalElements: data.totalElements,
-      totalPages: data.totalPages,
-      size: data.size,
-      number: data.number,
-      contentLength: data.content?.length || 0
-    });
     return NextResponse.json(data, { status: 200 });
 
   } catch (error) {

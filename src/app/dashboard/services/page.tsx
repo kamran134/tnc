@@ -86,16 +86,6 @@ export default function ServicesPage() {
     );
   }
 
-  // Debug: log the data structure
-  console.log('Services Data:', servicesData);
-  console.log('Pagination info:', {
-    totalElements: servicesData?.totalElements,
-    totalPages: servicesData?.totalPages,
-    size: servicesData?.size,
-    number: servicesData?.number,
-    contentLength: servicesData?.content?.length
-  });
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}

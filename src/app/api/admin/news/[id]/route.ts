@@ -62,9 +62,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         { status: 401 }
       );
     }
-    
-    console.log('Updating news with data:', JSON.stringify(body, null, 2));
-    
     // Проксируем запрос к Java бэкенду
     const response = await fetch(`${BACKEND_URL}/api/admin/news/${id}`, {
       method: 'PUT',
@@ -106,7 +103,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const data = await response.json();
-    console.log('News updated successfully:', data.id);
     return NextResponse.json(data, { status: 200 });
 
   } catch (error) {

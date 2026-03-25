@@ -106,7 +106,6 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('News created successfully:', data.id);
     return NextResponse.json(data, { status: 201 });
 
   } catch (error) {

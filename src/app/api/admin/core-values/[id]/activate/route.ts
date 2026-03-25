@@ -13,12 +13,7 @@ export async function PATCH(
     // Получаем токен из cookies
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('access_token')?.value;
-
-    console.log(`🔐 [Admin Core Value Activate API] PATCH request for ID: ${id}`);
-    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
-
     if (!accessToken) {
-      console.log('❌ No access token - returning 401');
       return NextResponse.json(
         { message: 'Not authenticated' },
         { status: 401 }
@@ -26,8 +21,6 @@ export async function PATCH(
     }
 
     const backendUrl = `${BACKEND_URL}/api/admin/core-values/${id}/activate`;
-    console.log('🚀 Proxying to backend:', backendUrl);
-    
     const response = await fetch(backendUrl, {
       method: 'PATCH',
       headers: {
@@ -35,19 +28,13 @@ export async function PATCH(
         'Content-Type': 'application/json',
       },
     });
-
-    console.log('📥 Backend response status:', response.status);
-
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Failed to activate core value' }));
-      console.log('❌ Backend returned error:', error);
       return NextResponse.json(
         { message: error.message || 'Failed to activate core value' },
         { status: response.status }
       );
     }
-
-    console.log('✅ Core value activated successfully');
     return NextResponse.json({ message: 'Core value activated successfully' }, { status: 200 });
 
   } catch (error) {

@@ -16,9 +16,7 @@ export const adminServicesService = {
     active?: boolean;
   }): Promise<PageServiceAdminDto> {
     try {
-      console.log('🔍 Fetching services with params:', params);
       const response = await apiClient.get<PageServiceAdminDto>('/admin/services', { params });
-      console.log('📦 Services response data:', response.data);
       return response.data;
     } catch (error) {
       throw handleApiError(error);

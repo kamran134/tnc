@@ -21,16 +21,6 @@ export default function ContactsPage() {
     totalPages: data?.totalPages || 0
   };
 
-  // Debug: выводим структуру данных в консоль
-  console.log('=== CONTACTS DEBUG ===');
-  console.log('Raw API data:', data);
-  console.log('Contacts array:', contacts);
-  console.log('Contacts length:', contacts.length);
-  if (contacts.length > 0) {
-    console.log('First contact structure:', contacts[0]);
-    console.log('First contact keys:', Object.keys(contacts[0]));
-  }
-
   const formatDate = (dateString?: string) => {
     if (!dateString) return '-';
     try {

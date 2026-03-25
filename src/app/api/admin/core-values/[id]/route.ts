@@ -13,12 +13,7 @@ export async function GET(
     // Получаем токен из cookies
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('access_token')?.value;
-
-    console.log(`🔐 [Admin Core Value API] GET request for ID: ${id}`);
-    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
-
     if (!accessToken) {
-      console.log('❌ No access token - returning 401');
       return NextResponse.json(
         { message: 'Not authenticated' },
         { status: 401 }
@@ -26,8 +21,6 @@ export async function GET(
     }
 
     const backendUrl = `${BACKEND_URL}/api/admin/core-values/${id}`;
-    console.log('🚀 Proxying to backend:', backendUrl);
-    
     const response = await fetch(backendUrl, {
       method: 'GET',
       headers: {
@@ -35,12 +28,8 @@ export async function GET(
         'Content-Type': 'application/json',
       },
     });
-
-    console.log('📥 Backend response status:', response.status);
-
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Failed to fetch core value' }));
-      console.log('❌ Backend returned error:', error);
       return NextResponse.json(
         { message: error.message || 'Failed to fetch core value' },
         { status: response.status }
@@ -48,7 +37,6 @@ export async function GET(
     }
 
     const data = await response.json();
-    console.log('✅ Core value fetched successfully');
     return NextResponse.json(data, { status: 200 });
 
   } catch (error) {
@@ -71,12 +59,7 @@ export async function PUT(
     // Получаем токен из cookies
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('access_token')?.value;
-
-    console.log(`🔐 [Admin Core Value API] PUT request for ID: ${id}`);
-    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
-
     if (!accessToken) {
-      console.log('❌ No access token - returning 401');
       return NextResponse.json(
         { message: 'Not authenticated' },
         { status: 401 }
@@ -84,8 +67,6 @@ export async function PUT(
     }
 
     const backendUrl = `${BACKEND_URL}/api/admin/core-values/${id}`;
-    console.log('🚀 Proxying to backend:', backendUrl);
-    
     const response = await fetch(backendUrl, {
       method: 'PUT',
       headers: {
@@ -94,12 +75,8 @@ export async function PUT(
       },
       body: JSON.stringify(body),
     });
-
-    console.log('📥 Backend response status:', response.status);
-
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Failed to update core value' }));
-      console.log('❌ Backend returned error:', error);
       return NextResponse.json(
         { message: error.message || 'Failed to update core value' },
         { status: response.status }
@@ -107,7 +84,6 @@ export async function PUT(
     }
 
     const data = await response.json();
-    console.log('✅ Core value updated successfully');
     return NextResponse.json(data, { status: 200 });
 
   } catch (error) {
@@ -129,12 +105,7 @@ export async function DELETE(
     // Получаем токен из cookies
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('access_token')?.value;
-
-    console.log(`🔐 [Admin Core Value API] DELETE request for ID: ${id}`);
-    console.log('🍪 Access token from cookies:', accessToken ? `EXISTS (${accessToken.substring(0, 20)}...)` : '❌ MISSING');
-
     if (!accessToken) {
-      console.log('❌ No access token - returning 401');
       return NextResponse.json(
         { message: 'Not authenticated' },
         { status: 401 }
@@ -142,8 +113,6 @@ export async function DELETE(
     }
 
     const backendUrl = `${BACKEND_URL}/api/admin/core-values/${id}`;
-    console.log('🚀 Proxying to backend:', backendUrl);
-    
     const response = await fetch(backendUrl, {
       method: 'DELETE',
       headers: {
@@ -151,19 +120,13 @@ export async function DELETE(
         'Content-Type': 'application/json',
       },
     });
-
-    console.log('📥 Backend response status:', response.status);
-
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Failed to delete core value' }));
-      console.log('❌ Backend returned error:', error);
       return NextResponse.json(
         { message: error.message || 'Failed to delete core value' },
         { status: response.status }
       );
     }
-
-    console.log('✅ Core value deleted successfully');
     return NextResponse.json({ message: 'Core value deleted successfully' }, { status: 200 });
 
   } catch (error) {

@@ -54,10 +54,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ message: 'Token refreshed' }, { status: 200 });
   } catch (error) {
-    console.error('💥 ======================== API ROUTE: /auth/refresh EXCEPTION ========================');
-    console.error('❌ Error:', error);
-    console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack trace');
-    console.log('========================================================================\n');
+    console.error('Token refresh failed:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

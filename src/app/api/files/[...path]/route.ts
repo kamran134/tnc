@@ -11,8 +11,6 @@ export async function GET(
     const imagePath = path.join('/');
     const imageUrl = `${BACKEND_URL}/api/files/${imagePath}`;
 
-    console.log('Proxying image request:', imageUrl);
-
     const response = await fetch(imageUrl, {
       method: 'GET',
       headers: {

@@ -64,15 +64,6 @@ export async function POST(request: NextRequest) {
     if (description) {
       url.searchParams.append('description', description);
     }
-
-    console.log('Uploading file:', {
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      fileType,
-      description
-    });
-
     // Отправляем файл на бекенд
     const response = await fetch(url.toString(), {
       method: 'POST',
@@ -114,7 +105,6 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('File uploaded successfully:', data.id, data.fileName);
     return NextResponse.json(data, { status: 201 });
 
   } catch (error) {

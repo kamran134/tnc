@@ -20,9 +20,6 @@ export default function Pagination({
   const startItem = totalElements === 0 ? 0 : currentPage * pageSize + 1;
   const endItem = Math.min((currentPage + 1) * pageSize, totalElements);
 
-  console.log('🔢 Pagination props:', { currentPage, totalPages, pageSize, totalElements });
-  console.log('🔢 Calculated:', { startItem, endItem });
-
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
     const maxVisiblePages = 5;

@@ -75,7 +75,6 @@ export default function ImageUpload({
 
       if (response.ok) {
         const data = await response.json();
-        console.log('File uploaded:', data);
         
         // Если есть старый файл - удаляем его
         if (currentFileId) {
@@ -83,7 +82,6 @@ export default function ImageUpload({
             await fetch(`/api/admin/files/${currentFileId}`, {
               method: 'DELETE',
             });
-            console.log('Old file deleted:', currentFileId);
           } catch (error) {
             console.error('Failed to delete old file:', error);
           }
@@ -166,7 +164,7 @@ export default function ImageUpload({
         });
         
         if (response.ok) {
-          console.log('File deleted from server:', currentFileId);
+          setCurrentFileId(undefined);
         } else {
           console.error('Failed to delete file from server');
           alert('Failed to delete file from server');

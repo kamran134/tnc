@@ -68,9 +68,6 @@ export async function PUT(
         { status: 401 }
       );
     }
-    
-    console.log('Updating service category with data:', JSON.stringify(body, null, 2));
-
     // Проксируем запрос к Java бэкенду
     const response = await fetch(`${BACKEND_URL}/api/admin/service-categories/${id}`, {
       method: 'PUT',

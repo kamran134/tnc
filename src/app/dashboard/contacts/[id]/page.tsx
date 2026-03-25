@@ -27,7 +27,6 @@ export default function ContactDetailPage() {
         const data = await response.json();
         setContact(data);
         setAdminNotes(data.adminNotes || '');
-        console.log('Contact detail:', data);
       } else {
         console.error('Failed to load contact');
       }

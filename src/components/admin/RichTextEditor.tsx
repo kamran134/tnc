@@ -6,13 +6,17 @@ import 'quill/dist/quill.snow.css';
 // Register the style-based align attributor ONCE (module scope, runs on first import).
 // This makes Quill output  style="text-align: right"  instead of  class="ql-align-right",
 // which means alignment survives clipboard.dangerouslyPasteHTML round-trips reliably.
-let alignRegistered = false;
-async function registerAlignStyle() {
-  if (alignRegistered) return;
-  alignRegistered = true;
-  const Quill = (await import('quill')).default;
-  const AlignStyle = Quill.import('attributors/style/align') as any;
-  Quill.register(AlignStyle, true);
+// Using a cached Promise instead of a mutable boolean ensures exactly one registration
+// even under concurrent calls, and avoids module-level mutable state.
+let alignPromise: Promise<void> | null = null;
+function registerAlignStyle(): Promise<void> {
+  if (!alignPromise) {
+    alignPromise = import('quill').then((Quill) => {
+      const AlignStyle = Quill.default.import('attributors/style/align') as any;
+      Quill.default.register(AlignStyle, true);
+    });
+  }
+  return alignPromise;
 }
 
 export type RichTextToolbarType = 'title' | 'subtitle' | 'full';
