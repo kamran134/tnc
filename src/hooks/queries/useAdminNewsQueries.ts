@@ -30,6 +30,7 @@ export function useAdminNewsDetailQuery(id: string | number) {
     queryKey: adminNewsKeys.detail(id),
     queryFn: () => adminNewsService.getById(Number(id)),
     enabled: !!id,
+    staleTime: 0,
   });
 }
 
