@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, memo } from 'react';
+import { useState } from 'react';
 
 type LanguageCode = 'az' | 'en' | 'ru';
 
@@ -51,4 +51,4 @@ function LanguageTabs({ children }: LanguageTabsProps) {
   );
 }
 
-export default memo(LanguageTabs);
+export default LanguageTabs;
