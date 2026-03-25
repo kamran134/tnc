@@ -33,6 +33,8 @@ export function useAdminCareerDetailQuery(id: string | number) {
     queryKey: adminCareersKeys.detail(id),
     queryFn: () => adminCareersService.getById(Number(id)),
     enabled: !!id,
+    staleTime: 0,
+    gcTime: 0,
   });
 }
 
@@ -65,9 +67,9 @@ export function useUpdateCareerMutation() {
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: any }) => 
       adminCareersService.update(id, data),
-    onSuccess: (_, variables) => {
+    onSuccess: (updatedCareer, variables) => {
+      queryClient.setQueryData(adminCareersKeys.detail(variables.id), updatedCareer);
       queryClient.invalidateQueries({ queryKey: adminCareersKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: adminCareersKeys.detail(variables.id) });
     },
   });
 }
