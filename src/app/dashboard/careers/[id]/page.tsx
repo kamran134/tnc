@@ -9,9 +9,9 @@ export default function EditCareerPage() {
   const router = useRouter();
   const careerId = params?.id as string;
 
-  const { data: careerData, isLoading, error } = useAdminCareerDetailQuery(careerId);
+  const { data: careerData, isLoading, isFetching, error } = useAdminCareerDetailQuery(careerId);
 
-  if (isLoading) {
+  if (isLoading || (isFetching && !careerData)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -53,5 +53,5 @@ export default function EditCareerPage() {
     );
   }
 
-  return <CareerEditForm initialData={careerData} />;
+  return <CareerEditForm key={careerData.updatedAt ?? careerData.id} initialData={careerData} />;
 }
