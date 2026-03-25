@@ -28,6 +28,10 @@ interface CareerEditFormProps {
 }
 
 function buildFormData(data: CareerAdminDto) {
+  const azTrans = data.translations?.find((t) => t.languageCode === 'az');
+  const enTrans = data.translations?.find((t) => t.languageCode === 'en');
+  const ruTrans = data.translations?.find((t) => t.languageCode === 'ru');
+
   return {
     location: data.location || '',
     employmentType: data.employmentType || 'FULL_TIME',
@@ -37,40 +41,40 @@ function buildFormData(data: CareerAdminDto) {
     active: data.active ?? true,
     translations: [
       {
-        id: getTranslation(data.translations, 'az')?.id,
+        id: azTrans?.id,
         languageCode: 'az',
-        title: getTranslation(data.translations, 'az')?.title || '',
-        slug: getTranslation(data.translations, 'az')?.slug || '',
-        content: getTranslation(data.translations, 'az')?.content || '',
-        excerpt: getTranslation(data.translations, 'az')?.excerpt || '',
-        requirements: getTranslation(data.translations, 'az')?.requirements || '',
-        position: getTranslation(data.translations, 'az')?.position || '',
-        company: getTranslation(data.translations, 'az')?.company || '',
-        department: getTranslation(data.translations, 'az')?.department || '',
+        title: azTrans?.title || '',
+        slug: azTrans?.slug || '',
+        content: azTrans?.content || '',
+        excerpt: azTrans?.excerpt || '',
+        requirements: azTrans?.requirements || '',
+        position: azTrans?.position || '',
+        company: azTrans?.company || '',
+        department: azTrans?.department || '',
       },
       {
-        id: getTranslation(data.translations, 'en')?.id,
+        id: enTrans?.id,
         languageCode: 'en',
-        title: getTranslation(data.translations, 'en')?.title || '',
-        slug: getTranslation(data.translations, 'en')?.slug || '',
-        content: getTranslation(data.translations, 'en')?.content || '',
-        excerpt: getTranslation(data.translations, 'en')?.excerpt || '',
-        requirements: getTranslation(data.translations, 'en')?.requirements || '',
-        position: getTranslation(data.translations, 'en')?.position || '',
-        company: getTranslation(data.translations, 'en')?.company || '',
-        department: getTranslation(data.translations, 'en')?.department || '',
+        title: enTrans?.title || '',
+        slug: enTrans?.slug || '',
+        content: enTrans?.content || '',
+        excerpt: enTrans?.excerpt || '',
+        requirements: enTrans?.requirements || '',
+        position: enTrans?.position || '',
+        company: enTrans?.company || '',
+        department: enTrans?.department || '',
       },
       {
-        id: getTranslation(data.translations, 'ru')?.id,
+        id: ruTrans?.id,
         languageCode: 'ru',
-        title: getTranslation(data.translations, 'ru')?.title || '',
-        slug: getTranslation(data.translations, 'ru')?.slug || '',
-        content: getTranslation(data.translations, 'ru')?.content || '',
-        excerpt: getTranslation(data.translations, 'ru')?.excerpt || '',
-        requirements: getTranslation(data.translations, 'ru')?.requirements || '',
-        position: getTranslation(data.translations, 'ru')?.position || '',
-        company: getTranslation(data.translations, 'ru')?.company || '',
-        department: getTranslation(data.translations, 'ru')?.department || '',
+        title: ruTrans?.title || '',
+        slug: ruTrans?.slug || '',
+        content: ruTrans?.content || '',
+        excerpt: ruTrans?.excerpt || '',
+        requirements: ruTrans?.requirements || '',
+        position: ruTrans?.position || '',
+        company: ruTrans?.company || '',
+        department: ruTrans?.department || '',
       },
     ] as Translation[],
   };
