@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { DashboardDataDto } from '@/types/api';
+import apiClient from '@/lib/api/client';
 
 // Dashboard Stats Query Keys
 export const dashboardKeys = {
@@ -12,20 +13,8 @@ export function useDashboardStatsQuery() {
   return useQuery({
     queryKey: dashboardKeys.stats(),
     queryFn: async (): Promise<DashboardDataDto> => {
-      // Используем относительный URL - запрос пойдет через Next.js API route
-      // который проксирует на бэкенд
-      const response = await fetch('/api/admin/dashboard/statistics', {
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch dashboard stats');
-      }
-
-      return response.json();
+      const { data } = await apiClient.get<DashboardDataDto>('/admin/dashboard/statistics');
+      return data;
     },
   });
 }

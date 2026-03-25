@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { authService } from '@/lib/api';
+import apiClient from '@/lib/api/client';
 
 // Auth Query Keys
 export const authKeys = {
@@ -23,9 +24,8 @@ export function useLogoutMutation() {
 
   return useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/auth/logout', { method: 'POST' });
-      if (!response.ok) throw new Error('Logout failed');
-      return response.json();
+      const { data } = await apiClient.post('/auth/logout');
+      return data;
     },
     onSuccess: () => {
       // Clear all queries on logout

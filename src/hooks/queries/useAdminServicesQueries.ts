@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminServicesService } from '@/lib/api';
+import apiClient from '@/lib/api/client';
 import type { ServiceAdminDto } from '@/types/api';
 
 // Admin Services Query Keys
@@ -79,13 +80,8 @@ export function useToggleServiceActiveMutation() {
   return useMutation({
     mutationFn: async ({ id, activate }: { id: number; activate: boolean }) => {
       const action = activate ? 'activate' : 'deactivate';
-      const response = await fetch(`/api/admin/services/${id}/${action}`, {
-        method: 'PATCH',
-      });
-      if (!response.ok) {
-        throw new Error(`Failed to ${action} service`);
-      }
-      return response.json();
+      const { data } = await apiClient.patch(`/admin/services/${id}/${action}`);
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminServicesKeys.lists() });
