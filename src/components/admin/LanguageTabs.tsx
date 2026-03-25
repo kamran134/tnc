@@ -44,7 +44,7 @@ function LanguageTabs({ children }: LanguageTabsProps) {
       </div>
 
       {/* Content */}
-      <div>
+      <div key={activeLanguage}>
         {children(activeLanguage, activeIndex)}
       </div>
     </div>
