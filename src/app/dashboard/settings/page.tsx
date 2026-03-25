@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/lib/api';
+import { ConfirmModal } from '@/components/ui';
 import { UserDto, ChangePasswordRequest } from '@/types/api';
 
 export default function SettingsPage() {
@@ -11,6 +12,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   // Password change form
   const [passwordForm, setPasswordForm] = useState<ChangePasswordRequest>({
@@ -85,10 +87,11 @@ export default function SettingsPage() {
   };
 
   const handleLogoutAll = async () => {
-    if (!confirm('Are you sure you want to logout from all devices?')) {
-      return;
-    }
+    setShowLogoutConfirm(true);
+  };
 
+  const confirmLogoutAll = async () => {
+    setShowLogoutConfirm(false);
     try {
       await authService.logoutAll();
       setSuccess('Successfully logged out from all devices');
@@ -120,6 +123,7 @@ export default function SettingsPage() {
   }
 
   return (
+    <>
     <div className="max-w-4xl mx-auto p-6">
       {/* Header */}
       <div className="mb-8">
@@ -278,5 +282,16 @@ export default function SettingsPage() {
         </div>
       </div>
     </div>
+
+    <ConfirmModal
+      open={showLogoutConfirm}
+      title="Logout from all devices"
+      message="Are you sure you want to logout from all devices?"
+      confirmLabel="Logout All"
+      variant="warning"
+      onConfirm={confirmLogoutAll}
+      onCancel={() => setShowLogoutConfirm(false)}
+    />
+    </>
   );
 }

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { adminAboutSectionsService } from '@/lib/api';
+import { useToast } from '@/components/ui';
 import type { AboutSectionAdminDto } from '@/types/api';
 
 export default function AboutSectionsPage() {
@@ -11,6 +12,7 @@ export default function AboutSectionsPage() {
   const [sections, setSections] = useState<AboutSectionAdminDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     loadSections();
@@ -34,7 +36,7 @@ export default function AboutSectionsPage() {
       setSections((prev) => prev.filter((s) => s.id !== id));
       setDeleteConfirmId(null);
     } catch (error: any) {
-      alert(error.message || 'Failed to delete section');
+      toast.error(error.message || 'Failed to delete section');
     }
   };
 

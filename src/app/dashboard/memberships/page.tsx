@@ -8,6 +8,7 @@ import {
   useAdminMembershipMutation,
 } from '@/hooks/queries';
 import { useToast } from '@/components/ui';
+import { ConfirmModal } from '@/components/ui';
 
 export default function MembershipsPage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function MembershipsPage() {
 
   const { data: memberships = [], isLoading, isFetching, error } = useAdminMembershipsListQuery();
   const mutations = useAdminMembershipMutation();
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
 
   const getAzTitle = (membership: MembershipAdminDto) =>
     membership.translations?.find((t) => t.languageCode === 'az')?.title ||
@@ -37,12 +39,18 @@ export default function MembershipsPage() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Delete this membership? This action cannot be undone.')) return;
+    setDeleteTarget(id);
+  };
+
+  const confirmDelete = async () => {
+    if (deleteTarget === null) return;
     try {
-      await mutations.delete.mutateAsync(id);
+      await mutations.delete.mutateAsync(deleteTarget);
       toast.success('Membership deleted');
     } catch {
       toast.error('Failed to delete membership');
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -90,6 +98,7 @@ export default function MembershipsPage() {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
@@ -294,5 +303,15 @@ export default function MembershipsPage() {
         </div>
       </div>
     </div>
+
+    <ConfirmModal
+      open={deleteTarget !== null}
+      title="Delete membership"
+      message="Delete this membership? This action cannot be undone."
+      confirmLabel="Delete"
+      onConfirm={confirmDelete}
+      onCancel={() => setDeleteTarget(null)}
+    />
+    </>
   );
 }

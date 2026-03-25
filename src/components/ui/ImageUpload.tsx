@@ -1,6 +1,7 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import { useToast } from '@/components/ui';
 
 interface ImageUploadProps {
   value?: string; // URL текущего изображения
@@ -26,6 +27,7 @@ export default function ImageUpload({
   const [dragActive, setDragActive] = useState(false);
   const [currentFileId, setCurrentFileId] = useState<number | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
 
   // Синхронизируем preview с внешним value
   useEffect(() => {
@@ -38,14 +40,14 @@ export default function ImageUpload({
     // Проверяем тип файла
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      alert('Invalid file type. Only JPG, PNG, GIF, and WEBP images are allowed.');
+      toast.warning('Invalid file type. Only JPG, PNG, GIF, and WEBP images are allowed.');
       return;
     }
 
     // Проверяем размер файла (максимум 5MB)
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
-      alert('File too large. Maximum size is 5MB.');
+      toast.warning('File too large. Maximum size is 5MB.');
       return;
     }
 
@@ -102,12 +104,12 @@ export default function ImageUpload({
       } else {
         const error = await response.json();
         console.error('Upload failed:', error);
-        alert('Upload failed: ' + (error.message || 'Unknown error'));
+        toast.error('Upload failed: ' + (error.message || 'Unknown error'));
         setPreview(value || '');
       }
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Upload error. Please try again.');
+      toast.error('Upload error. Please try again.');
       setPreview(value || '');
     } finally {
       setIsUploading(false);
@@ -167,12 +169,12 @@ export default function ImageUpload({
           setCurrentFileId(undefined);
         } else {
           console.error('Failed to delete file from server');
-          alert('Failed to delete file from server');
+          toast.error('Failed to delete file from server');
           return;
         }
       } catch (error) {
         console.error('Error deleting file:', error);
-        alert('Error deleting file. Please try again.');
+        toast.error('Error deleting file. Please try again.');
         return;
       }
     }

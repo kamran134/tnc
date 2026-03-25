@@ -7,7 +7,7 @@ import { removeEmptyFields } from '@/lib/utils/cleanup';
 import IconSelector from '@/components/admin/IconSelector';
 import { getMissionIcons, getVisionIcons } from '@/lib/icons/mission-vision-icons';
 import LanguageTabs from '@/components/admin/LanguageTabs';
-import { useToast, ImageUpload } from '@/components/ui';
+import { useToast, ImageUpload, ConfirmModal } from '@/components/ui';
 import { useCompanyInfoQuery, useCompanyInfoMutation } from '@/hooks/queries';
 
 const DEFAULT_FORM_DATA: CompanyInfoAdminDto = {
@@ -149,6 +149,7 @@ export default function CompanyInfoPage() {
   const router = useRouter();
   const toast = useToast();
   const [formData, setFormData] = useState<CompanyInfoAdminDto>(DEFAULT_FORM_DATA);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // React Query hooks
   const { data: serverData, isLoading: isLoadingData, error } = useCompanyInfoQuery();
@@ -278,10 +279,11 @@ export default function CompanyInfoPage() {
   }, [formData, exists, create, update, toast]);
 
   const handleDelete = useCallback(async () => {
-    if (!confirm('Are you sure you want to delete company information?')) {
-      return;
-    }
+    setShowDeleteConfirm(true);
+  }, []);
 
+  const confirmDelete = useCallback(async () => {
+    setShowDeleteConfirm(false);
     try {
       await deleteCompanyInfo.mutateAsync();
       toast.success('Company information deleted successfully!');
@@ -306,6 +308,7 @@ export default function CompanyInfoPage() {
   }
 
   return (
+    <>
     <div className="max-w-6xl mx-auto p-6">
       {/* Header */}
       <div className="mb-8 flex justify-between items-center">
@@ -802,5 +805,15 @@ export default function CompanyInfoPage() {
         </div>
       </form>
     </div>
+
+    <ConfirmModal
+      open={showDeleteConfirm}
+      title="Delete company information"
+      message="Are you sure you want to delete company information?"
+      confirmLabel="Delete"
+      onConfirm={confirmDelete}
+      onCancel={() => setShowDeleteConfirm(false)}
+    />
+    </>
   );
 }

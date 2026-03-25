@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PageHeroAdminDto, PageTag } from '@/types/api';
 import { useToast } from '@/components/ui';
+import { ConfirmModal } from '@/components/ui';
 import { decodeHtmlEntities } from '@/lib/sanitize';
 import {
   useAdminPageHeroListQuery,
@@ -30,6 +32,7 @@ export default function PageHeroManagementPage() {
   const activateMutation = useActivatePageHeroMutation();
   const deactivateMutation = useDeactivatePageHeroMutation();
   const deleteMutation = useDeletePageHeroMutation();
+  const [deleteTarget, setDeleteTarget] = useState<PageHeroAdminDto | null>(null);
 
   const handleToggleActive = async (hero: PageHeroAdminDto) => {
     try {
@@ -42,13 +45,18 @@ export default function PageHeroManagementPage() {
   };
 
   const handleDelete = async (hero: PageHeroAdminDto) => {
-    const label = decodeHtmlEntities(getTranslation(hero)?.title) || `#${hero.id}`;
-    if (!confirm(`Delete slide "${label}"? This cannot be undone.`)) return;
+    setDeleteTarget(hero);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      await deleteMutation.mutateAsync(hero.id!);
+      await deleteMutation.mutateAsync(deleteTarget.id!);
       toast.success('Slide deleted.');
     } catch {
       toast.error('Failed to delete slide.');
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -70,6 +78,7 @@ export default function PageHeroManagementPage() {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
@@ -187,5 +196,15 @@ export default function PageHeroManagementPage() {
         </div>
       </div>
     </div>
+
+    <ConfirmModal
+      open={deleteTarget !== null}
+      title="Delete slide"
+      message={deleteTarget ? `Delete slide "${decodeHtmlEntities(getTranslation(deleteTarget)?.title) || `#${deleteTarget.id}`}"? This cannot be undone.` : ''}
+      confirmLabel="Delete"
+      onConfirm={confirmDelete}
+      onCancel={() => setDeleteTarget(null)}
+    />
+    </>
   );
 }

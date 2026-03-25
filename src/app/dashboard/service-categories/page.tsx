@@ -5,12 +5,16 @@ import { useRouter } from 'next/navigation';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { ServiceCategoryAdminDto } from '@/types/api';
 import { adminServiceCategoriesService } from '@/lib/api';
+import { useToast } from '@/components/ui';
+import { ConfirmModal } from '@/components/ui';
 import { getServiceCategoryIconByName } from '@/lib/icons/service-category-icons';
 
 export default function ServiceCategoriesPage() {
   const router = useRouter();
+  const toast = useToast();
   const [categories, setCategories] = useState<ServiceCategoryAdminDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
 
   useEffect(() => {
     loadCategories();
@@ -29,13 +33,18 @@ export default function ServiceCategoriesPage() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this category?')) return;
+    setDeleteTarget(id);
+  };
 
+  const confirmDelete = async () => {
+    if (deleteTarget === null) return;
     try {
-      await adminServiceCategoriesService.delete(id);
+      await adminServiceCategoriesService.delete(deleteTarget);
       await loadCategories();
     } catch (error: any) {
-      alert(error.message || 'Failed to delete category');
+      toast.error(error.message || 'Failed to delete category');
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -53,7 +62,7 @@ export default function ServiceCategoriesPage() {
       await adminServiceCategoriesService.reorder(items.map(cat => cat.id));
     } catch (error: any) {
       console.error('Failed to reorder:', error);
-      alert(error.message || 'Failed to update order');
+      toast.error(error.message || 'Failed to update order');
       // Reload on error
       await loadCategories();
     }
@@ -74,6 +83,7 @@ export default function ServiceCategoriesPage() {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
@@ -242,5 +252,15 @@ export default function ServiceCategoriesPage() {
         )}
       </div>
     </div>
+
+    <ConfirmModal
+      open={deleteTarget !== null}
+      title="Delete category"
+      message="Are you sure you want to delete this category?"
+      confirmLabel="Delete"
+      onConfirm={confirmDelete}
+      onCancel={() => setDeleteTarget(null)}
+    />
+    </>
   );
 }

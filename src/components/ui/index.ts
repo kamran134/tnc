@@ -8,3 +8,4 @@ export { default as ImageUpload } from './ImageUpload';
 export { default as Toast } from './Toast';
 export { ToastProvider, useToast } from './ToastProvider';
 export { default as Pagination } from './Pagination';
+export { default as ConfirmModal } from './ConfirmModal';

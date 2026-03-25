@@ -10,11 +10,13 @@ import {
   useDeactivateTeamMemberMutation,
 } from '@/hooks/queries';
 import { useToast } from '@/components/ui';
+import { ConfirmModal } from '@/components/ui';
 
 export default function TeamManagementPage() {
   const router = useRouter();
   const toast = useToast();
   const [page, setPage] = useState(0);
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
 
   // Fetch team members
   const { data, isLoading, error } = useAdminTeamListQuery({ page, size: 10 });
@@ -36,13 +38,19 @@ export default function TeamManagementPage() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this team member?')) return;
+    setDeleteTarget(id);
+  };
+
+  const confirmDelete = async () => {
+    if (deleteTarget === null) return;
     try {
-      await deleteMutation.mutateAsync(id);
+      await deleteMutation.mutateAsync(deleteTarget);
       toast.success('Team member deleted successfully!');
     } catch (error) {
       console.error('Error deleting team member:', error);
       toast.error('Failed to delete team member');
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -122,6 +130,7 @@ export default function TeamManagementPage() {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
@@ -341,5 +350,15 @@ export default function TeamManagementPage() {
         </div>
       </div>
     </div>
+
+    <ConfirmModal
+      open={deleteTarget !== null}
+      title="Delete team member"
+      message="Are you sure you want to delete this team member?"
+      confirmLabel="Delete"
+      onConfirm={confirmDelete}
+      onCancel={() => setDeleteTarget(null)}
+    />
+    </>
   );
 }

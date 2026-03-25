@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { CareerAdminDto } from '@/types/api';
 import { useAdminCareersListQuery, useDeleteCareerMutation, useActivateCareerMutation, useDeactivateCareerMutation } from '@/hooks/queries';
+import { ConfirmModal } from '@/components/ui';
 
 export default function CareersPage() {
   const router = useRouter();
@@ -11,6 +12,7 @@ export default function CareersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
   const [employmentTypeFilter, setEmploymentTypeFilter] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
   
   const queryParams = useMemo(() => ({
     page,
@@ -64,12 +66,17 @@ export default function CareersPage() {
   };
 
   const handleDelete = async (jobId: number) => {
-    if (!confirm('Are you sure you want to delete this job?')) return;
-    
+    setDeleteTarget(jobId);
+  };
+
+  const confirmDelete = async () => {
+    if (deleteTarget === null) return;
     try {
-      await deleteCareerMutation.mutateAsync(jobId);
+      await deleteCareerMutation.mutateAsync(deleteTarget);
     } catch (error) {
       console.error('Error deleting job:', error);
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -90,6 +97,7 @@ export default function CareersPage() {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
@@ -325,5 +333,15 @@ export default function CareersPage() {
         )}
       </div>
     </div>
+
+    <ConfirmModal
+      open={deleteTarget !== null}
+      title="Delete job posting"
+      message="Are you sure you want to delete this job?"
+      confirmLabel="Delete"
+      onConfirm={confirmDelete}
+      onCancel={() => setDeleteTarget(null)}
+    />
+    </>
   );
 }

@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { ServiceCategoryAdminDto } from '@/types/api';
 import { adminServiceCategoriesService } from '@/lib/api';
+import { useToast } from '@/components/ui';
+import { ConfirmModal } from '@/components/ui';
 import { getServiceCategoryIconByName } from '@/lib/icons/service-category-icons';
 import ServiceCategoryFormModal from './ServiceCategoryFormModal';
 
@@ -19,6 +21,8 @@ export default function ManageServiceCategoriesModal({
   const [isLoading, setIsLoading] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<ServiceCategoryAdminDto | null>(null);
+  const toast = useToast();
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
 
   const loadCategories = async () => {
     setIsLoading(true);
@@ -39,13 +43,18 @@ export default function ManageServiceCategoriesModal({
   }, [isOpen]);
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this category?')) return;
+    setDeleteTarget(id);
+  };
 
+  const confirmDelete = async () => {
+    if (deleteTarget === null) return;
     try {
-      await adminServiceCategoriesService.delete(id);
+      await adminServiceCategoriesService.delete(deleteTarget);
       await loadCategories();
     } catch (error: any) {
-      alert(error.message || 'Failed to delete category');
+      toast.error(error.message || 'Failed to delete category');
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -218,6 +227,15 @@ export default function ManageServiceCategoriesModal({
         onClose={handleFormClose}
         onSuccess={handleFormSuccess}
         category={selectedCategory}
+      />
+
+      <ConfirmModal
+        open={deleteTarget !== null}
+        title="Delete category"
+        message="Are you sure you want to delete this category?"
+        confirmLabel="Delete"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
       />
     </>
   );
