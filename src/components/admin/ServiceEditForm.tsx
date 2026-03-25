@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ImageUpload, useToast } from '@/components/ui';
-import { removeEmptyFields } from '@/lib/utils/cleanup';\nimport { getTranslation, isDefaultLanguage } from '@/lib/utils/translations';
+import { removeEmptyFields } from '@/lib/utils/cleanup';
+import { getTranslation, isDefaultLanguage } from '@/lib/utils/translations';
 import LanguageTabs from '@/components/admin/LanguageTabs';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { adminServiceCategoriesService } from '@/lib/api';
