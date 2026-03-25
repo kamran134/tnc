@@ -21,6 +21,16 @@ export default function CareersPage() {
 
   const localeMap: Record<string, string> = { az: 'az-AZ', en: 'en-US', ru: 'ru-RU' };
 
+  const getEmploymentTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+      FULL_TIME: t('careers.fullTime'),
+      PART_TIME: t('careers.partTime'),
+      CONTRACT: t('careers.contract'),
+      REMOTE: t('careers.remote'),
+    };
+    return labels[type] ?? type;
+  };
+
   const formatDate = (dateString: string) => {
     const d = new Date(dateString);
     const day = String(d.getDate()).padStart(2, '0');
@@ -135,7 +145,7 @@ export default function CareersPage() {
                               <svg className="w-4 h-4 mr-1 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
-                              {job.employmentType}
+                              {getEmploymentTypeLabel(job.employmentType)}
                             </span>
                           )}
                           {job.company && (
