@@ -49,6 +49,18 @@ export const careersService = {
     }
   },
 
+  // Get career by ID (used for cross-language slug resolution)
+  async getById(id: number, lang: LanguageCode = 'az'): Promise<CareerDto> {
+    try {
+      const response = await apiClient.get<CareerDto>(`/careers/id/${id}`, {
+        params: { lang },
+      });
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  },
+
   // Get available career locations
   async getLocations(page: number = 0, size: number = 50): Promise<PageString> {
     try {

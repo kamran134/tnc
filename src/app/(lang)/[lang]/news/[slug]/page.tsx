@@ -1,6 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Header from '@/components/layout/Header';
@@ -8,6 +9,8 @@ import Footer from '@/components/layout/Footer';
 import { LoadingSpinner, Alert } from '@/components/ui';
 import { LanguageCode } from '@/types/api';
 import { useNewsBySlugQuery } from '@/hooks/queries';
+import { newsService } from '@/lib/api';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { sanitizeHtml } from '@/lib/sanitize';
 
 export default function NewsDetail() {
@@ -17,6 +20,27 @@ export default function NewsDetail() {
   const slug = params.slug as string;
   
   const { data: news, isLoading: loading, error } = useNewsBySlugQuery(slug, lang);
+  const { setSlugResolver } = useLanguage();
+
+  // Register a slug resolver so language switching navigates to the correct slug
+  useEffect(() => {
+    if (!news) {
+      setSlugResolver(null);
+      return;
+    }
+    const newsId = news.id;
+    setSlugResolver(async (newLocale: LanguageCode) => {
+      try {
+        const translated = await newsService.getById(newsId, newLocale);
+        return `/${newLocale}/news/${translated.slug}`;
+      } catch {
+        return `/${newLocale}/news`;
+      }
+    });
+    return () => {
+      setSlugResolver(null);
+    };
+  }, [news, setSlugResolver]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

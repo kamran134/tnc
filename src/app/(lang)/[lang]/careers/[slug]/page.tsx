@@ -1,6 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -8,6 +9,8 @@ import { LoadingSpinner, Alert } from '@/components/ui';
 import { LanguageCode } from '@/types/api';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useCareerBySlugQuery } from '@/hooks/queries';
+import { careersService } from '@/lib/api';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { sanitizeHtml } from '@/lib/sanitize';
 
 const localeMap: Record<string, string> = {
@@ -24,6 +27,27 @@ export default function CareerDetail() {
   const slug = params.slug as string;
   
   const { data: career, isLoading: loading, error } = useCareerBySlugQuery(slug, lang);
+  const { setSlugResolver } = useLanguage();
+
+  // Register a slug resolver so language switching navigates to the correct slug
+  useEffect(() => {
+    if (!career) {
+      setSlugResolver(null);
+      return;
+    }
+    const careerId = career.id;
+    setSlugResolver(async (newLocale: LanguageCode) => {
+      try {
+        const translated = await careersService.getById(careerId, newLocale);
+        return `/${newLocale}/careers/${translated.slug}`;
+      } catch {
+        return `/${newLocale}/careers`;
+      }
+    });
+    return () => {
+      setSlugResolver(null);
+    };
+  }, [career, setSlugResolver]);
 
   const formatDate = (dateString: string) => {
     const d = new Date(dateString);

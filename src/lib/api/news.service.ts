@@ -47,4 +47,16 @@ export const newsService = {
       throw handleApiError(error);
     }
   },
+
+  // Get news by ID (used for cross-language slug resolution)
+  async getById(id: number, lang: LanguageCode = 'az'): Promise<NewsDto> {
+    try {
+      const response = await apiClient.get<NewsDto>(`/news/id/${id}`, {
+        params: { lang },
+      });
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  },
 };
