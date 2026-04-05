@@ -33,6 +33,7 @@ export function sanitizeHtml(dirty: string): string {
       'src', 'alt', 'width', 'height',
       'class', 'style',
       'colspan', 'rowspan',
+      'data-list',
     ],
     // Запрещаем javascript: в href/src
     FORBID_TAGS: ['script', 'iframe', 'object', 'embed'],

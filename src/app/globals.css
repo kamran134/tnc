@@ -61,6 +61,19 @@ body {
 /* Inherit the container colour/weight from the parent element */
 .hero-rte em     { font-style: italic; }
 
+/* ─── Quill v2 list fix ───
+   Quill v2 wraps ALL lists in <ol> and uses data-list attribute on <li>
+   to distinguish bullet vs ordered. Without these rules, bullet lists
+   render as numbered lists after HTML sanitization round-trips. */
+.rich-text-content li[data-list="bullet"],
+.prose li[data-list="bullet"] {
+  list-style-type: disc;
+}
+.rich-text-content li[data-list="ordered"],
+.prose li[data-list="ordered"] {
+  list-style-type: decimal;
+}
+
 @layer utilities {
   @keyframes float {
     0%, 100% {

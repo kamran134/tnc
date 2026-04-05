@@ -153,6 +153,13 @@ export default function ServicesList({ categoryCode }: ServicesListProps) {
                       .rich-text-content ol {
                         list-style-type: decimal;
                       }
+                      /* Quill v2 wraps ALL lists in <ol> and uses data-list attr to differentiate */
+                      .rich-text-content li[data-list="bullet"] {
+                        list-style-type: disc;
+                      }
+                      .rich-text-content li[data-list="ordered"] {
+                        list-style-type: decimal;
+                      }
                       .rich-text-content li {
                         margin-bottom: 0.5rem;
                       }
