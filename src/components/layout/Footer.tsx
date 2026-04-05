@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations } from '@/hooks/useTranslations'
 import { LanguageCode } from '@/types/api'
-import { useCompanyInfo } from '@/hooks/queries'
+import { useCompanyInfo, useServiceCategories } from '@/hooks/queries'
 
 export default function Footer() {
   const { t } = useTranslations();
@@ -14,14 +14,7 @@ export default function Footer() {
   
   // Use React Query hook - data will be cached and shared across components
   const { data: companyInfo } = useCompanyInfo(lang);
-
-  const services = [
-    t('footer.services.accounting'),
-    t('footer.services.taxCompliance'),
-    t('footer.services.taxAdvisory'),
-    t('footer.services.legal'),
-    t('footer.services.hr')
-  ]
+  const { data: serviceCategories } = useServiceCategories(lang);
 
   const quickLinks = [
     { name: t('nav.about'), href: `/${lang}/about` },
@@ -71,10 +64,10 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4">{t('footer.ourServices')}</h4>
             <ul className="space-y-2">
-              {services.map((service) => (
-                <li key={service}>
-                  <Link href={`/${lang}/services`} className="text-gray-300 hover:text-white transition-colors">
-                    {service}
+              {(serviceCategories ?? []).map((category) => (
+                <li key={category.id}>
+                  <Link href={`/${lang}/services/${category.code}`} className="text-gray-300 hover:text-white transition-colors">
+                    {category.name}
                   </Link>
                 </li>
               ))}
