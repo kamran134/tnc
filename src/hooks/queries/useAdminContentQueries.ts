@@ -115,8 +115,8 @@ export function useAdminCoreValueQuery(id: number) {
     queryKey: contentQueryKeys.coreValues.detail(id),
     queryFn: () => adminCoreValuesService.getById(id),
     enabled: id > 0,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    staleTime: 0,
+    gcTime: 0,
   });
 }
 
@@ -179,8 +179,8 @@ export function useAdminMembershipQuery(id: number) {
     queryKey: contentQueryKeys.memberships.detail(id),
     queryFn: () => adminMembershipsService.getById(id),
     enabled: id > 0,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    staleTime: 0,
+    gcTime: 0,
   });
 }
 

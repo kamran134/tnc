@@ -20,6 +20,8 @@ export function useAdminAboutSectionDetailQuery(id: number) {
     queryKey: adminAboutSectionsKeys.detail(id),
     queryFn: () => adminAboutSectionsService.getById(id),
     enabled: !!id,
+    staleTime: 0,
+    gcTime: 0,
   });
 }
 

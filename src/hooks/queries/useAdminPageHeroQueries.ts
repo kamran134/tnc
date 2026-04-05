@@ -26,6 +26,8 @@ export function useAdminPageHeroDetailQuery(id: string | number) {
     queryKey: adminPageHeroKeys.detail(id),
     queryFn: () => adminPageHeroService.getById(Number(id)),
     enabled: !!id,
+    staleTime: 0,
+    gcTime: 0,
   });
 }
 

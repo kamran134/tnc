@@ -35,6 +35,8 @@ export function useAdminServiceDetailQuery(id: string | number) {
     queryKey: adminServicesKeys.detail(id),
     queryFn: () => adminServicesService.getById(Number(id)),
     enabled: !!id,
+    staleTime: 0,
+    gcTime: 0,
   });
 }
 

@@ -38,6 +38,8 @@ export function useAdminTeamDetailQuery(id: string | number) {
     queryKey: adminTeamKeys.detail(id),
     queryFn: () => adminTeamService.getById(Number(id)),
     enabled: !!id,
+    staleTime: 0,
+    gcTime: 0,
   });
 }
 

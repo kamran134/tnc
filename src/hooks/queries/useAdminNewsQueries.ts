@@ -31,6 +31,7 @@ export function useAdminNewsDetailQuery(id: string | number) {
     queryFn: () => adminNewsService.getById(Number(id)),
     enabled: !!id,
     staleTime: 0,
+    gcTime: 0,
   });
 }
 
