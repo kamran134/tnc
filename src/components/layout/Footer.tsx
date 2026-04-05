@@ -34,8 +34,10 @@ export default function Footer() {
             <p className="text-gray-300 mb-4">
               {companyInfo?.description || t('footer.description')}
             </p>
+            {(companyInfo?.linkedinUrl || companyInfo?.facebookUrl || companyInfo?.instagramUrl) && (
+              <p className="text-gray-400 text-sm mb-2">{t('footer.followUs')}</p>
+            )}
             <div className="flex space-x-4">
-              {/* Social Media Icons */}
               {companyInfo?.linkedinUrl && (
                 <a href={companyInfo.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -107,7 +109,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {currentYear} TnC Tax & Consulting (TnC). {t('footer.allRightsReserved')}</p>
+          <p>&copy; {currentYear} {companyInfo?.companyName || 'TnC'}. {t('footer.allRightsReserved')}</p>
         </div>
       </div>
     </footer>
