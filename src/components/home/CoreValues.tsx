@@ -33,9 +33,9 @@ export default function CoreValues({ companyInfo }: CoreValuesProps) {
               className={`bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-50 translate-y-20'}`}
               style={{ transitionDelay: `${index * 150}ms` }}>
               <div className="flex items-center mb-6">
-                <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mr-4">
+                <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center mr-4">
                   {value.icon ? (
-                    <span className="text-3xl">{value.icon}</span>
+                    <span className="text-2xl">{value.icon}</span>
                   ) : (
                     <svg className="w-8 h-8 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />

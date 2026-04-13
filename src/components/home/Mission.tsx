@@ -15,26 +15,27 @@ export default function Mission({ companyInfo }: MissionProps) {
   return (
     <section ref={ref as any} className="snap-start section-padding bg-white flex items-center" style={{ minHeight: '100vh' }}>
       <div className="container-max">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className={`text-3xl md:text-4xl font-bold text-gray-900 mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
+        <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             {companyInfo?.missionTitle || 'Our Mission'}
           </h2>
-          <div className={`prose prose-lg mx-auto transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-16'}`}>
-            <p className="text-xl text-gray-700 leading-relaxed">
-              {companyInfo?.missionDescription || 'We are dedicated to delivering high-caliber services, grounded in a thorough understanding of our clients\' specific industries and operational needs.'}
-            </p>
-          </div>
-          {companyInfo?.missions && companyInfo.missions.length > 0 && (
-            <div className="mt-12 flex flex-wrap justify-center gap-8">
-              {companyInfo.missions.map((mission, index) => {
-                const Icon = getIconByName(mission.icon);
-                return (
-                  <div
-                    key={mission.id || index}
-                    className={`text-center w-full md:w-64 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-16'}`}
-                    style={{ transitionDelay: `${(index + 3) * 150}ms` }}
-                  >
-                    <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            {companyInfo?.missionDescription || 'We are dedicated to delivering high-caliber services, grounded in a thorough understanding of our clients\' specific industries and operational needs.'}
+          </p>
+        </div>
+
+        {companyInfo?.missions && companyInfo.missions.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {companyInfo.missions.map((mission, index) => {
+              const Icon = getIconByName(mission.icon);
+              return (
+                <div
+                  key={mission.id || index}
+                  className={`bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-50 translate-y-20'}`}
+                  style={{ transitionDelay: `${index * 150}ms` }}
+                >
+                  <div className="flex items-center mb-6">
+                    <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center mr-4">
                       {Icon ? (
                         <Icon className="w-6 h-6 text-sky-600" />
                       ) : (
@@ -43,14 +44,14 @@ export default function Mission({ companyInfo }: MissionProps) {
                         </svg>
                       )}
                     </div>
-                    <h3 className="font-semibold text-gray-900 mb-2">{mission.title}</h3>
-                    <p className="text-gray-600">{mission.description}</p>
+                    <h3 className="text-xl font-bold text-gray-900">{mission.title}</h3>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                  <p className="text-gray-700 leading-relaxed">{mission.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </section>
   )
