@@ -254,9 +254,9 @@ export default function TeamMemberForm({ initialData, isEdit = false }: TeamMemb
                         rows={6}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder:text-gray-400"
                         placeholder="Tell us about this team member..."
-                        maxLength={2500}
+                        maxLength={4000}
                       />
-                      <p className="mt-1 text-sm text-gray-500">{translation.bio?.length || 0}/2500 characters</p>
+                      <p className="mt-1 text-sm text-gray-500">{translation.bio?.length || 0}/4000 characters</p>
                     </div>
                   </div>
                 );
