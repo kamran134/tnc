@@ -40,10 +40,6 @@ function useSectionVisible(threshold = 0.18) {
   return { ref, isVisible };
 }
 
-function formatNumber(n: number) {
-  return String(n + 1).padStart(2, '0');
-}
-
 // ────────────────────────────────────────────────────────────────────────────
 // Single section block — Variant B "Cinematic Numbers"
 // ────────────────────────────────────────────────────────────────────────────
@@ -120,21 +116,6 @@ function SectionBlock({ section, index }: { section: AboutSection; index: number
               transitionDelay: '0.15s',
             }}
           >
-            {/* Giant watermark number */}
-            <span
-              aria-hidden="true"
-              className="absolute select-none pointer-events-none font-black text-gray-100 leading-none -z-0"
-              style={{
-                fontSize: 'clamp(72px, 13vw, 152px)',
-                top: '-0.22em',
-                right: isEven ? '-0.05em' : 'auto',
-                left: isEven ? 'auto' : '-0.05em',
-                lineHeight: 1,
-              }}
-            >
-              {formatNumber(index)}
-            </span>
-
             <div className="relative z-10">
               {/* Subtitle / tag */}
               {section.subtitle && (
