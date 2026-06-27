@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16
@@ -29,7 +27,7 @@ services:
         max-file: "3"
 
   backend:
-    image: ghcr.io/yeskela7/backend-tnc:latest
+    image: ghcr.io/kamran134/backend-tnc:latest
     container_name: tnc-backend-prod
     restart: unless-stopped
     depends_on:
@@ -46,6 +44,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       FILE_UPLOAD_DIR: /var/app/uploads
       FILE_BASE_URL: https://tnc.az
+      JAVA_TOOL_OPTIONS: "-Xms256m -Xmx600m -XX:+UseContainerSupport"
     volumes:
       - ./uploads:/var/app/uploads
     networks:
@@ -72,17 +71,19 @@ services:
       NEXT_PUBLIC_API_BASE_URL: /api
       NEXT_PUBLIC_SITE_URL: https://tnc.az
       BACKEND_URL: http://backend:8080
+      NODE_OPTIONS: "--max-old-space-size=1200"
     networks:
       - tnc-network
     expose:
       - "3000"
     pull_policy: always
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/ >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health >/dev/null 2>&1 || wget -qO- http://127.0.0.1:3000/ >/dev/null || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 10
-    mem_limit: 768m
+    mem_limit: 1536m
+    memswap_limit: 1536m
     pids_limit: 256
     security_opt:
       - no-new-privileges:true

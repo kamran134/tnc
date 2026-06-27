@@ -78,20 +78,6 @@ jobs:
     if: github.ref == 'refs/heads/main'
     
     steps:
-    - name: Checkout code for compose file
-      uses: actions/checkout@v4
-
-    - name: Copy docker-compose.yml to server
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.HOST_HETZNER }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY_2 }}
-        port: ${{ secrets.PORT }}
-        source: "docker-compose.yml,nginx.conf"
-        target: "/opt/tnc-website"
-        overwrite: true
-
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.0.3
       with:
