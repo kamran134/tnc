@@ -586,16 +586,15 @@ export interface DashboardDataDto {
   newContacts: number;
 }
 
-// Dashboard Statistics
-export interface DashboardDataDto {
-  totalServices: number;
-  activeServices: number;
-  totalNews: number;
-  publishedNews: number;
-  totalCareers: number;
-  activeCareers: number;
-  totalContacts: number;
-  newContacts: number;
+export interface MonthlyStatDto {
+  year: number;
+  month: number;
+  count: number;
+}
+
+export interface AnalyticsDto {
+  contactsByMonth: MonthlyStatDto[];
+  newsByMonth: MonthlyStatDto[];
 }
 
 // Service Category DTOs

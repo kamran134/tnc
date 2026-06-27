@@ -69,6 +69,7 @@ jobs:
         build-args: |
           BUILDKIT_INLINE_CACHE=1
           NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL_2 }}
+          NEXT_PUBLIC_GA_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
           BACKEND_URL=${{ secrets.BACKEND_URL }}
 
   deploy:

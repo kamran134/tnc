@@ -371,7 +371,6 @@ export default function DashboardPage() {
             icon={<AboutIcon />}
             onClick={() => router.push('/dashboard/about-sections')}
           />
-          {/* Analytics — placeholder, not implemented yet */}
           <ManagementCard
             title="Analytics & Reports"
             description="View website analytics and generate business reports"
@@ -380,6 +379,7 @@ export default function DashboardPage() {
             iconColorClass="text-indigo-600"
             linkColorClass="text-indigo-600"
             icon={<AnalyticsIcon />}
+            onClick={() => router.push('/dashboard/analytics')}
           />
           <ManagementCard
             title="System Settings"
