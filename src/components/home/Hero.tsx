@@ -5,8 +5,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from '@/hooks/useTranslations';
 import { resolveImageUrl } from '@/lib/utils/image';
+import { usePageHeroQuery } from '@/hooks/queries';
 import { useEffect, useState, useRef, useCallback } from 'react';
-import type { PageHeroUserDto } from '@/types/api';
+import type { LanguageCode, PageHeroUserDto } from '@/types/api';
 import { decodeHtmlEntities, sanitizeHtml } from '@/lib/sanitize';
 
 // How long text stays fully visible before the leave animation starts
@@ -25,10 +26,10 @@ export default function Hero(_: HeroProps) {
   const lang = (params.lang as string) || 'az';
   const { t } = useTranslations();
 
-  const [slides, setSlides] = useState<PageHeroUserDto[]>([]);
+  const { data: slidesData, isLoading } = usePageHeroQuery('HOME', lang as LanguageCode);
+  const slides: PageHeroUserDto[] = Array.isArray(slidesData) ? slidesData : slidesData ? [slidesData] : [];
   const [activeIndex, setActiveIndex] = useState(0);
   const [textVisible, setTextVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   // Tracks in-flight timeouts so we can cancel them on unmount / manual nav
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
@@ -43,24 +44,8 @@ export default function Hero(_: HeroProps) {
     return id;
   };
 
-  useEffect(() => {
-    const fetchSlides = async () => {
-      try {
-        const response = await fetch(`/api/page-hero/HOME?lang=${lang}`);
-        if (response.ok) {
-          const data = await response.json();
-          setSlides(Array.isArray(data) ? data : data ? [data] : []);
-        }
-      } catch (error) {
-        console.error('Error fetching hero slides:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchSlides();
-    return clearTimeouts;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lang]);
+  // Cancel any pending slide-transition timeouts on unmount
+  useEffect(() => clearTimeouts, []);
 
   // Show text shortly after slides arrive
   useEffect(() => {

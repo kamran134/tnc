@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
+import { usePageHeroQuery } from '@/hooks/queries';
+import type { LanguageCode } from '@/types/api';
 import { sanitizeHtml } from '@/lib/sanitize';
 import { resolveImageUrl } from '@/lib/utils/image';
 
@@ -17,29 +18,11 @@ interface HeroData {
 
 export default function ServiceHero() {
   const params = useParams();
-  const lang = (params.lang as string) || 'az';
-  const [heroData, setHeroData] = useState<HeroData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const lang = ((params.lang as string) || 'az') as LanguageCode;
 
-  useEffect(() => {
-    const fetchHeroData = async () => {
-      try {
-        const response = await fetch(`/api/page-hero/SERVICES?lang=${lang}`);
-        if (response.ok) {
-          const data = await response.json();
-          // Backend returns an array; take the first active entry
-          const first = Array.isArray(data) ? data[0] ?? null : data;
-          setHeroData(first);
-        }
-      } catch (error) {
-        console.error('Error fetching hero data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchHeroData();
-  }, [lang]);
+  const { data: slidesData, isLoading } = usePageHeroQuery('SERVICES', lang);
+  // Backend returns an array; take the first active entry
+  const heroData: HeroData | null = Array.isArray(slidesData) ? (slidesData[0] ?? null) : (slidesData ?? null);
 
   const rawTitle = heroData?.title || 'Our Professional Services';
   const rawSubtitle = heroData?.subtitle || '';

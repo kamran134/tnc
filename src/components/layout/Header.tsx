@@ -1,34 +1,23 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import LanguageSwitcher from './LanguageSwitcher'
 import ServicesDropdown from './ServicesDropdown'
 import { useTranslations } from '@/hooks/useTranslations'
-import { CompanyInfoDto, LanguageCode } from '@/types/api'
-import { companyInfoService } from '@/lib/api'
+import { LanguageCode } from '@/types/api'
+import { useCompanyInfo } from '@/hooks/queries'
 import { resolveImageUrl } from '@/lib/utils/image'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [companyInfo, setCompanyInfo] = useState<CompanyInfoDto | null>(null)
   const params = useParams();
   const lang = (params.lang as string) || 'az';
   const { t } = useTranslations();
 
-  useEffect(() => {
-    const fetchCompanyInfo = async () => {
-      try {
-        const data = await companyInfoService.getCompanyInfo(lang as LanguageCode);
-        setCompanyInfo(data);
-      } catch (error) {
-        console.error('Failed to load company info:', error);
-      }
-    };
-    fetchCompanyInfo();
-  }, [lang]);
+  const { data: companyInfo } = useCompanyInfo(lang as LanguageCode);
 
   const navigation = [
     { name: t('nav.home'), href: `/${lang}`, hasDropdown: false },

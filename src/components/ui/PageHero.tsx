@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { PageTag } from '@/types/api';
+import { usePageHeroQuery } from '@/hooks/queries';
+import type { LanguageCode, PageTag } from '@/types/api';
 import { sanitizeHtml } from '@/lib/sanitize';
 import { resolveImageUrl } from '@/lib/utils/image';
 
@@ -31,31 +31,13 @@ export default function PageHero({
   variant = 'gradient' 
 }: PageHeroProps) {
   const pathname = usePathname();
-  const [heroData, setHeroData] = useState<PageHeroData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   // Определяем язык из URL
-  const lang = pathname?.startsWith('/en') ? 'en' : pathname?.startsWith('/ru') ? 'ru' : 'az';
+  const lang = (pathname?.startsWith('/en') ? 'en' : pathname?.startsWith('/ru') ? 'ru' : 'az') as LanguageCode;
 
-  useEffect(() => {
-    const fetchHeroData = async () => {
-      try {
-        const response = await fetch(`/api/page-hero/${pageTag}?lang=${lang}`);
-        if (response.ok) {
-          const data = await response.json();
-          // Backend returns an array; take the first active entry
-          const first = Array.isArray(data) ? data[0] ?? null : data;
-          setHeroData(first);
-        }
-      } catch (error) {
-        // Fallback to default hero on error
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchHeroData();
-  }, [pageTag, lang]);
+  const { data: slidesData, isLoading } = usePageHeroQuery(pageTag, lang);
+  // Backend returns an array; take the first active entry
+  const heroData: PageHeroData | null = Array.isArray(slidesData) ? (slidesData[0] ?? null) : (slidesData ?? null);
 
   const backgroundImageUrl = resolveImageUrl(heroData?.backgroundImageUrl);
   const hasBackgroundImage = !!backgroundImageUrl;
