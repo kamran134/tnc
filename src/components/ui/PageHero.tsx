@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { PageTag } from '@/types/api';
 import { sanitizeHtml } from '@/lib/sanitize';
+import { resolveImageUrl } from '@/lib/utils/image';
 
 interface PageHeroProps {
   pageTag: PageTag;
@@ -56,7 +57,7 @@ export default function PageHero({
     fetchHeroData();
   }, [pageTag, lang]);
 
-  const backgroundImageUrl = heroData?.backgroundImageUrl;
+  const backgroundImageUrl = resolveImageUrl(heroData?.backgroundImageUrl);
   const hasBackgroundImage = !!backgroundImageUrl;
   const bgClass = 'bg-gradient-to-r from-sky-400 to-sky-500';
 

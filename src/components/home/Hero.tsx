@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from '@/hooks/useTranslations';
+import { resolveImageUrl } from '@/lib/utils/image';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import type { PageHeroUserDto } from '@/types/api';
 import { decodeHtmlEntities, sanitizeHtml } from '@/lib/sanitize';
@@ -157,7 +158,7 @@ export default function Hero(_: HeroProps) {
           >
             {slide.backgroundImageUrl && (
               <Image
-                src={slide.backgroundImageUrl}
+                src={resolveImageUrl(slide.backgroundImageUrl)!}
                 alt=""
                 fill
                 priority={i === activeIndex}

@@ -27,6 +27,16 @@ const nextConfig = {
         hostname: '*.tnc.az',
         pathname: '/api/files/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'tnc.az',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.tnc.az',
+        pathname: '/uploads/**',
+      },
     ],
     // Разрешаем локальные паттерны для проксированных изображений
     unoptimized: false,
