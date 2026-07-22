@@ -5,6 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch: {}
 
 # Отменяем предыдущие запуски при новом пуше
 concurrency:
@@ -99,14 +100,15 @@ jobs:
           # Авторизация в GitHub Container Registry
           echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-          # Остановка текущих контейнеров
-          docker compose -f docker-compose.yml down app
+          # Остановка текущих контейнеров (фронт + бэкенд — у backend-tnc нет своего деплой-шага,
+          # его образ собирается отдельным workflow в ghcr.io, а перезапуск на сервере подхватываем здесь)
+          docker compose -f docker-compose.yml down app backend
 
-          # Загрузка нового образа из GHCR
+          # Загрузка новых образов из GHCR (тянет все сервисы, включая backend)
           docker compose -f docker-compose.yml pull
 
-          # Запуск новых контейнеров с обновленным образом
-          docker compose -f docker-compose.yml up -d app
+          # Запуск новых контейнеров с обновлёнными образами
+          docker compose -f docker-compose.yml up -d app backend
 
           # Очистка старых образов для экономии места
           docker image prune -f
@@ -116,3 +118,4 @@ jobs:
 
           # Показать логи для проверки запуска
           docker compose -f docker-compose.yml logs app --tail=20
+          docker compose -f docker-compose.yml logs backend --tail=20
