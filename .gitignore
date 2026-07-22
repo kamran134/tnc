@@ -39,8 +39,8 @@ next-env.d.ts
 !README.md
 
 # server config и инструкции (содержат реальную конфигурацию с сервера)
-nginx-server.conf
-docker-compose.prod.yml
+docker-compose.yml
+nginx.conf
 ssl/
 uploads/
 postgres-data/
