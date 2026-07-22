@@ -76,7 +76,7 @@ export default function NewsPage() {
                   {allArticles.map((article) => (
                     <Card key={article.id} hover className="overflow-hidden">
                       {article.imageUrl && (
-                        <div className="relative h-48 w-full">
+                        <div className="relative w-full aspect-video">
                           <Image
                             src={article.imageUrl}
                             alt={article.title}

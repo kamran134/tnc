@@ -145,7 +145,7 @@ export default function NewsDetail() {
             </div>
 
             {news.imageUrl && (
-              <div className="relative w-full h-96 mb-12 rounded-xl overflow-hidden">
+              <div className="relative w-full aspect-video mb-12 rounded-xl overflow-hidden">
                 <Image
                   src={news.imageUrl}
                   alt={news.title}
