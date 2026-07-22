@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import type { PageHeroUserDto } from '@/types/api';
@@ -155,11 +156,13 @@ export default function Hero(_: HeroProps) {
             }}
           >
             {slide.backgroundImageUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={slide.backgroundImageUrl}
                 alt=""
-                className="absolute inset-0 w-full h-full object-cover"
+                fill
+                priority={i === activeIndex}
+                sizes="100vw"
+                className="object-cover"
               />
             )}
           </div>

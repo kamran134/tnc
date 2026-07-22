@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import { PageTag } from '@/types/api';
 import { sanitizeHtml } from '@/lib/sanitize';
 
@@ -55,7 +56,8 @@ export default function PageHero({
     fetchHeroData();
   }, [pageTag, lang]);
 
-  const hasBackgroundImage = !!heroData?.backgroundImageUrl;
+  const backgroundImageUrl = heroData?.backgroundImageUrl;
+  const hasBackgroundImage = !!backgroundImageUrl;
   const bgClass = 'bg-gradient-to-r from-sky-400 to-sky-500';
 
   const rawTitle = heroData?.title || fallbackTitle;
@@ -78,13 +80,15 @@ export default function PageHero({
   return (
     <section className={`relative ${hasBackgroundImage ? '' : bgClass} text-white section-padding overflow-hidden`}>
       {/* Background image layer (per-language) */}
-      {hasBackgroundImage && (
+      {backgroundImageUrl && (
         <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={heroData.backgroundImageUrl}
+          <Image
+            src={backgroundImageUrl}
             alt=""
-            className="absolute inset-0 w-full h-full object-cover"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
           />
           {/* Dark scrim for text contrast */}
           <div className="absolute inset-0 bg-black/50" />
