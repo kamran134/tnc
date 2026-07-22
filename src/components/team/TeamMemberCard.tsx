@@ -2,7 +2,9 @@
 
 import { TeamMemberDto } from '@/types/api';
 import { useState } from 'react';
+import Image from 'next/image';
 import TeamMemberModal from './TeamMemberModal';
+import { resolveImageUrl } from '@/lib/utils/image';
 
 interface TeamMemberCardProps {
   member: TeamMemberDto;
@@ -31,10 +33,12 @@ export default function TeamMemberCard({ member, index, isVisible, lang = 'az' }
       {/* Image Container */}
       <div className="relative h-80 w-full overflow-hidden bg-gray-100">
         {member.imageUrl ? (
-          <img
-            src={member.imageUrl}
+          <Image
+            src={resolveImageUrl(member.imageUrl)!}
             alt={member.fullName}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            fill
+            sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-sky-100 to-sky-200">

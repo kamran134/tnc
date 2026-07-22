@@ -2,6 +2,8 @@
 
 import { TeamMemberDto } from '@/types/api';
 import { useEffect } from 'react';
+import Image from 'next/image';
+import { resolveImageUrl } from '@/lib/utils/image';
 
 interface TeamMemberModalProps {
   member: TeamMemberDto;
@@ -85,10 +87,12 @@ export default function TeamMemberModal({ member, isOpen, onClose, lang = 'az' }
             <div className="flex-shrink-0">
               <div className="relative w-full md:w-64 h-80 rounded-xl overflow-hidden shadow-lg">
                 {member.imageUrl ? (
-                  <img
-                    src={member.imageUrl}
+                  <Image
+                    src={resolveImageUrl(member.imageUrl)!}
                     alt={member.fullName}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(min-width: 768px) 256px, 100vw"
+                    className="object-cover"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-sky-100 to-sky-200">

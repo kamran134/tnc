@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import Image from 'next/image';
 import { sanitizeHtml } from '@/lib/sanitize';
+import { resolveImageUrl } from '@/lib/utils/image';
 
 interface HeroData {
   title: string;
@@ -62,11 +64,13 @@ export default function ServiceHero() {
       {/* Background image layer */}
       {hasBackgroundImage && (
         <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={heroData!.backgroundImageUrl}
+          <Image
+            src={resolveImageUrl(heroData!.backgroundImageUrl)!}
             alt=""
-            className="absolute inset-0 w-full h-full object-cover"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
           />
           {/* Dark scrim for text contrast */}
           <div className="absolute inset-0 bg-black/50" />

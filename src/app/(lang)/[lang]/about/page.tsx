@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { LoadingSpinner, Alert, PageHero } from '@/components/ui';
+import { resolveImageUrl } from '@/lib/utils/image';
 
 interface AboutSection {
   id: number;
@@ -79,10 +81,12 @@ function SectionBlock({ section, index }: { section: AboutSection; index: number
               }}
             >
               {section.imageUrl ? (
-                <img
-                  src={section.imageUrl}
+                <Image
+                  src={resolveImageUrl(section.imageUrl)!}
                   alt={section.title || ''}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover"
                 />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-sky-400 via-sky-500 to-sky-600 flex items-center justify-center">

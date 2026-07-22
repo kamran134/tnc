@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { LanguageCode } from '@/types/api';
 import { useMemberships } from '@/hooks/queries';
+import { resolveImageUrl } from '@/lib/utils/image';
 
 interface MembershipsProps {
   lang?: string;
@@ -53,11 +55,13 @@ export default function Memberships({ lang = 'az' }: MembershipsProps) {
             const cardContent = (
               <div className="text-center">
                 {membership.logoUrl ? (
-                  <div className="w-32 h-32 mx-auto mb-4">
-                    <img
-                      src={membership.logoUrl}
+                  <div className="relative w-32 h-32 mx-auto mb-4">
+                    <Image
+                      src={resolveImageUrl(membership.logoUrl)!}
                       alt={membership.title}
-                      className="w-full h-full object-contain"
+                      fill
+                      sizes="128px"
+                      className="object-contain"
                     />
                   </div>
                 ) : (

@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import LanguageSwitcher from './LanguageSwitcher'
 import ServicesDropdown from './ServicesDropdown'
 import { useTranslations } from '@/hooks/useTranslations'
 import { CompanyInfoDto, LanguageCode } from '@/types/api'
 import { companyInfoService } from '@/lib/api'
+import { resolveImageUrl } from '@/lib/utils/image'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -46,9 +48,12 @@ export default function Header() {
           {/* Logo */}
           <Link href={`/${lang}`} className="flex items-center">
             {companyInfo?.logoUrl ? (
-              <img
-                src={companyInfo.logoUrl}
+              <Image
+                src={resolveImageUrl(companyInfo.logoUrl)!}
                 alt={companyInfo.companyName}
+                width={160}
+                height={96}
+                priority
                 className="h-24 w-auto object-contain absolute"
               />
             ) : (
