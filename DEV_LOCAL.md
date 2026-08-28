@@ -37,10 +37,27 @@ the commands in "Refreshing the snapshot" below.
 
 ## Run
 
+Windows helper scripts (double-click, or run from a terminal in the repo root):
+
+| script | what it does |
+|--------|--------------|
+| `dev-up.cmd`               | build if needed + start everything, prints the URLs |
+| `dev-down.cmd`             | stop the stack, keep the database |
+| `dev-logs.cmd [service]`   | follow logs (all, or one service) |
+| `dev-rebuild.cmd [app\|backend]` | rebuild images after code changes + restart, keep DB |
+| `dev-reset-db.cmd`         | wipe local DB, re-restore the snapshot (uploads/images kept) |
+| `dev-refresh-snapshot.cmd` | pull a fresh prod DB + uploads over ssh, then reload |
+
+Or the raw compose command:
+
 ```bash
 # from the tnc/ repo root, on branch dev
-docker compose -f docker-compose.dev.yml up -d --build
+docker compose -f docker-compose.dev.yml --env-file .env.dev up -d --build
 ```
+
+**Prerequisites:** Docker Desktop running; the sibling `../backend-tnc` repo on
+its `dev` branch; `dev-local/db/tnc_prod.dump` present (run
+`dev-refresh-snapshot.cmd` once if it is missing).
 
 First run builds both images (a few minutes) and restores the DB. Then:
 

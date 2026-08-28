@@ -62,6 +62,13 @@ Dockerfile
 docker-compose*.yml
 .dockerignore
 
+# Local dev stack (not part of the app image)
+dev-local/
+dev-*.cmd
+dev-restore-db.sh
+nginx*.conf
+.env.dev
+
 # Documentation
 *.md
 docs/
