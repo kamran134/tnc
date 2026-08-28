@@ -50,3 +50,6 @@ logs/
 # backup files
 *.bak
 *.backup
+
+# local dev stack data (prod DB snapshot + uploads copy) - see docker-compose.dev.yml
+/dev-local/
