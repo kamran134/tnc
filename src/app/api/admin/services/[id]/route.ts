@@ -102,7 +102,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       );
     }
 
-    return NextResponse.json({}, { status: 204 });
+    return new NextResponse(null, { status: 204 });
 
   } catch (error) {
     console.error('Service delete error:', error);

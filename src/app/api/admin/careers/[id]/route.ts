@@ -88,7 +88,7 @@ export async function DELETE(
       );
     }
 
-    return NextResponse.json(null, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error('Career delete error:', error);
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
