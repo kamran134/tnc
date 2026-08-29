@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+import { backendFetch } from '@/lib/auth/server';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -10,17 +8,10 @@ interface RouteParams {
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
 
-    if (!accessToken) {
-      return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
-    }
-
-    const response = await fetch(`${BACKEND_URL}/api/admin/about-sections/${id}`, {
+    const response = await backendFetch(`/api/admin/about-sections/${id}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });
@@ -43,17 +34,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
     const body = await request.json();
 
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
-
-    if (!accessToken) {
-      return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
-    }
-
-    const response = await fetch(`${BACKEND_URL}/api/admin/about-sections/${id}`, {
+    const response = await backendFetch(`/api/admin/about-sections/${id}`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
@@ -75,17 +58,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
 
-    if (!accessToken) {
-      return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
-    }
-
-    const response = await fetch(`${BACKEND_URL}/api/admin/about-sections/${id}`, {
+    const response = await backendFetch(`/api/admin/about-sections/${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });

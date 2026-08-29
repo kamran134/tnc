@@ -1,16 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { backendFetch, clearAuthCookies, REFRESH_COOKIE } from '@/lib/auth/server';
 
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
-
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const cookieStore = await cookies();
-    const refreshToken = cookieStore.get('refresh_token')?.value;
+    const refreshToken = cookieStore.get(REFRESH_COOKIE)?.value;
 
     if (refreshToken) {
       try {
-        await fetch(`${BACKEND_URL}/api/auth/logout`, {
+        // POST /api/auth/logout на бэкенде требует аутентификации (SecurityConfig:
+        // .requestMatchers(POST, "/api/auth/logout").authenticated()) — одного
+        // refreshToken в теле недостаточно, нужен ещё и валидный Bearer. backendFetch
+        // сам подставит Authorization и при протухшем access-токене один раз обновит
+        // его перед вызовом, чтобы сессия реально отозвалась в БД.
+        await backendFetch('/api/auth/logout', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -22,8 +26,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    cookieStore.delete('access_token');
-    cookieStore.delete('refresh_token');
+    // Куки чистим всегда, даже если запрос на бэкенд не удался.
+    await clearAuthCookies();
 
     return NextResponse.json({ message: 'Logged out successfully' }, { status: 200 });
   } catch (error) {

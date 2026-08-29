@@ -93,6 +93,44 @@ docker compose -f docker-compose.dev.yml down -v
 docker compose -f docker-compose.dev.yml up -d
 ```
 
+## Проверка refresh-flow локально
+
+Access-токен живёт 1 час, refresh — 30 дней (см. `TZ_REFRESH_TOKEN.md`). Чтобы не ждать
+час, поднимите стек с коротким TTL для access-токена:
+
+```bash
+JWT_ACCESS_EXPIRATION_MS=60000 docker compose -f docker-compose.dev.yml --env-file .env.dev up -d --build
+```
+
+(60000 мс = 60 секунд; переменная переопределяет значение по умолчанию из `.env.dev`
+только для этого запуска.)
+
+Дальше:
+
+1. Зайти на http://localhost:8090/dashboard/login, залогиниться. DevTools → Application →
+   Cookies: должны появиться **обе** куки `access_token` и `refresh_token`, `HttpOnly`,
+   `SameSite=Lax`, `Secure=false` (мы на http), срок жизни у обеих — **~30 дней** (не
+   секунды и не 1 час — если видите короткий срок, это баг из §1 ТЗ, а не то, что должно
+   быть: срок куки не совпадает с TTL самого токена).
+2. Походить по разделам админки (news, services, team, contacts и т.д.) — всё грузится.
+3. Подождать 70+ секунд (access-токен протух) и повторить шаг 2, а также попробовать
+   создать/отредактировать запись. Всё должно продолжать работать без разлогина, в
+   Network — коды 200, а не 401; значение куки `access_token` при этом должно смениться
+   (сработал прозрачный рефреш).
+4. Открыть вторую вкладку админки и после протухания токена перезагрузить обе вкладки
+   почти одновременно — не должно быть разлогина ни в одной (несколько параллельных
+   запросов не должны гонять друг друга, ротации refresh-токена нет специально).
+5. Logout → проверить в БД, что сессия отозвана:
+   ```bash
+   docker compose -f docker-compose.dev.yml exec postgres psql -U tnc_user -d tnc_prod \
+     -c "select id, revoked, created_at from refresh_tokens order by id desc limit 5;"
+   ```
+   У последней сессии `revoked = t`.
+
+После проверки верните `JWT_ACCESS_EXPIRATION_MS` к значению по умолчанию (просто не
+передавайте переменную при следующем `up`, либо явно `up -d --build` без неё — `.env.dev`
+уже содержит дефолт `3600000`).
+
 ## How it differs from prod (all intentional, all local-only)
 
 - images are **built from local source** (branch `dev` of each repo), not pulled

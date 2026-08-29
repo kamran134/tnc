@@ -1,28 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+import { backendFetch } from '@/lib/auth/server';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    
-    // Получаем токен из cookies
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
 
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/api/admin/news/${id}`, {
+    const response = await backendFetch(`/api/admin/news/${id}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });
@@ -51,22 +37,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   try {
     const { id } = await params;
     const body = await request.json();
-    
-    // Получаем токен из cookies
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
 
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/api/admin/news/${id}`, {
+    const response = await backendFetch(`/api/admin/news/${id}`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
@@ -74,11 +49,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     if (!response.ok) {
       let errorMessage = 'Failed to update news';
-      
+
       try {
         const error = await response.text();
         console.error('Backend error response:', error);
-        
+
         // Проверяем специфические ошибки кеша
         if (error.includes('Cannot find cache named')) {
           errorMessage = 'Server cache configuration issue. Please contact administrator.';
@@ -95,7 +70,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       } catch {
         errorMessage = `Server error (HTTP ${response.status})`;
       }
-      
+
       return NextResponse.json(
         { message: errorMessage },
         { status: response.status }
@@ -117,23 +92,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    
-    // Получаем токен из cookies
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
 
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/api/admin/news/${id}`, {
+    const response = await backendFetch(`/api/admin/news/${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });

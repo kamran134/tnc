@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+import { backendFetch } from '@/lib/auth/server';
 
 interface RouteParams {
   params: Promise<{
@@ -15,23 +13,12 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
 
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
+    const backendUrl = `/api/admin/team/${id}/activate`;
 
-    const backendUrl = `${BACKEND_URL}/api/admin/team/${id}/activate`;
-    
-    const response = await fetch(backendUrl, {
+    const response = await backendFetch(backendUrl, {
       method: 'PATCH',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });

@@ -1,32 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+import { backendFetch } from '@/lib/auth/server';
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
-    
-    if (!accessToken) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
 
     const { id } = await params;
     const body = await request.json();
     const { status } = body;
-    
+
     if (!status) {
       return NextResponse.json({ error: 'Status is required' }, { status: 400 });
     }
 
-    const response = await fetch(`${BACKEND_URL}/api/admin/contacts/${id}/status?status=${status}`, {
+    const response = await backendFetch(`/api/admin/contacts/${id}/status?status=${status}`, {
       method: 'PATCH',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });

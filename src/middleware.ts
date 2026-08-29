@@ -5,7 +5,10 @@ import { LANGUAGES, DEFAULT_LANGUAGE } from '@/lib/utils/translations';
 const locales = LANGUAGES;
 const defaultLocale = DEFAULT_LANGUAGE;
 
-// ЛОГИКА: авторизация для /dashboard + поддержка языков + автоматический refresh
+// ЛОГИКА: авторизация для /dashboard + поддержка языков.
+// Refresh токена здесь НЕ делается и делаться не должен — matcher исключает /api, поэтому
+// XHR-запросы сюда не попадают. Рефреш живёт в backendFetch (src/lib/auth/server.ts) и
+// в axios-интерсепторе (src/lib/api/client.ts).
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   

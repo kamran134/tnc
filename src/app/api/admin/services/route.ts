@@ -1,31 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+import { backendFetch } from '@/lib/auth/server';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const params = new URLSearchParams(searchParams);
 
-    // Получаем токен из cookies
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
-
     // Проксируем запрос к Java бэкенду
-    const backendUrl = `${BACKEND_URL}/api/admin/services?${params}`;
-    
-    const response = await fetch(backendUrl, {
+    const backendUrl = `/api/admin/services?${params}`;
+
+    const response = await backendFetch(backendUrl, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });
@@ -39,7 +25,7 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
-    
+
     // Если данные приходят в формате {content, page}, нужно преобразовать в Spring Page формат
     if (data.page && !data.totalElements) {
       const transformedData = {
@@ -57,7 +43,7 @@ export async function GET(request: NextRequest) {
       };
       return NextResponse.json(transformedData, { status: 200 });
     }
-    
+
     return NextResponse.json(data, { status: 200 });
 
   } catch (error) {
@@ -72,23 +58,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
-    // Получаем токен из cookies
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
 
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
-    
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/api/admin/services`, {
+    const response = await backendFetch(`/api/admin/services`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),

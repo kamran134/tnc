@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+import { backendFetch } from '@/lib/auth/server';
 
 export async function GET(
   request: NextRequest,
@@ -9,23 +7,11 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    
-    // Получаем токен из cookies
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
 
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/api/admin/service-categories/${id}`, {
+    const response = await backendFetch(`/api/admin/service-categories/${id}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });
@@ -57,22 +43,11 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    
-    // Получаем токен из cookies
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
 
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/api/admin/service-categories/${id}`, {
+    const response = await backendFetch(`/api/admin/service-categories/${id}`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
@@ -80,11 +55,11 @@ export async function PUT(
 
     if (!response.ok) {
       let errorMessage = 'Failed to update service category';
-      
+
       try {
         const error = await response.text();
         console.error('Backend error response:', error);
-        
+
         try {
           const jsonError = JSON.parse(error);
           errorMessage = jsonError.message || errorMessage;
@@ -94,7 +69,7 @@ export async function PUT(
       } catch {
         errorMessage = `Server error (HTTP ${response.status})`;
       }
-      
+
       return NextResponse.json(
         { message: errorMessage },
         { status: response.status }
@@ -119,23 +94,11 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    
-    // Получаем токен из cookies
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
 
     // Проксируем запрос к Java бэкенду
-    const response = await fetch(`${BACKEND_URL}/api/admin/service-categories/${id}`, {
+    const response = await backendFetch(`/api/admin/service-categories/${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
       },
     });
 

@@ -1,26 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+import { backendFetch } from '@/lib/auth/server';
 
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
 
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
+    const backendUrl = `/api/admin/team/list`;
 
-    const backendUrl = `${BACKEND_URL}/api/admin/team/list`;
-    
-    const response = await fetch(backendUrl, {
+    const response = await backendFetch(backendUrl, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });

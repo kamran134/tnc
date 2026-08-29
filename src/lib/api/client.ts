@@ -46,12 +46,63 @@ apiClient.interceptors.request.use(
   }
 );
 
+// Single-flight refresh: все параллельные 401 ждут один и тот же промис, а не запускают
+// по своему собственному рефрешу (без ротации refresh-токена это безопасно — см. §2 ТЗ).
+// Это модульное состояние живёт ТОЛЬКО в браузере (клиентский код), на сервере такое
+// делать нельзя — там cookies() привязаны к контексту конкретного запроса.
+let refreshPromise: Promise<boolean> | null = null;
+
+function requestRefresh(): Promise<boolean> {
+  if (!refreshPromise) {
+    refreshPromise = fetch('/api/auth/refresh', {
+      method: 'POST',
+      credentials: 'include',
+    })
+      .then((res) => res.ok)
+      .catch(() => false)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+}
+
 // Response interceptor - Simple error handling
 apiClient.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
+    const originalConfig = error.config as (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined;
+
+    // Handle 401 Unauthorized - попытка обновить токен и повторить запрос ровно один раз.
+    if (
+      error.response?.status === 401 &&
+      originalConfig &&
+      !originalConfig._retry &&
+      !originalConfig.url?.startsWith('/auth/') // не рефрешим сам /auth/*, чтобы не зациклиться
+    ) {
+      originalConfig._retry = true;
+
+      const refreshed = await requestRefresh();
+
+      if (refreshed) {
+        return apiClient(originalConfig);
+      }
+
+      // Рефреш не удался — сессия мертва. Редиректим на логин только если мы в админке.
+      if (
+        typeof window !== 'undefined' &&
+        window.location.pathname.startsWith('/dashboard') &&
+        !window.location.pathname.startsWith('/dashboard/login')
+      ) {
+        window.location.href =
+          '/dashboard/login?redirect=' + encodeURIComponent(window.location.pathname);
+      }
+
+      return Promise.reject(error);
+    }
+
     // Handle 403 Forbidden
     if (error.response?.status === 403) {
       console.error('Access forbidden:', error.response.data);

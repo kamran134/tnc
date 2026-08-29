@@ -1,21 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+import { backendFetch } from '@/lib/auth/server';
 
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
 
-    if (!accessToken) {
-      return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
-    }
-
-    const response = await fetch(`${BACKEND_URL}/api/admin/about-sections`, {
+    const response = await backendFetch(`/api/admin/about-sections`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });
@@ -37,17 +28,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
-
-    if (!accessToken) {
-      return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
-    }
-
-    const response = await fetch(`${BACKEND_URL}/api/admin/about-sections`, {
+    const response = await backendFetch(`/api/admin/about-sections`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),

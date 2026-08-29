@@ -1,26 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+import { backendFetch } from '@/lib/auth/server';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ pageTag: string }> }) {
   try {
     const { pageTag } = await params;
-    
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
 
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
-
-    const response = await fetch(`${BACKEND_URL}/api/admin/page-hero/tag/${pageTag}`, {
+    const response = await backendFetch(`/api/admin/page-hero/tag/${pageTag}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });

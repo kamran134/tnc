@@ -1,21 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+import { backendFetch } from '@/lib/auth/server';
 
 export async function POST(request: NextRequest) {
   try {
-    // Получаем токен из cookies
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
-
     // Получаем FormData из запроса
     const formData = await request.formData();
     const file = formData.get('file') as File;
@@ -58,28 +45,27 @@ export async function POST(request: NextRequest) {
     const backendFormData = new FormData();
     backendFormData.append('file', file);
 
-    // Создаем URL с параметрами
-    const url = new URL(`${BACKEND_URL}/api/admin/files/upload`);
-    url.searchParams.append('fileType', fileType);
+    // Собираем путь с параметрами (backendFetch сам подставляет BACKEND_URL)
+    const uploadParams = new URLSearchParams();
+    uploadParams.append('fileType', fileType);
     if (description) {
-      url.searchParams.append('description', description);
+      uploadParams.append('description', description);
     }
-    // Отправляем файл на бекенд
-    const response = await fetch(url.toString(), {
+
+    // Отправляем файл на бекенд. Content-Type не выставляем — его ставит runtime
+    // вместе с boundary для multipart/form-data.
+    const response = await backendFetch(`/api/admin/files/upload?${uploadParams}`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-      },
       body: backendFormData,
     });
 
     if (!response.ok) {
       let errorMessage = 'Failed to upload file';
-      
+
       try {
         const error = await response.text();
         console.error('Backend upload error:', error);
-        
+
         if (error.includes('virus') || error.includes('malware')) {
           errorMessage = 'File rejected by security scan. Please try a different file.';
         } else if (error.includes('size') || error.includes('large')) {
@@ -97,7 +83,7 @@ export async function POST(request: NextRequest) {
       } catch {
         errorMessage = `Upload failed (HTTP ${response.status})`;
       }
-      
+
       return NextResponse.json(
         { message: errorMessage },
         { status: response.status }
