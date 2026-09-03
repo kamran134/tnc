@@ -3,14 +3,17 @@ name: Build and Deploy to Server
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  # Бэкенд (yeskela7/backend-tnc) после публикации своего образа дёргает этот workflow,
+  # чтобы сервер подхватил новый backend без пуша во фронтенд
+  repository_dispatch:
+    types: [ backend-updated ]
   workflow_dispatch: {}
 
-# Отменяем предыдущие запуски при новом пуше
+# Деплои на прод сериализуются: очередь, а не отмена — иначе новый пуш
+# оборвёт развёртывание на середине и оставит сервер в промежуточном состоянии
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: prod-deploy
+  cancel-in-progress: false
 
 # Добавляем права для работы с packages
 permissions:
@@ -26,8 +29,9 @@ jobs:
     # Убираем тесты для ускорения
     # needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    
+    # При запуске от бэкенда фронт пересобирать не нужно — только задеплоить
+    if: github.event_name != 'repository_dispatch'
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -76,8 +80,9 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    
+    # success — обычный пуш во фронт; skipped — прилетел repository_dispatch от бэкенда
+    if: always() && (needs.build-and-push.result == 'success' || needs.build-and-push.result == 'skipped')
+
     steps:
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.0.3
@@ -87,6 +92,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY_2 }}
         port: ${{ secrets.PORT }}
         script: |
+          set -e
           cd /opt/tnc-website
 
           # Записываем .env файл из GitHub Secrets (перезаписываем при каждом деплое)
@@ -100,17 +106,17 @@ jobs:
           # Авторизация в GitHub Container Registry
           echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-          # Остановка текущих контейнеров (фронт + бэкенд — у backend-tnc нет своего деплой-шага,
-          # его образ собирается отдельным workflow в ghcr.io, а перезапуск на сервере подхватываем здесь)
-          docker compose -f docker-compose.yml down app backend
+          # Снимаем заглушку техработ, если она висит: она занимает сетевой алиас app,
+          # и без этого nginx будет балансировать между заглушкой и приложением
+          docker rm -f tnc-maintenance 2>/dev/null || true
 
-          # Загрузка новых образов из GHCR (тянет все сервисы, включая backend)
-          docker compose -f docker-compose.yml pull
-
-          # Запуск новых контейнеров с обновлёнными образами
+          # Тянем только нужные образы и пересоздаём только изменившиеся контейнеры.
+          # Намеренно без "docker compose down": он удаляет контейнеры целиком,
+          # включая остановленные, которые могут быть нужны для разбора инцидентов
+          docker compose -f docker-compose.yml pull app backend
           docker compose -f docker-compose.yml up -d app backend
 
-          # Очистка старых образов для экономии места
+          # Очистка только висячих (dangling) образов — теги не трогает
           docker image prune -f
 
           # Проверка состояния контейнеров

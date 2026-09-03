@@ -6,6 +6,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { LoadingSpinner, Alert, PageHero } from '@/components/ui';
 import { resolveImageUrl } from '@/lib/utils/image';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 interface AboutSection {
   id: number;
@@ -162,7 +163,7 @@ function SectionBlock({ section, index }: { section: AboutSection; index: number
                     transition: 'opacity 0.55s ease-out, transform 0.55s ease-out',
                     transitionDelay: '0.54s',
                   }}
-                  dangerouslySetInnerHTML={{ __html: section.description }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(section.description) }}
                 />
               )}
 
