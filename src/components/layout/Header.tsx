@@ -34,21 +34,34 @@ export default function Header() {
     <header className="bg-white sticky top-0 z-50">
       <nav className="container-max">
         <div className="flex justify-between items-center py-4">
-          {/* Logo */}
-          <Link href={`/${lang}`} className="flex items-center">
-            {companyInfo?.logoUrl ? (
+          {/* Logo + AGA membership badge; absolutely positioned so the logo can overflow the header height */}
+          <div className="flex items-center">
+            <div className="absolute flex items-center gap-4">
+              <Link href={`/${lang}`} className="flex items-center">
+                {companyInfo?.logoUrl ? (
+                  <Image
+                    src={resolveImageUrl(companyInfo.logoUrl)!}
+                    alt={companyInfo.companyName}
+                    width={160}
+                    height={96}
+                    priority
+                    className="h-24 w-auto object-contain"
+                  />
+                ) : (
+                  <span className="text-2xl font-bold text-sky-700">TnC</span>
+                )}
+              </Link>
+              {/* Hidden between md and xl: the desktop nav takes the full row there and doesn't reserve space for the absolute block */}
               <Image
-                src={resolveImageUrl(companyInfo.logoUrl)!}
-                alt={companyInfo.companyName}
-                width={160}
-                height={96}
-                priority
-                className="h-24 w-auto object-contain absolute"
+                src="/images/aga-members.svg"
+                alt="AGA Members"
+                width={267}
+                height={58}
+                unoptimized
+                className="h-8 sm:h-10 w-auto md:hidden xl:block"
               />
-            ) : (
-              <span className="text-2xl font-bold text-sky-700">TnC</span>
-            )}
-          </Link>
+            </div>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
