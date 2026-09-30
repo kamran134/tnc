@@ -51,20 +51,19 @@ export default function Header() {
                   <span className="text-2xl font-bold text-sky-700">TnC</span>
                 )}
               </Link>
-              {/* Hidden between md and xl: the desktop nav takes the full row there and doesn't reserve space for the absolute block */}
               <Image
                 src="/images/aga-members.svg"
                 alt="AGA Members"
                 width={267}
                 height={58}
                 unoptimized
-                className="h-8 sm:h-10 w-auto md:hidden xl:block"
+                className="h-8 sm:h-10 w-auto"
               />
             </div>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden xl:flex items-center space-x-8">
             {navigation.map((item) => (
               item.hasDropdown ? (
                 <ServicesDropdown key={item.name} />
@@ -83,7 +82,7 @@ export default function Header() {
 
           {/* Mobile menu button */}
           <button
-            className="md:hidden p-2"
+            className="xl:hidden p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <svg
@@ -104,7 +103,7 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t space-y-2">
+          <div className="xl:hidden py-4 border-t space-y-2">
             {navigation.map((item) => (
               item.hasDropdown ? (
                 <ServicesDropdown 
