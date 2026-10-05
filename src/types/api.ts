@@ -597,6 +597,136 @@ export interface AnalyticsDto {
   newsByMonth: MonthlyStatDto[];
 }
 
+// First-party traffic analytics (GET /api/admin/dashboard/traffic)
+export type TrafficPageType =
+  | 'HOME'
+  | 'NEWS_LIST'
+  | 'NEWS_DETAIL'
+  | 'CAREERS_LIST'
+  | 'CAREER_DETAIL'
+  | 'SERVICES'
+  | 'SERVICE_CATEGORY'
+  | 'ABOUT'
+  | 'TEAM'
+  | 'CONTACT'
+  | 'OTHER';
+
+export type TrafficSourceType = 'DIRECT' | 'SEARCH' | 'SOCIAL' | 'REFERRAL' | 'CAMPAIGN';
+
+export interface TrafficRangeDto {
+  from: string;
+  to: string;
+  days: number;
+  granularity: 'DAY' | 'MONTH';
+}
+
+export interface TrafficSummaryDto {
+  visitors: number;
+  sessions: number;
+  pageviews: number;
+  pagesPerSession: number;
+  bounceRate: number;
+  avgSessionDurationSec: number;
+  newVisitorRate: number;
+  contacts: number;
+  conversionRate: number;
+}
+
+export interface TrafficTimeseriesPointDto {
+  date: string;
+  visitors: number;
+  sessions: number;
+  pageviews: number;
+  contacts: number;
+}
+
+export interface TrafficRealtimePageDto {
+  path: string;
+  visitors: number;
+}
+
+export interface TrafficRealtimeDto {
+  activeVisitors: number;
+  pages: TrafficRealtimePageDto[];
+}
+
+export interface TrafficTopPageDto {
+  path: string;
+  pageType: TrafficPageType;
+  title: string | null;
+  views: number;
+  visitors: number;
+  avgDurationSec: number;
+}
+
+export interface TrafficEntryPageDto {
+  path: string;
+  sessions: number;
+}
+
+export interface TrafficContentItemDto {
+  slug: string;
+  title: string | null;
+  views: number;
+  visitors: number;
+}
+
+export interface TrafficTopContentDto {
+  news: TrafficContentItemDto[];
+  careers: TrafficContentItemDto[];
+  services: TrafficContentItemDto[];
+}
+
+export interface TrafficSourceDto {
+  source: string;
+  type: TrafficSourceType;
+  sessions: number;
+  visitors: number;
+}
+
+export interface TrafficSourceTypeDto {
+  type: TrafficSourceType;
+  sessions: number;
+}
+
+export interface TrafficNamedCountDto {
+  name: string;
+  visitors: number;
+}
+
+export interface TrafficHeatmapCellDto {
+  /** ISO weekday: 1 = Monday .. 7 = Sunday */
+  weekday: number;
+  hour: number;
+  pageviews: number;
+}
+
+export interface TrafficContactStatusDto {
+  status: string;
+  count: number;
+}
+
+export interface TrafficAnalyticsDto {
+  range: TrafficRangeDto;
+  summary: TrafficSummaryDto;
+  previous: TrafficSummaryDto;
+  timeseries: TrafficTimeseriesPointDto[];
+  realtime: TrafficRealtimeDto;
+  topPages: TrafficTopPageDto[];
+  entryPages: TrafficEntryPageDto[];
+  topContent: TrafficTopContentDto;
+  sources: TrafficSourceDto[];
+  sourceTypes: TrafficSourceTypeDto[];
+  devices: TrafficNamedCountDto[];
+  browsers: TrafficNamedCountDto[];
+  os: TrafficNamedCountDto[];
+  siteLanguages: TrafficNamedCountDto[];
+  browserLanguages: TrafficNamedCountDto[];
+  timezones: TrafficNamedCountDto[];
+  heatmap: TrafficHeatmapCellDto[];
+  contactsByStatus: TrafficContactStatusDto[];
+}
+
 // Service Category DTOs
 export interface ServiceCategoryTranslationDto {
   id?: number;

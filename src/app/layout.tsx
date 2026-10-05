@@ -4,6 +4,7 @@ import Script from 'next/script'
 import './globals.css'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { QueryProvider } from '@/lib/providers/QueryProvider'
+import PageViewTracker from '@/components/analytics/PageViewTracker'
 
 const montserrat = Montserrat({
   subsets: ['latin', 'cyrillic'],
@@ -89,6 +90,7 @@ export default function RootLayout({
             </Script>
           </>
         )}
+        <PageViewTracker />
         <QueryProvider>
           <LanguageProvider>
             {children}
