@@ -30,6 +30,13 @@ function useLang(): LanguageCode {
 
 /* ───────────────────────── Memberships ───────────────────────── */
 
+// Marquee geometry: plate width + gap must match .site-marquee-* in globals.css
+const MARQUEE_ITEM_PX = 180 + 12;
+// One half of the track must be wider than the widest content area
+const MARQUEE_MIN_HALF_PX = 1440;
+// Seconds per logo per pass: calm, roughly 40px/s
+const MARQUEE_SEC_PER_ITEM = 5;
+
 export function HomeMemberships() {
   const lang = useLang();
   const { t } = useTranslations();
@@ -38,42 +45,62 @@ export function HomeMemberships() {
 
   if (memberships.length === 0) return null;
 
+  // The track is two identical halves and slides by -50%, so the loop is seamless.
+  // Each half repeats the list enough times to fill wide screens; only the very
+  // first copy is exposed to assistive tech and keyboard focus.
+  const reps = Math.max(1, Math.ceil(MARQUEE_MIN_HALF_PX / (memberships.length * MARQUEE_ITEM_PX)));
+  const copies = reps * 2;
+  const trackStyle = {
+    '--marquee-dur': `${memberships.length * reps * MARQUEE_SEC_PER_ITEM}s`,
+  } as React.CSSProperties;
+
+  const plateClass =
+    'box-border block h-24 rounded-lg bg-white p-4 transition-[box-shadow,transform] duration-300 ease-out hover:shadow-[0_0_0_2px_#7CC4F2] motion-safe:hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-navy-petrol';
+
   return (
     <section ref={revealRef} className="site-wrap flex flex-col gap-5 pb-[88px] pt-6" aria-label={t('home.memberships')}>
       <span className="rv-item font-plexmono text-[13px] text-navy-muted">{t('home.memberships')}</span>
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(170px,100%),1fr))] gap-3">
-        {memberships.map((m, i) => {
-          const logo = resolveImageUrl(m.logoUrl);
-          const inner = (
-            <div className="relative h-full w-full">
-              {logo ? (
-                <Image src={logo} alt={m.title} fill unoptimized sizes="200px" className="object-contain" />
-              ) : (
-                <span className="flex h-full items-center justify-center text-center text-sm font-semibold text-navy-950">
-                  {m.title}
-                </span>
-              )}
-            </div>
-          );
-          const boxClass =
-            'rv-item box-border block h-24 rounded-lg bg-white p-4 transition-[box-shadow,transform] duration-300 ease-out hover:shadow-[0_0_0_2px_#7CC4F2] motion-safe:hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-accent';
-          return m.websiteUrl ? (
-            <a
-              key={m.id}
-              href={m.websiteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={rvDelay(i + 1)}
-              className={boxClass}
-            >
-              {inner}
-            </a>
-          ) : (
-            <div key={m.id} style={rvDelay(i + 1)} className={boxClass}>
-              {inner}
-            </div>
-          );
-        })}
+      <div className="rv-item site-marquee" style={rvDelay(1)}>
+        <div className="site-marquee-track" style={trackStyle}>
+          {Array.from({ length: copies }, (_, copy) => {
+            const hidden = copy > 0;
+            return (
+              <ul key={copy} className="site-marquee-list" aria-hidden={hidden || undefined}>
+                {memberships.map((m) => {
+                  const logo = resolveImageUrl(m.logoUrl);
+                  const inner = (
+                    <div className="relative h-full w-full">
+                      {logo ? (
+                        <Image src={logo} alt={hidden ? '' : m.title} fill unoptimized sizes="200px" className="object-contain" />
+                      ) : (
+                        <span className="flex h-full items-center justify-center text-center text-sm font-semibold text-navy-950">
+                          {m.title}
+                        </span>
+                      )}
+                    </div>
+                  );
+                  return (
+                    <li key={m.id} className="site-marquee-item">
+                      {m.websiteUrl ? (
+                        <a
+                          href={m.websiteUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          tabIndex={hidden ? -1 : undefined}
+                          className={plateClass}
+                        >
+                          {inner}
+                        </a>
+                      ) : (
+                        <div className={plateClass}>{inner}</div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

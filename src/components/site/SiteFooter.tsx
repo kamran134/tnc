@@ -42,18 +42,19 @@ export default function SiteFooter() {
         <div className="flex max-w-[360px] flex-1 basis-[280px] flex-col gap-[18px]">
           <Link
             href={`/${lang}`}
-            className="flex items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy-accent"
+            className="flex w-fit items-center rounded-lg bg-white px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy-accent"
           >
+            {/* Original logo colours need a light surface on the dark footer */}
             {companyInfo?.logoUrl ? (
               <Image
                 src={resolveImageUrl(companyInfo.logoUrl)!}
                 alt={companyInfo.companyName}
                 width={160}
                 height={96}
-                className="h-12 w-auto object-contain brightness-0 invert"
+                className="h-12 w-auto object-contain"
               />
             ) : (
-              <span className="text-[22px] font-semibold tracking-tight text-white">TnC</span>
+              <span className="text-[22px] font-semibold tracking-tight text-navy-petrol">TnC</span>
             )}
           </Link>
           <p className="m-0">{t('footer.description')}</p>

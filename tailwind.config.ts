@@ -25,6 +25,11 @@ const config: Config = {
           text2: "#C3D3DF",
           muted: "#9FB4C4",
           accent: "#7CC4F2",
+          // Light header surface: brand petrol (lion logo) and neutral greys
+          petrol: "#0B4058",
+          slate: "#3D5266",
+          hairline: "#D5DFE8",
+          mist: "#EEF3F7",
         },
         primary: {
           50: "#eff6ff",

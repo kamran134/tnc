@@ -24,7 +24,7 @@ export default function HomePage() {
   const { data: companyInfo } = useCompanyInfo(lang);
 
   return (
-    <SiteShell overlayHeader>
+    <SiteShell>
       <HomeHero />
       <HomeMemberships />
       <HomeServices />

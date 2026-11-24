@@ -53,9 +53,9 @@ export default function SiteServicesDropdown({ isMobile = false, active = false,
   const list = (
     <>
       {isLoading ? (
-        <div className="px-4 py-3 text-sm text-navy-muted">{t('common.loading')}</div>
+        <div className="px-4 py-3 text-sm text-navy-slate">{t('common.loading')}</div>
       ) : sorted.length === 0 ? (
-        <div className="px-4 py-3 text-sm text-navy-muted">{t('services.noCategories')}</div>
+        <div className="px-4 py-3 text-sm text-navy-slate">{t('services.noCategories')}</div>
       ) : (
         sorted.map((category) => {
           const Icon = getServiceCategoryIconByName(category.iconUrl);
@@ -64,9 +64,9 @@ export default function SiteServicesDropdown({ isMobile = false, active = false,
               key={category.id}
               href={`/${lang}/services/${category.code}`}
               onClick={handleItem}
-              className="flex min-h-[44px] items-center gap-3 px-4 py-2 text-[15px] text-navy-text2 transition-colors hover:bg-navy-700 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-navy-accent"
+              className="flex min-h-[44px] items-center gap-3 px-4 py-2 text-[15px] text-navy-950 transition-colors hover:bg-navy-mist hover:text-navy-petrol focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-navy-petrol"
             >
-              {Icon && <Icon className="h-5 w-5 flex-none text-navy-accent" aria-hidden="true" />}
+              {Icon && <Icon className="h-5 w-5 flex-none text-navy-petrol" aria-hidden="true" />}
               <span>{category.name}</span>
             </Link>
           );
@@ -75,7 +75,7 @@ export default function SiteServicesDropdown({ isMobile = false, active = false,
       <Link
         href={`/${lang}/services/all`}
         onClick={handleItem}
-        className="flex min-h-[44px] items-center gap-3 border-t border-navy-line px-4 py-2 text-[15px] font-semibold text-navy-accent transition-colors hover:bg-navy-700 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-navy-accent"
+        className="flex min-h-[44px] items-center gap-3 border-t border-navy-hairline px-4 py-2 text-[15px] font-semibold text-navy-petrol transition-colors hover:bg-navy-mist focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-navy-petrol"
       >
         {t('services.viewAll')}
       </Link>
@@ -89,7 +89,7 @@ export default function SiteServicesDropdown({ isMobile = false, active = false,
           <Link
             href={`/${lang}/services`}
             onClick={handleItem}
-            className={`inline-flex min-h-[44px] flex-1 items-center text-[17px] ${active ? 'text-navy-accent' : 'text-navy-text'}`}
+            className={`inline-flex min-h-[44px] flex-1 items-center text-[17px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy-petrol ${active ? 'font-semibold text-navy-petrol' : 'text-navy-950'}`}
           >
             {t('nav.services')}
           </Link>
@@ -98,12 +98,12 @@ export default function SiteServicesDropdown({ isMobile = false, active = false,
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-label={t('nav.services')}
-            className="inline-flex h-11 w-11 items-center justify-center text-navy-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy-accent"
+            className="inline-flex h-11 w-11 items-center justify-center text-navy-slate focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy-petrol"
           >
             <ChevronDown className={`h-5 w-5 transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
           </button>
         </div>
-        {open && <div className="mb-2 ml-2 border-l border-navy-line">{list}</div>}
+        {open && <div className="mb-2 ml-2 border-l border-navy-hairline">{list}</div>}
       </div>
     );
   }
@@ -127,11 +127,15 @@ export default function SiteServicesDropdown({ isMobile = false, active = false,
       }}
       onMouseLeave={scheduleClose}
     >
-      <div className={`inline-flex min-h-[44px] items-center gap-1 border-b-2 ${active ? 'border-navy-accent text-navy-accent' : 'border-transparent'}`}>
+      <div
+        className={`inline-flex min-h-[44px] items-center gap-1 border-b-2 ${
+          active ? 'border-navy-petrol text-navy-petrol' : 'border-transparent text-navy-slate'
+        }`}
+      >
         <Link
           href={`/${lang}/services`}
           aria-current={active ? 'page' : undefined}
-          className="inline-flex min-h-[44px] items-center transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy-accent"
+          className="inline-flex min-h-[44px] items-center transition-colors hover:text-navy-petrol focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-petrol"
         >
           {t('nav.services')}
         </Link>
@@ -140,14 +144,14 @@ export default function SiteServicesDropdown({ isMobile = false, active = false,
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-label={t('nav.services')}
-          className="inline-flex h-8 w-6 items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy-accent"
+          className="inline-flex h-8 w-6 items-center justify-center hover:text-navy-petrol focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy-petrol"
         >
           <ChevronDown className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
         </button>
       </div>
       {open && (
         <div className="absolute left-0 top-full z-50 w-80 pt-2">
-          <div className="overflow-hidden rounded-lg border border-navy-line bg-navy-900 py-1 shadow-xl">{list}</div>
+          <div className="overflow-hidden rounded-lg border border-navy-hairline bg-white py-1 shadow-[0_12px_32px_rgba(7,27,46,0.16)]">{list}</div>
         </div>
       )}
     </div>

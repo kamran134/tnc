@@ -12,12 +12,12 @@ import { useCompanyInfo } from '@/hooks/queries';
 import { resolveImageUrl } from '@/lib/utils/image';
 import type { LanguageCode } from '@/types/api';
 
-interface SiteHeaderProps {
-  /** Transparent header floating over the hero (home page). */
-  overlay?: boolean;
-}
-
-export default function SiteHeader({ overlay = false }: SiteHeaderProps) {
+/**
+ * Light, solid header on every page. Logos keep their original brand colours
+ * (they are dark and have white detail, so they need a light surface); all text
+ * and controls are dark-on-white with >= 4.5:1 contrast in every state.
+ */
+export default function SiteHeader() {
   const params = useParams();
   const pathname = usePathname() || '';
   const lang = (params.lang as string) || 'az';
@@ -27,7 +27,7 @@ export default function SiteHeader({ overlay = false }: SiteHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 16);
+    const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -53,10 +53,7 @@ export default function SiteHeader({ overlay = false }: SiteHeaderProps) {
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
-  const solid = !overlay || scrolled || menuOpen;
-  const positionClass = overlay ? 'fixed inset-x-0 top-0' : 'sticky top-0';
-  // Overlay header: the navy surface is a separate layer that fades in (opacity only)
-  const surfaceClass = overlay ? '' : 'border-b border-navy-line bg-navy-950';
+  const focusRing = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-petrol';
 
   const logo = companyInfo?.logoUrl ? (
     <Image
@@ -65,27 +62,26 @@ export default function SiteHeader({ overlay = false }: SiteHeaderProps) {
       width={160}
       height={96}
       priority
-      className="h-12 w-auto object-contain brightness-0 invert sm:h-14"
+      className="h-12 w-auto object-contain sm:h-14"
     />
   ) : (
-    <span className="text-2xl font-semibold tracking-tight text-white">TnC</span>
+    <span className="text-2xl font-semibold tracking-tight text-navy-petrol">TnC</span>
   );
 
   return (
-    <header className={`${positionClass} z-50 ${surfaceClass}`}>
-      {overlay && (
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 border-b border-navy-line bg-navy-950 transition-opacity duration-300 ease-out motion-reduce:transition-none"
-          style={{ opacity: solid ? 1 : 0 }}
-        />
-      )}
+    <header className="sticky top-0 z-50 border-b border-navy-hairline bg-white text-navy-950">
+      {/* Soft shadow once the page scrolls under the header (opacity only) */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-full h-3 transition-opacity duration-300 ease-out motion-reduce:transition-none"
+        style={{
+          opacity: scrolled ? 1 : 0,
+          background: 'linear-gradient(180deg, rgba(7,27,46,0.18) 0%, rgba(7,27,46,0) 100%)',
+        }}
+      />
       <div className="site-wrap flex items-center justify-between gap-4 py-3 xl:py-4">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-          <Link
-            href={`/${lang}`}
-            className="flex items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy-accent"
-          >
+          <Link href={`/${lang}`} className={`flex flex-none items-center rounded-sm ${focusRing}`}>
             {logo}
           </Link>
           <Image
@@ -94,11 +90,11 @@ export default function SiteHeader({ overlay = false }: SiteHeaderProps) {
             width={267}
             height={58}
             unoptimized
-            className="h-7 w-auto brightness-0 invert sm:h-10"
+            className="h-7 w-auto sm:h-10 xl:h-9 2xl:h-10"
           />
         </div>
 
-        <nav aria-label="Main" className="hidden items-center gap-x-6 text-[15px] xl:flex">
+        <nav aria-label="Main" className="hidden items-center gap-x-4 whitespace-nowrap text-[15px] font-medium xl:flex 2xl:gap-x-6">
           {navigation.map((item) =>
             item.dropdown ? (
               <SiteServicesDropdown key={item.key} active={isActive(item.href)} />
@@ -107,10 +103,10 @@ export default function SiteHeader({ overlay = false }: SiteHeaderProps) {
                 key={item.key}
                 href={item.href}
                 aria-current={isActive(item.href) ? 'page' : undefined}
-                className={`site-nav-link inline-flex min-h-[44px] items-center border-b-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy-accent ${
+                className={`site-nav-link inline-flex min-h-[44px] items-center border-b-2 transition-colors ${focusRing} ${
                   isActive(item.href)
-                    ? 'border-navy-accent text-navy-accent'
-                    : 'border-transparent text-navy-text hover:text-white'
+                    ? 'border-navy-petrol text-navy-petrol'
+                    : 'border-transparent text-navy-slate hover:text-navy-petrol'
                 }`}
               >
                 {item.name}
@@ -123,7 +119,7 @@ export default function SiteHeader({ overlay = false }: SiteHeaderProps) {
           <SiteLanguageSwitcher />
           <Link
             href={`/${lang}/contact`}
-            className="inline-flex min-h-[44px] items-center whitespace-nowrap rounded-md bg-navy-accent px-5 text-[15px] font-semibold text-navy-950 transition-colors hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className={`inline-flex min-h-[44px] items-center whitespace-nowrap rounded-md bg-navy-950 px-5 text-[15px] font-semibold text-white transition-colors hover:bg-navy-petrol ${focusRing}`}
           >
             {t('home.hero.getInTouch')}
           </Link>
@@ -135,7 +131,7 @@ export default function SiteHeader({ overlay = false }: SiteHeaderProps) {
           aria-label="Menu"
           aria-expanded={menuOpen}
           aria-controls="site-mobile-nav"
-          className="inline-flex h-11 w-11 flex-none items-center justify-center rounded-md border border-navy-line text-navy-text transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy-accent xl:hidden"
+          className={`inline-flex h-11 w-11 flex-none items-center justify-center rounded-md border border-navy-hairline text-navy-950 transition-colors hover:bg-navy-mist ${focusRing} xl:hidden`}
         >
           {menuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
         </button>
@@ -144,7 +140,7 @@ export default function SiteHeader({ overlay = false }: SiteHeaderProps) {
       {menuOpen && (
         <div
           id="site-mobile-nav"
-          className="max-h-[calc(100vh-72px)] overflow-y-auto border-t border-navy-line bg-navy-950 xl:hidden"
+          className="max-h-[calc(100vh-72px)] overflow-y-auto border-t border-navy-hairline bg-white xl:hidden"
         >
           <nav aria-label="Main" className="site-wrap flex flex-col py-4">
             {navigation.map((item) =>
@@ -161,8 +157,8 @@ export default function SiteHeader({ overlay = false }: SiteHeaderProps) {
                   href={item.href}
                   aria-current={isActive(item.href) ? 'page' : undefined}
                   onClick={() => setMenuOpen(false)}
-                  className={`inline-flex min-h-[44px] items-center text-[17px] ${
-                    isActive(item.href) ? 'text-navy-accent' : 'text-navy-text'
+                  className={`inline-flex min-h-[44px] items-center text-[17px] ${focusRing} ${
+                    isActive(item.href) ? 'font-semibold text-navy-petrol' : 'text-navy-950'
                   }`}
                 >
                   {item.name}
@@ -170,11 +166,11 @@ export default function SiteHeader({ overlay = false }: SiteHeaderProps) {
               )
             )}
             <div className="flex flex-wrap items-center justify-between gap-4 pt-4">
-              <SiteLanguageSwitcher inline />
+              <SiteLanguageSwitcher />
               <Link
                 href={`/${lang}/contact`}
                 onClick={() => setMenuOpen(false)}
-                className="inline-flex min-h-[44px] items-center gap-2 rounded-md bg-navy-accent px-5 font-semibold text-navy-950"
+                className={`inline-flex min-h-[44px] items-center gap-2 rounded-md bg-navy-950 px-5 font-semibold text-white ${focusRing}`}
               >
                 {t('home.hero.getInTouch')}
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
