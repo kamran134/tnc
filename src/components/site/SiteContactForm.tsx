@@ -63,7 +63,9 @@ function ContactFormInner() {
     <form
       id="contact-form"
       onSubmit={handleSubmit}
-      className="scroll-mt-28 box-border grid min-w-0 flex-[999_1_520px] grid-cols-[repeat(auto-fit,minmax(min(220px,100%),1fr))] gap-[18px] rounded-xl border border-navy-line bg-navy-800 p-6 sm:p-9"
+      // Animated only inside a useReveal() container (home contact block)
+      style={{ '--rv-i': 2 } as React.CSSProperties}
+      className="rv-item scroll-mt-28 box-border grid min-w-0 flex-[999_1_520px] grid-cols-[repeat(auto-fit,minmax(min(220px,100%),1fr))] gap-[18px] rounded-xl border border-navy-line bg-navy-800 p-6 sm:p-9"
     >
       <h2 className="col-span-full m-0 text-[26px] font-semibold tracking-[-0.015em]">{t('contact.sendMessage')}</h2>
 

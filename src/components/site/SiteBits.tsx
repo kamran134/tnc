@@ -10,10 +10,10 @@ export function ArrowLink({ href, children, className = '' }: { href: string; ch
   return (
     <Link
       href={href}
-      className={`inline-flex min-h-[44px] items-center gap-2 font-semibold text-navy-accent transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy-accent ${className}`}
+      className={`group inline-flex min-h-[44px] items-center gap-2 font-semibold text-navy-accent transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy-accent ${className}`}
     >
-      {children}
-      <ArrowRight className="h-[18px] w-[18px]" aria-hidden="true" />
+      <span className="site-ulink">{children}</span>
+      <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 motion-safe:group-hover:translate-x-1" aria-hidden="true" />
     </Link>
   );
 }
@@ -32,12 +32,25 @@ export function PrimaryLink({ href, children }: { href: string; children: React.
 }
 
 /** Square team portrait with the name and position overlaid at the bottom. */
-export function TeamCard({ member, lang, compact = false }: { member: TeamMemberDto; lang: string; compact?: boolean }) {
+export function TeamCard({
+  member,
+  lang,
+  compact = false,
+  className = '',
+  style,
+}: {
+  member: TeamMemberDto;
+  lang: string;
+  compact?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   const img = resolveImageUrl(member.imageUrl);
   return (
     <Link
       href={`/${lang}/team/${member.id}`}
-      className="group relative block aspect-[4/5] overflow-hidden rounded-[10px] bg-[#0B2E4F] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-accent"
+      style={style}
+      className={`${className} group relative block aspect-[4/5] overflow-hidden rounded-[10px] bg-[#0B2E4F] transition-transform duration-300 ease-out motion-safe:hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-accent`}
     >
       {img && (
         <Image
@@ -45,7 +58,7 @@ export function TeamCard({ member, lang, compact = false }: { member: TeamMember
           alt={member.fullName}
           fill
           sizes="(min-width: 1280px) 25vw, (min-width: 640px) 33vw, 100vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.05]"
         />
       )}
       <span
@@ -64,7 +77,21 @@ export function TeamCard({ member, lang, compact = false }: { member: TeamMember
 }
 
 /** News card for list/teaser grids. `featured` renders the wide image + text variant. */
-export function NewsCard({ article, lang, readMore, featured = false }: { article: NewsDto; lang: string; readMore: string; featured?: boolean }) {
+export function NewsCard({
+  article,
+  lang,
+  readMore,
+  featured = false,
+  className = '',
+  style,
+}: {
+  article: NewsDto;
+  lang: string;
+  readMore: string;
+  featured?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   const img = resolveImageUrl(article.imageUrl);
   const href = `/${lang}/news/${article.slug}`;
   const date = formatDateDMY(article.publishDate);
@@ -94,7 +121,8 @@ export function NewsCard({ article, lang, readMore, featured = false }: { articl
   return (
     <Link
       href={href}
-      className="group flex flex-col gap-3.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy-accent"
+      style={style}
+      className={`${className} group flex flex-col gap-3.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy-accent`}
     >
       <span className="relative block aspect-[16/10] w-full overflow-hidden rounded-[10px] bg-navy-700">
         {img && (
@@ -103,7 +131,7 @@ export function NewsCard({ article, lang, readMore, featured = false }: { articl
             alt=""
             fill
             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.05]"
           />
         )}
       </span>
@@ -111,8 +139,8 @@ export function NewsCard({ article, lang, readMore, featured = false }: { articl
       <span className="text-[22px] font-semibold leading-tight">{article.title}</span>
       {article.excerpt && <span className="line-clamp-3 text-[15px] text-navy-muted">{article.excerpt}</span>}
       <span className="inline-flex min-h-[44px] items-center gap-2 font-semibold text-navy-accent">
-        {readMore}
-        <ArrowRight className="h-[18px] w-[18px]" aria-hidden="true" />
+        <span className="site-ulink">{readMore}</span>
+        <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 motion-safe:group-hover:translate-x-1" aria-hidden="true" />
       </span>
     </Link>
   );

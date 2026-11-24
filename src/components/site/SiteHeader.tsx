@@ -55,7 +55,8 @@ export default function SiteHeader({ overlay = false }: SiteHeaderProps) {
 
   const solid = !overlay || scrolled || menuOpen;
   const positionClass = overlay ? 'fixed inset-x-0 top-0' : 'sticky top-0';
-  const surfaceClass = solid ? 'border-b border-navy-line bg-navy-950' : 'border-b border-transparent bg-transparent';
+  // Overlay header: the navy surface is a separate layer that fades in (opacity only)
+  const surfaceClass = overlay ? '' : 'border-b border-navy-line bg-navy-950';
 
   const logo = companyInfo?.logoUrl ? (
     <Image
@@ -71,7 +72,14 @@ export default function SiteHeader({ overlay = false }: SiteHeaderProps) {
   );
 
   return (
-    <header className={`${positionClass} z-50 transition-colors duration-200 ${surfaceClass}`}>
+    <header className={`${positionClass} z-50 ${surfaceClass}`}>
+      {overlay && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 border-b border-navy-line bg-navy-950 transition-opacity duration-300 ease-out motion-reduce:transition-none"
+          style={{ opacity: solid ? 1 : 0 }}
+        />
+      )}
       <div className="site-wrap flex items-center justify-between gap-4 py-3 xl:py-4">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           <Link
@@ -99,7 +107,7 @@ export default function SiteHeader({ overlay = false }: SiteHeaderProps) {
                 key={item.key}
                 href={item.href}
                 aria-current={isActive(item.href) ? 'page' : undefined}
-                className={`inline-flex min-h-[44px] items-center border-b-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy-accent ${
+                className={`site-nav-link inline-flex min-h-[44px] items-center border-b-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy-accent ${
                   isActive(item.href)
                     ? 'border-navy-accent text-navy-accent'
                     : 'border-transparent text-navy-text hover:text-white'

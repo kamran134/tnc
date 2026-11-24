@@ -15,8 +15,10 @@ import type { LanguageCode, PageHeroUserDto } from '@/types/api';
 const SLIDE_HOLD_MS = 5500;
 // Text leave animation duration (slides down + fades out)
 const TEXT_OUT_MS = 400;
-// Background cross-fade duration
+// Background cross-fade duration (keep in sync with .hero-bg in globals.css)
 const BG_FADE_MS = 900;
+
+const heroDelay = (i: number) => ({ '--hi': i }) as React.CSSProperties;
 
 export default function HomeHero() {
   const params = useParams();
@@ -112,8 +114,8 @@ export default function HomeHero() {
             <div
               key={slide.id ?? i}
               aria-hidden="true"
-              className="absolute inset-0"
-              style={{ transition: `opacity ${BG_FADE_MS}ms ease-in-out`, opacity: i === activeIndex ? 1 : 0 }}
+              className="hero-bg absolute inset-0"
+              style={{ opacity: i === activeIndex ? 1 : 0 }}
             >
               {src && (
                 <Image
@@ -122,7 +124,7 @@ export default function HomeHero() {
                   fill
                   priority={i === 0}
                   sizes="100vw"
-                  className="object-cover object-[75%_50%]"
+                  className="hero-kb object-cover object-[75%_50%]"
                 />
               )}
             </div>
@@ -144,54 +146,58 @@ export default function HomeHero() {
       />
 
       {/* Slide content */}
+      {/* Items enter one after another (--hi), leave together; see .hero-item in globals.css */}
       <div
         className="site-wrap relative flex flex-1 flex-col justify-center gap-7 pb-10 pt-32"
-        style={{
-          transition: `opacity ${TEXT_OUT_MS}ms ease-out, transform ${TEXT_OUT_MS}ms ease-out`,
-          opacity: textVisible ? 1 : 0,
-          transform: textVisible ? 'translateY(0)' : 'translateY(28px)',
-        }}
+        data-visible={textVisible ? 'true' : 'false'}
       >
         {current ? (
           <>
             <div
               role="heading"
               aria-level={1}
-              className="hero-rte max-w-[820px] text-[clamp(40px,6vw,84px)] font-semibold leading-[1.02] tracking-[-0.03em]"
+              className="hero-item hero-rte max-w-[820px] text-[clamp(40px,6vw,84px)] font-semibold leading-[1.02] tracking-[-0.03em]"
               dangerouslySetInnerHTML={{ __html: sanitizeHtml(current.title) }}
             />
             {current.subtitle && (
               <div
                 role="heading"
                 aria-level={2}
-                className="hero-rte max-w-[640px] text-xl font-medium text-navy-accent"
+                style={heroDelay(1)}
+                className="hero-item hero-rte max-w-[640px] text-xl font-medium text-navy-accent"
                 dangerouslySetInnerHTML={{ __html: sanitizeHtml(current.subtitle) }}
               />
             )}
             {current.heroDescription && (
               <div
-                className="hero-rte max-w-[560px] text-[19px] text-navy-text2"
+                style={heroDelay(2)}
+                className="hero-item hero-rte max-w-[560px] text-[19px] text-navy-text2"
                 dangerouslySetInnerHTML={{ __html: sanitizeHtml(current.heroDescription) }}
               />
             )}
           </>
         ) : (
           <>
-            <h1 className="m-0 max-w-[820px] text-[clamp(40px,6vw,84px)] font-semibold leading-[1.02] tracking-[-0.03em]">
+            <h1 className="hero-item m-0 max-w-[820px] text-[clamp(40px,6vw,84px)] font-semibold leading-[1.02] tracking-[-0.03em]">
               {companyInfo?.companyName || 'TnC'}
             </h1>
             {companyInfo?.description && (
-              <p className="m-0 max-w-[560px] text-[19px] text-navy-text2">{companyInfo.description}</p>
+              <p style={heroDelay(1)} className="hero-item m-0 max-w-[560px] text-[19px] text-navy-text2">
+                {companyInfo.description}
+              </p>
             )}
           </>
         )}
-        <div className="flex flex-wrap gap-3.5 pt-2">
+        <div style={heroDelay(3)} className="hero-item flex flex-wrap gap-3.5 pt-2">
           <Link
             href={buttonUrl}
-            className="inline-flex min-h-[56px] items-center gap-2.5 rounded-md bg-navy-accent px-7 font-semibold text-navy-950 transition-colors hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="group inline-flex min-h-[56px] items-center gap-2.5 rounded-md bg-navy-accent px-7 font-semibold text-navy-950 transition-colors hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             {buttonText}
-            <ArrowRight className="h-[18px] w-[18px]" aria-hidden="true" />
+            <ArrowRight
+              className="h-[18px] w-[18px] transition-transform duration-300 motion-safe:group-hover:translate-x-1"
+              aria-hidden="true"
+            />
           </Link>
           <Link
             href={`/${lang}/contact`}
