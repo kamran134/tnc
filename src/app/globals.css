@@ -696,3 +696,23 @@ a:hover > .site-ulink::after,
   }
   .site-marquee-item { width: auto; }
 }
+
+/* Floating glass header (SiteHeader). Slot height = top offset + 60px island + gap. */
+:root { --site-header-h: 84px; }
+@media (min-width: 1280px) { :root { --site-header-h: 92px; } }
+.site-main { padding-top: var(--site-header-h); }
+/* Heroes that should run under the island */
+.site-under-header {
+  margin-top: calc(-1 * var(--site-header-h));
+  padding-top: var(--site-header-h);
+}
+.site-glass {
+  background: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  backdrop-filter: blur(18px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 10px 30px rgba(7, 27, 46, 0.22);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .site-glass { background: rgba(255, 255, 255, 0.96); }
+}

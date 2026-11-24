@@ -47,7 +47,7 @@ export function SitePageHeroView({
   const showSubtitle = !!subtitle && stripTags(subtitle) !== stripTags(title || '');
 
   return (
-    <section className="relative flex min-h-[440px] flex-col justify-center overflow-hidden">
+    <section className="site-under-header relative flex min-h-[calc(440px+var(--site-header-h))] flex-col justify-center overflow-hidden">
       {imageUrl && (
         <Image src={imageUrl} alt="" fill priority sizes="100vw" className="object-cover" />
       )}

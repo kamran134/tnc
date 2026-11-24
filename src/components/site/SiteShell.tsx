@@ -10,7 +10,7 @@ export default function SiteShell({ children }: SiteShellProps) {
   return (
     <div className="min-h-screen bg-navy-950 font-plex text-base leading-relaxed text-navy-text">
       <SiteHeader />
-      <main id="main">{children}</main>
+      <main id="main" className="site-main">{children}</main>
       <SiteFooter />
     </div>
   );

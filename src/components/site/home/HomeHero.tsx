@@ -86,12 +86,14 @@ export default function HomeHero() {
     return `/${lang}${clean}`;
   };
 
-  const sectionClass = 'relative flex min-h-[680px] flex-col overflow-hidden bg-navy-950 md:min-h-[740px]';
+  // Runs under the floating header; min-height includes the header slot
+  const sectionClass =
+    'site-under-header relative flex min-h-[760px] flex-col overflow-hidden bg-navy-950 md:min-h-[820px]';
 
   if (isLoading) {
     return (
       <section className={sectionClass}>
-        <div className="site-wrap flex flex-1 flex-col justify-center gap-7 pb-10 pt-16 md:pt-20" aria-hidden="true">
+        <div className="site-wrap flex flex-1 flex-col justify-center gap-7 pb-10 pt-10 md:pt-12" aria-hidden="true">
           <div className="h-20 max-w-[820px] animate-pulse rounded-lg bg-white/10" />
           <div className="h-8 max-w-[560px] animate-pulse rounded-lg bg-white/10" />
         </div>
@@ -148,7 +150,7 @@ export default function HomeHero() {
       {/* Slide content */}
       {/* Items enter one after another (--hi), leave together; see .hero-item in globals.css */}
       <div
-        className="site-wrap relative flex flex-1 flex-col justify-center gap-7 pb-10 pt-16 md:pt-20"
+        className="site-wrap relative flex flex-1 flex-col justify-center gap-7 pb-10 pt-10 md:pt-12"
         data-visible={textVisible ? 'true' : 'false'}
       >
         {current ? (
