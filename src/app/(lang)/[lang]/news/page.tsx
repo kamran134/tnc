@@ -2,11 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
-import Link from 'next/link'
-import Image from 'next/image'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
-import { PageHero, LoadingSpinner, Alert, Button, Card, EmptyState } from '@/components/ui'
+import SiteShell from '@/components/site/SiteShell'
+import SitePageHero from '@/components/site/SitePageHero'
+import { NewsCard } from '@/components/site/SiteBits'
 import { LanguageCode, NewsDto } from '@/types/api'
 import { useTranslations } from '@/hooks/useTranslations'
 import { useNewsListQuery } from '@/hooks/queries'
@@ -36,109 +34,70 @@ export default function NewsPage() {
   const totalElements = data?.totalElements || 0;
   const hasMore = totalElements > 6 && !data?.last;
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  }
-
   const loadMore = () => {
     if (hasMore && !loading) {
       setCurrentPage(prev => prev + 1)
     }
   }
 
+  const [featured, ...rest] = allArticles;
+
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main>
-        <PageHero 
-          pageTag="NEWS"
-          fallbackTitle={t('news.latestNews')}
-          fallbackDescription={t('news.description')}
-        />
+    <SiteShell>
+      <SitePageHero
+        pageTag="NEWS"
+        breadcrumb={t('nav.news')}
+        fallbackTitle={t('news.latestNews')}
+        fallbackDescription={t('news.description')}
+      />
 
-        <section className="section-padding">
-          <div className="container-max">
-            {loading && currentPage === 0 ? (
-              <div className="flex justify-center py-12">
-                <LoadingSpinner size="lg" />
-              </div>
-            ) : error ? (
-              <Alert type="error" message={error instanceof Error ? error.message : String(error)} className="mb-6" />
-            ) : allArticles.length === 0 && !loading ? (
-              <EmptyState message={t('news.noArticles')} />
-            ) : (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {allArticles.map((article) => (
-                    <Card key={article.id} hover className="overflow-hidden">
-                      {article.imageUrl && (
-                        <div className="relative w-full aspect-video">
-                          <Image
-                            src={article.imageUrl}
-                            alt={article.title}
-                            fill
-                            className="object-cover"
-                            unoptimized
-                          />
-                        </div>
-                      )}
-                      <div className="p-6">
-                        <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
-                          {article.publishDate && (
-                            <time>{formatDate(article.publishDate)}</time>
-                          )}
-                          {article.category && (
-                            <>
-                              <span>•</span>
-                              <span className="text-sky-600 font-medium">{article.category}</span>
-                            </>
-                          )}
-                        </div>
-                        <h3 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2">
-                          {article.title}
-                        </h3>
-                        {article.excerpt && (
-                          <p className="text-gray-600 mb-4 line-clamp-3">
-                            {article.excerpt}
-                          </p>
-                        )}
-                        <Link href={`/${lang}/news/${article.slug}`}>
-                          <Button variant="outline" size="sm" fullWidth>
-                            {t('common.readMore')}
-                          </Button>
-                        </Link>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-
-                {hasMore && (
-                  <div className="flex justify-center mt-12">
-                    <Button
-                      onClick={loadMore}
-                      disabled={loading}
-                      size="lg"
-                    >
-                      {loading ? t('common.loading') : t('news.loadMore')}
-                    </Button>
-                  </div>
-                )}
-
-                {!hasMore && allArticles.length > 0 && (
-                  <p className="text-center text-gray-500 mt-8">
-                    {t('news.endOfNews')}
-                  </p>
-                )}
-              </>
-            )}
+      <section className="site-wrap flex flex-col gap-8 pb-16 pt-14 md:pb-[112px]">
+        {loading && currentPage === 0 ? (
+          <div className="flex flex-col gap-8" aria-hidden="true">
+            <div className="aspect-[16/6] animate-pulse rounded-[10px] bg-navy-800" />
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(min(300px,100%),1fr))] gap-6">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="aspect-[16/10] animate-pulse rounded-[10px] bg-navy-800" />
+              ))}
+            </div>
           </div>
-        </section>
-      </main>
-      <Footer />
-    </div>
+        ) : error ? (
+          <p role="alert" className="text-navy-text2">
+            {error instanceof Error ? error.message : t('news.errorLoading')}
+          </p>
+        ) : allArticles.length === 0 && !loading ? (
+          <p className="py-12 text-center text-navy-muted">{t('news.noArticles')}</p>
+        ) : (
+          <>
+            {featured && <NewsCard article={featured} lang={lang} readMore={t('common.readMore')} featured />}
+
+            {rest.length > 0 && (
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(min(300px,100%),1fr))] gap-x-6 gap-y-8 pt-4">
+                {rest.map((article) => (
+                  <NewsCard key={article.id} article={article} lang={lang} readMore={t('common.readMore')} />
+                ))}
+              </div>
+            )}
+
+            {hasMore && (
+              <div className="flex justify-center pt-6">
+                <button
+                  type="button"
+                  onClick={loadMore}
+                  disabled={loading}
+                  className="inline-flex min-h-[56px] cursor-pointer items-center justify-center rounded-md border border-[rgba(234,241,246,0.4)] bg-transparent px-8 font-semibold text-navy-text transition-colors hover:border-white hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-accent disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loading ? t('common.loading') : t('news.loadMore')}
+                </button>
+              </div>
+            )}
+
+            {!hasMore && allArticles.length > 0 && (
+              <p className="pt-4 text-center text-navy-muted">{t('news.endOfNews')}</p>
+            )}
+          </>
+        )}
+      </section>
+    </SiteShell>
   )
 }

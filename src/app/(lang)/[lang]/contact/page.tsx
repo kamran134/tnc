@@ -1,342 +1,124 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
-import { PageHero, Alert, Button, Card } from '@/components/ui'
-import { contactService } from '@/lib/api'
-import { ContactDto, LanguageCode } from '@/types/api'
+import { useParams } from 'next/navigation'
+import { ArrowRight, Mail, MapPin, Phone } from 'lucide-react'
+import SiteShell from '@/components/site/SiteShell'
+import SitePageHero from '@/components/site/SitePageHero'
+import SiteContactForm from '@/components/site/SiteContactForm'
+import { LanguageCode } from '@/types/api'
 import { useTranslations } from '@/hooks/useTranslations'
 import { useCompanyInfo } from '@/hooks/queries'
+import { formatPhone, phoneHref } from '@/lib/utils/phone'
 
-interface Service {
-  id: number;
-  title: string;
-  languageCode: string;
+function InfoRow({
+  icon,
+  label,
+  children,
+  href,
+}: {
+  icon: React.ReactNode
+  label: string
+  children: React.ReactNode
+  href?: string
+}) {
+  const content = (
+    <>
+      <span className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-navy-700 text-navy-accent">
+        {icon}
+      </span>
+      <span className="flex min-w-0 flex-col">
+        <span className="text-sm text-navy-muted">{label}</span>
+        <span className="break-words">{children}</span>
+      </span>
+    </>
+  )
+  return href ? (
+    <a
+      href={href}
+      className="flex items-start gap-4 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-accent"
+    >
+      {content}
+    </a>
+  ) : (
+    <div className="flex items-start gap-4">{content}</div>
+  )
 }
 
 export default function ContactPage() {
-  const { t, locale } = useTranslations();
-  const searchParams = useSearchParams();
-  const [services, setServices] = useState<Service[]>([]);
-  
-  // Use React Query hook - data will be cached and shared with Footer
-  const { data: companyInfo } = useCompanyInfo(locale as LanguageCode);
-  
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    service: '',
-    message: ''
-  })
-  const [submitting, setSubmitting] = useState(false)
-  const [submitSuccess, setSubmitSuccess] = useState(false)
-  const [submitError, setSubmitError] = useState<string | null>(null)
+  const { t } = useTranslations();
+  const params = useParams();
+  const lang = ((params.lang as string) || 'az') as LanguageCode;
+  const { data: companyInfo } = useCompanyInfo(lang);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Load services only
-        const response = await fetch(`/api/services?lang=${locale}`);
-        if (response.ok) {
-          const data = await response.json();
-          setServices(data);
-        }
-      } catch (error) {
-        console.error('Failed to load services:', error);
-      }
-    };
-    loadData();
-  }, [locale]);
-
-  // Автоматически выбрать услугу из URL параметра
-  useEffect(() => {
-    const serviceParam = searchParams.get('service');
-    if (serviceParam) {
-      setFormData(prev => ({
-        ...prev,
-        service: decodeURIComponent(serviceParam)
-      }));
-    }
-  }, [searchParams]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    try {
-      setSubmitting(true)
-      setSubmitError(null)
-      
-      const contactData: Omit<ContactDto, 'id' | 'status' | 'submittedAt' | 'notes' | 'deleted' | 'deletedAt' | 'deletedBy'> = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone || undefined,
-        company: formData.company || undefined,
-        subject: formData.service || 'General Inquiry',
-        message: formData.message
-      }
-      
-      await contactService.submit(contactData)
-      
-      setSubmitSuccess(true)
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        company: '',
-        service: '',
-        message: ''
-      })
-      
-      setTimeout(() => {
-        setSubmitSuccess(false)
-      }, 5000)
-    } catch (err) {
-      console.error('Failed to submit contact form:', err)
-      setSubmitError(t('contact.errorMessage'))
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+  const address = companyInfo?.address || t('footer.location');
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main>
-        {/* Hero Section - Refactored to use PageHero component */}
-        <PageHero 
-          pageTag="CONTACT"
-          fallbackTitle={t('contact.title')}
-          fallbackDescription={t('contact.getInTouch')}
-        />
+    <SiteShell>
+      <SitePageHero
+        pageTag="CONTACT"
+        breadcrumb={t('nav.contact')}
+        fallbackTitle={t('contact.title')}
+        fallbackDescription={t('contact.getInTouch')}
+      />
 
-        {/* Contact Form & Info */}
-        <section className="section-padding bg-gray-50">
-          <div className="container-max">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              {/* Contact Form */}
-              <Card>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  {t('contact.sendMessage')}
-                </h2>
-                
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                        {t('contact.fullName')} *
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        required
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 text-gray-900"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                        {t('contact.email')} *
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        required
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 text-gray-900"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                        {t('contact.phone')}
-                      </label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 text-gray-900"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
-                        {t('contact.company')}
-                      </label>
-                      <input
-                        type="text"
-                        id="company"
-                        name="company"
-                        value={formData.company}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 text-gray-900"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="service" className="block text-sm font-medium text-gray-700 mb-1">
-                      {t('contact.serviceOfInterest')}
-                    </label>
-                    <select
-                      id="service"
-                      name="service"
-                      value={formData.service}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 text-gray-900"
-                    >
-                      <option value="">{t('contact.selectService')}</option>
-                      {services.map(service => (
-                        <option key={service.id} value={service.title}>
-                          {service.title}
-                        </option>
-                      ))}
-                      <option value="other">{t('contact.other')}</option>
-                    </select>
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                      {t('contact.message')} *
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows={4}
-                      required
-                      value={formData.message}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 text-gray-900"
-                      placeholder={t('contact.messagePlaceholder')}
-                    ></textarea>
-                  </div>
-                  
-                  {submitSuccess && (
-                    <Alert type="success" message={t('contact.successMessage')} />
-                  )}
-                  
-                  {submitError && (
-                    <Alert type="error" message={submitError} />
-                  )}
-                  
-                  <Button
-                    type="submit"
-                    disabled={submitting}
-                    fullWidth
-                  >
-                    {submitting ? t('contact.sending') : t('contact.send')}
-                  </Button>
-                </form>
-              </Card>
+      <section className="site-wrap flex flex-wrap items-start gap-12 pb-16 pt-14 md:pb-[112px]">
+        <div className="flex min-w-0 flex-[1_1_380px] flex-col gap-6">
+          <div className="flex flex-col gap-6 rounded-[10px] border border-navy-line bg-navy-800 p-6 sm:p-8">
+            <h2 className="m-0 text-[26px] font-semibold tracking-[-0.015em]">{t('contact.contactInformation')}</h2>
+            <InfoRow icon={<MapPin className="h-[22px] w-[22px]" strokeWidth={1.6} aria-hidden="true" />} label={t('contact.address')}>
+              {address}
+            </InfoRow>
+            {companyInfo?.phone && (
+              <InfoRow
+                icon={<Phone className="h-[22px] w-[22px]" strokeWidth={1.6} aria-hidden="true" />}
+                label={t('footer.phone')}
+                href={phoneHref(companyInfo.phone)}
+              >
+                {formatPhone(companyInfo.phone)}
+              </InfoRow>
+            )}
+            {companyInfo?.email && (
+              <InfoRow
+                icon={<Mail className="h-[22px] w-[22px]" strokeWidth={1.6} aria-hidden="true" />}
+                label={t('footer.email')}
+                href={`mailto:${companyInfo.email}`}
+              >
+                {companyInfo.email}
+              </InfoRow>
+            )}
+          </div>
 
-              {/* Contact Information */}
-              <div className="space-y-8">
-                <Card>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                    {t('contact.contactInformation')}
-                  </h2>
-                  
-                  <div className="space-y-4">
-                    <div className="flex items-start space-x-3">
-                      <svg className="w-6 h-6 text-sky-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">{t('contact.address')}</h3>
-                        <p className="text-gray-600">
-                          {companyInfo?.address || t('footer.location')}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-3">
-                      <svg className="w-6 h-6 text-sky-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                      </svg>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">{t('footer.phone')}</h3>
-                        <p className="text-gray-600">{companyInfo?.phone || '+994 XX XXX XX XX'}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-3">
-                      <svg className="w-6 h-6 text-sky-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">{t('footer.email')}</h3>
-                        <p className="text-gray-600">{companyInfo?.email || 'info@tnc.az'}</p>
-                      </div>
-                    </div>
-                    
-                    {companyInfo?.website && (
-                      <div className="flex items-start space-x-3">
-                        <svg className="w-6 h-6 text-sky-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                        </svg>
-                        <div>
-                          <h3 className="font-semibold text-gray-900">Website</h3>
-                          <p className="text-gray-600">
-                            <a href={companyInfo.website} target="_blank" rel="noopener noreferrer" className="hover:text-sky-600 transition-colors">
-                              {companyInfo.website}
-                            </a>
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="flex items-start space-x-3">
-                      <svg className="w-6 h-6 text-sky-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">{t('contact.businessHours')}</h3>
-                        <p className="text-gray-600">
-                          {t('contact.mondayFriday')}: 9:00 AM - 6:00 PM<br />
-                          {t('contact.saturday')}: 10:00 AM - 2:00 PM
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-                
-                {/* <div className="bg-sky-50 p-8 rounded-lg">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
-                    {t('contact.scheduleConsultation')}
-                  </h3>
-                  <p className="text-gray-700 mb-6">
-                    {t('contact.consultationDescription')}
-                  </p>
-                  <Button>
-                    {t('contact.bookConsultation')}
-                  </Button>
-                </div> */}
-              </div>
+          <div className="flex flex-col gap-4 rounded-[10px] border border-navy-line bg-navy-800 p-6 sm:p-8">
+            <h3 className="m-0 text-xl font-semibold">{t('contact.businessHours')}</h3>
+            <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 border-b border-navy-line pb-3">
+              <span className="text-navy-text2">{t('contact.mondayFriday')}</span>
+              <span className="font-plexmono text-sm">9:00 AM - 6:00 PM</span>
+            </div>
+            <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
+              <span className="text-navy-text2">{t('contact.saturday')}</span>
+              <span className="font-plexmono text-sm">10:00 AM - 2:00 PM</span>
             </div>
           </div>
-        </section>
-      </main>
-      <Footer />
-    </div>
+        </div>
+
+        <SiteContactForm />
+      </section>
+
+      <section className="border-t border-navy-line bg-navy-900">
+        <div className="site-wrap flex flex-wrap items-center justify-between gap-x-12 gap-y-7 py-16 md:py-[88px]">
+          <div className="flex flex-[1_1_420px] flex-col gap-3.5">
+            <h2 className="site-h2">{t('contact.scheduleConsultation')}</h2>
+            <p className="m-0 max-w-[640px] text-navy-text2">{t('contact.consultationDescription')}</p>
+          </div>
+          <a
+            href="#contact-form"
+            className="inline-flex min-h-[56px] items-center gap-2.5 rounded-md bg-navy-accent px-7 font-semibold text-navy-950 transition-colors hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            {t('contact.bookConsultation')}
+            <ArrowRight className="h-[18px] w-[18px]" aria-hidden="true" />
+          </a>
+        </div>
+      </section>
+    </SiteShell>
   )
 }

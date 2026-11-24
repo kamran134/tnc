@@ -24,6 +24,10 @@
     "contact": "Əlaqə",
     "about": "Haqqımızda"
   },
+  "team": {
+    "positionDescription": "Vəzifə təsviri",
+    "bio": "Bioqrafiya"
+  },
   "footer": {
     "description": "Peşəkar vergi, hüquqi və konsaltinq xidmətləri dürüstlüklə mükəmməllik təqdim edir.",
     "quickLinks": "Sürətli Keçidlər",

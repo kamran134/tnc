@@ -24,6 +24,10 @@
     "contact": "Contact",
     "about": "About"
   },
+  "team": {
+    "positionDescription": "Position Description",
+    "bio": "Biography"
+  },
   "footer": {
     "description": "Professional tax, legal, and consulting services delivering excellence with integrity.",
     "quickLinks": "Quick Links",

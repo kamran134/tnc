@@ -46,8 +46,10 @@ const nextConfig = {
   async rewrites() {
     const target = process.env.DEV_API_PROXY
     if (!target) return []
+    // afterFiles (not fallback): /api/team and /api/services would otherwise be swallowed by
+    // the dynamic /[lang]/team and /[lang]/services pages before a fallback rewrite could apply.
     return {
-      fallback: [
+      afterFiles: [
         { source: '/api/:path*', destination: `${target}/api/:path*` },
         { source: '/uploads/:path*', destination: `${target}/uploads/:path*` },
       ],

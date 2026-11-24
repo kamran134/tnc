@@ -1,114 +1,44 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import TeamMemberCard from '@/components/team/TeamMemberCard';
-import { teamService, TeamMemberDto } from '@/lib/api';
-import { LoadingSpinner, Alert, PageHero } from '@/components/ui';
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { useParams } from 'next/navigation';
+import SiteShell from '@/components/site/SiteShell';
+import SitePageHero from '@/components/site/SitePageHero';
+import { TeamCard } from '@/components/site/SiteBits';
+import { useTeamList } from '@/hooks/site/useSiteQueries';
+import { useTranslations } from '@/hooks/useTranslations';
+import type { LanguageCode } from '@/types/api';
 
-interface TeamPageProps {
-  params: Promise<{
-    lang: string;
-  }>;
-}
-
-export default function TeamPage({ params }: TeamPageProps) {
-  const [lang, setLang] = useState<string>('az');
-  const [teamMembers, setTeamMembers] = useState<TeamMemberDto[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { ref, isVisible } = useScrollAnimation();
-
-  useEffect(() => {
-    params.then(({ lang: resolvedLang }) => {
-      setLang(resolvedLang);
-      loadTeamMembers(resolvedLang);
-    });
-  }, [params]);
-
-  const loadTeamMembers = async (language: string) => {
-    try {
-      setIsLoading(true);
-      const data = await teamService.getAll(language as 'az' | 'en' | 'ru');
-      setTeamMembers(data);
-      setError(null);
-    } catch (err) {
-      setError('Failed to load team members');
-      console.error('Team members error:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+export default function TeamPage() {
+  const params = useParams();
+  const lang = ((params.lang as string) || 'az') as LanguageCode;
+  const { t } = useTranslations();
+  const { data: members = [], isLoading, error } = useTeamList(lang);
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main>
-        <PageHero
-          pageTag="TEAM"
-          fallbackTitle={lang === 'az' ? 'Komanda Üzvləri' : lang === 'ru' ? 'Члены Команды' : 'Team Members'}
-          fallbackDescription={
-            lang === 'az'
-              ? 'Peşəkar komandamızla tanış olun - uğurunuzun arxasındakı mütəxəssislər'
-              : lang === 'ru'
-              ? 'Познакомьтесь с нашей профессиональной командой - экспертами вашего успеха'
-              : 'Meet our professional team - the experts behind your success'
-          }
-        />
+    <SiteShell>
+      <SitePageHero pageTag="TEAM" breadcrumb={t('nav.team')} fallbackTitle={t('nav.team')} wideDescription />
 
-        {/* Team Members Section */}
-        <section ref={ref as any} className="section-padding bg-gray-50">
-          <div className="container-max">
-            {isLoading ? (
-              <div className="flex justify-center py-20">
-                <LoadingSpinner />
-              </div>
-            ) : error ? (
-              <div className="max-w-2xl mx-auto">
-                <Alert type="error" message={error} />
-              </div>
-            ) : teamMembers.length === 0 ? (
-              <div className="text-center py-20">
-                <svg
-                  className="mx-auto h-16 w-16 text-gray-400 mb-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
-                <p className="text-xl text-gray-600">
-                  {lang === 'az'
-                    ? 'Komanda üzvləri tapılmadı'
-                    : lang === 'ru'
-                    ? 'Члены команды не найдены'
-                    : 'No team members found'}
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {teamMembers.map((member, index) => (
-                  <TeamMemberCard
-                    key={member.id}
-                    member={member}
-                    index={index}
-                    isVisible={isVisible}
-                    lang={lang}
-                  />
-                ))}
-              </div>
-            )}
+      <section className="site-wrap pb-16 pt-14 md:pb-[112px]">
+        {isLoading ? (
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(min(260px,100%),1fr))] gap-4" aria-hidden="true">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="aspect-[4/5] animate-pulse rounded-[10px] bg-navy-800" />
+            ))}
           </div>
-        </section>
-      </main>
-      <Footer />
-    </div>
+        ) : error ? (
+          <p role="alert" className="text-center text-navy-text2">
+            {t('common.error')}
+          </p>
+        ) : members.length === 0 ? (
+          <p className="text-center text-navy-muted">{t('common.noResults')}</p>
+        ) : (
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(min(260px,100%),1fr))] gap-4">
+            {members.map((member) => (
+              <TeamCard key={member.id} member={member} lang={lang} />
+            ))}
+          </div>
+        )}
+      </section>
+    </SiteShell>
   );
 }

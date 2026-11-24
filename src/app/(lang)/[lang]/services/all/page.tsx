@@ -1,7 +1,6 @@
 import { Metadata } from 'next'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
-import ServicesList from '@/components/services/ServicesList'
+import SiteShell from '@/components/site/SiteShell'
+import { AllServicesView } from '@/components/site/services/ServicesViews'
 import az from '@/locales/az.json'
 import en from '@/locales/en.json'
 import ru from '@/locales/ru.json'
@@ -38,36 +37,10 @@ export async function generateMetadata({ params }: AllServicesPageProps): Promis
   }
 }
 
-export default async function AllServicesPage({ params }: AllServicesPageProps) {
-  const { lang } = await params
-  const t = translations[lang]
-
+export default function AllServicesPage() {
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main>
-        {/* Hero Section */}
-        <section className="bg-gradient-to-r from-sky-400 to-sky-500 text-white py-16">
-          <div className="container-max">
-            <div className="text-center max-w-3xl mx-auto">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                {t.services.allServicesTitle}
-              </h1>
-              <p className="text-lg md:text-xl text-white/90">
-                {t.services.allServicesDescription}
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Services List */}
-        <section className="section-padding bg-gray-50">
-          <div className="container-max">
-            <ServicesList />
-          </div>
-        </section>
-      </main>
-      <Footer />
-    </div>
+    <SiteShell>
+      <AllServicesView />
+    </SiteShell>
   )
 }

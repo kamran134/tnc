@@ -1,31 +1,24 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
 import Link from 'next/link';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import { LoadingSpinner, Alert } from '@/components/ui';
+import SiteShell from '@/components/site/SiteShell';
+import { PrimaryLink } from '@/components/site/SiteBits';
 import { LanguageCode } from '@/types/api';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useCareerBySlugQuery } from '@/hooks/queries';
 import { careersService } from '@/lib/api';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { sanitizeHtml } from '@/lib/sanitize';
-
-const localeMap: Record<string, string> = {
-  az: 'az-AZ',
-  en: 'en-US',
-  ru: 'ru-RU',
-};
+import { formatDateDMY } from '@/lib/utils/date';
 
 export default function CareerDetail() {
   const { t } = useTranslations();
   const params = useParams();
-  const router = useRouter();
   const lang = params.lang as LanguageCode;
   const slug = params.slug as string;
-  
+
   const { data: career, isLoading: loading, error } = useCareerBySlugQuery(slug, lang);
   const { setSlugResolver } = useLanguage();
 
@@ -49,14 +42,6 @@ export default function CareerDetail() {
     };
   }, [career, setSlugResolver]);
 
-  const formatDate = (dateString: string) => {
-    const d = new Date(dateString);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}.${month}.${year}`;
-  };
-
   const getEmploymentTypeLabel = (type?: string) => {
     const types: Record<string, string> = {
       'FULL_TIME': t('careers.fullTime'),
@@ -67,170 +52,93 @@ export default function CareerDetail() {
     return type ? types[type] || type : '';
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen">
-        <Header />
-        <main className="section-padding">
-          <div className="container-max">
-            <LoadingSpinner />
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  const backLink = (
+    <Link
+      href={`/${lang}/careers`}
+      className="inline-flex min-h-[44px] items-center gap-2 self-start font-semibold text-navy-accent transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy-accent"
+    >
+      <span aria-hidden="true">←</span> {t('careers.backToCareers')}
+    </Link>
+  );
 
-  if (error || !career) {
-    return (
-      <div className="min-h-screen">
-        <Header />
-        <main className="section-padding">
-          <div className="container-max">
-            <Alert type="error" message={(error instanceof Error ? error.message : error) || t('careers.notFound')} />
-            <button
-              onClick={() => router.push(`/${lang}/careers`)}
-              className="mt-6 text-sky-600 hover:text-sky-700 font-medium"
-            >
-              ← {t('careers.backToCareers')}
-            </button>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  const meta: { label: string; value: string }[] = career
+    ? [
+        { label: t('careers.location'), value: career.location },
+        ...(career.employmentType ? [{ label: t('careers.type'), value: getEmploymentTypeLabel(career.employmentType) }] : []),
+        ...(career.salaryRange
+          ? [{ label: t('careers.salary'), value: career.salaryRange === 'BY_NEGOTIATION' ? t('careers.byNegotiation') : career.salaryRange }]
+          : []),
+        ...(career.company ? [{ label: t('careers.company'), value: career.company }] : []),
+        ...(career.department ? [{ label: t('careers.department'), value: career.department }] : []),
+        { label: t('careers.posted'), value: formatDateDMY(career.postDate) },
+      ]
+    : [];
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      
-      <main>
-        <article className="section-padding bg-white">
-          <div className="container-max max-w-4xl">
-            <nav className="mb-8 text-sm">
-              <ol className="flex items-center space-x-2 text-gray-500">
-                <li>
-                  <Link href={`/${lang}`} className="hover:text-sky-600">{t('nav.home')}</Link>
-                </li>
-                <li>/</li>
-                <li>
-                  <Link href={`/${lang}/careers`} className="hover:text-sky-600">{t('nav.careers')}</Link>
-                </li>
-                <li>/</li>
-                <li className="text-gray-900">{career.title}</li>
-              </ol>
-            </nav>
+    <SiteShell>
+      <section className="site-wrap flex flex-col gap-10 pb-24 pt-10">
+        {backLink}
 
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+        {loading ? (
+          <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6" aria-hidden="true">
+            <div className="h-16 animate-pulse rounded-lg bg-navy-800" />
+            <div className="h-40 animate-pulse rounded-[10px] bg-navy-800" />
+          </div>
+        ) : error || !career ? (
+          <p role="alert" className="m-0 text-navy-text2">
+            {t('careers.notFound')}
+          </p>
+        ) : (
+          <article className="mx-auto flex w-full max-w-[760px] flex-col gap-8">
+            <h1 className="m-0 text-[clamp(32px,4vw,54px)] font-semibold leading-[1.1] tracking-[-0.03em]">
               {career.title}
             </h1>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 pb-8 border-b border-gray-200">
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500 mb-1">{t('careers.location')}</span>
-                <span className="font-medium text-gray-900">{career.location}</span>
-              </div>
-              
-              {career.employmentType && (
-                <div className="flex flex-col">
-                  <span className="text-sm text-gray-500 mb-1">{t('careers.type')}</span>
-                  <span className="font-medium text-gray-900">
-                    {getEmploymentTypeLabel(career.employmentType)}
-                  </span>
+            <dl className="m-0 grid grid-cols-2 gap-4 border-y border-navy-line py-6 md:grid-cols-3">
+              {meta.map((item) => (
+                <div key={item.label} className="flex flex-col gap-1">
+                  <dt className="text-sm text-navy-muted">{item.label}</dt>
+                  <dd className="m-0 font-medium text-navy-text">{item.value}</dd>
                 </div>
-              )}
-              
-              {career.salaryRange && (
-                <div className="flex flex-col">
-                  <span className="text-sm text-gray-500 mb-1">{t('careers.salary')}</span>
-                  <span className="font-medium text-gray-900">
-                    {career.salaryRange === 'BY_NEGOTIATION' ? t('careers.byNegotiation') : career.salaryRange}
-                  </span>
-                </div>
-              )}
-
-              {career.company && (
-                <div className="flex flex-col">
-                  <span className="text-sm text-gray-500 mb-1">{t('careers.company')}</span>
-                  <span className="font-medium text-gray-900">{career.company}</span>
-                </div>
-              )}
-
-              {career.department && (
-                <div className="flex flex-col">
-                  <span className="text-sm text-gray-500 mb-1">{t('careers.department')}</span>
-                  <span className="font-medium text-gray-900">{career.department}</span>
-                </div>
-              )}
-              
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500 mb-1">{t('careers.posted')}</span>
-                <span className="font-medium text-gray-900">{formatDate(career.postDate)}</span>
-              </div>
-            </div>
+              ))}
+            </dl>
 
             {career.excerpt && (
-              <div className="text-xl text-gray-700 leading-relaxed mb-8 font-medium border-l-4 border-sky-500 pl-6">
-                {career.excerpt}
-              </div>
+              <p className="m-0 border-l-[3px] border-navy-accent pl-5 text-xl text-navy-text2">{career.excerpt}</p>
             )}
 
-            <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('careers.jobDescription')}</h2>
-              <div 
-                className="prose prose-lg max-w-none text-gray-700 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(career.content) }}
-              />
+            <div className="flex flex-col gap-3">
+              <h2 className="m-0 text-[26px] font-semibold tracking-[-0.015em]">{t('careers.jobDescription')}</h2>
+              <div className="site-prose text-lg" dangerouslySetInnerHTML={{ __html: sanitizeHtml(career.content) }} />
             </div>
 
             {career.requirements && (
-              <div className="mb-12">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('careers.requirements')}</h2>
-                <div 
-                  className="prose prose-lg max-w-none text-gray-700 leading-relaxed"
+              <div className="flex flex-col gap-3">
+                <h2 className="m-0 text-[26px] font-semibold tracking-[-0.015em]">{t('careers.requirements')}</h2>
+                <div
+                  className="site-prose text-lg"
                   dangerouslySetInnerHTML={{ __html: sanitizeHtml(career.requirements) }}
                 />
               </div>
             )}
 
             {career.expiryDate && new Date(career.expiryDate) > new Date() && (
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8">
-                <p className="text-amber-800">
-                  <span className="font-semibold">{t('careers.applicationDeadline')}:</span> {formatDate(career.expiryDate)}
-                </p>
-              </div>
+              <p className="m-0 rounded-md border border-navy-input bg-navy-700 px-4 py-3 text-navy-text">
+                <span className="font-semibold">{t('careers.applicationDeadline')}:</span>{' '}
+                <span className="font-plexmono">{formatDateDMY(career.expiryDate)}</span>
+              </p>
             )}
 
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-8 mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('careers.interestedInPosition')}</h2>
-              <p className="text-gray-700 mb-6">
-                {t('careers.interestedDescription')}
-              </p>
-              <button
-                onClick={() => router.push(`/${lang}/contact`)}
-                className="bg-sky-600 text-white px-8 py-3 rounded-lg hover:bg-sky-700 transition-colors font-semibold"
-              >
-                {t('careers.applyNow')}
-              </button>
+            <div className="flex flex-col items-start gap-[18px] rounded-xl border border-navy-line bg-navy-800 p-[clamp(24px,4vw,40px)]">
+              <h2 className="m-0 text-[clamp(24px,3vw,32px)] font-semibold tracking-[-0.02em]">
+                {t('careers.interestedInPosition')}
+              </h2>
+              <p className="m-0 max-w-[640px] text-navy-text2">{t('careers.interestedDescription')}</p>
+              <PrimaryLink href={`/${lang}/contact`}>{t('careers.applyNow')}</PrimaryLink>
             </div>
-
-            <div className="pt-8 border-t border-gray-200">
-              <button
-                onClick={() => router.push(`/${lang}/careers`)}
-                className="inline-flex items-center text-sky-600 hover:text-sky-700 font-semibold transition-colors"
-              >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                {t('careers.backToCareers')}
-              </button>
-            </div>
-          </div>
-        </article>
-      </main>
-
-      <Footer />
-    </div>
+          </article>
+        )}
+      </section>
+    </SiteShell>
   );
 }
