@@ -1,0 +1,70 @@
+name: Build and Deploy redesign preview (new.tnc.az)
+
+# Only the "redesign" branch. Touches nothing but the app-new container;
+# tnc.az (service "app", branch main) is never rebuilt or restarted here.
+on:
+  push:
+    branches: [ redesign ]
+  workflow_dispatch: {}
+
+concurrency:
+  group: prod-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: kamran134/tnc
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GHCR_PAT }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64
+        push: true
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:redesign
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:redesign-${{ github.sha }}
+        cache-from: type=gha,scope=redesign
+        cache-to: type=gha,mode=max,scope=redesign
+        build-args: |
+          NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL_2 }}
+          NEXT_PUBLIC_GA_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
+          BACKEND_URL=${{ secrets.BACKEND_URL }}
+
+    - name: Deploy app-new
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST_HETZNER }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY_2 }}
+        port: ${{ secrets.PORT }}
+        script: |
+          set -e
+          cd /opt/tnc-website
+          echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker compose -f docker-compose.yml pull app-new
+          docker compose -f docker-compose.yml up -d --no-deps app-new
+          docker image prune -f
+          docker compose -f docker-compose.yml ps app-new
+          docker compose -f docker-compose.yml logs app-new --tail=20
