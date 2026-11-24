@@ -10,8 +10,22 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['var(--font-montserrat)', 'system-ui', 'sans-serif'],
+        plex: ['var(--font-plex)', 'system-ui', 'sans-serif'],
+        plexmono: ['var(--font-plex-mono)', 'ui-monospace', 'monospace'],
       },
       colors: {
+        navy: {
+          950: "#071B2E",
+          900: "#0A2238",
+          800: "#0C2640",
+          700: "#12324F",
+          line: "#1B3A57",
+          input: "#24486A",
+          text: "#EAF1F6",
+          text2: "#C3D3DF",
+          muted: "#9FB4C4",
+          accent: "#7CC4F2",
+        },
         primary: {
           50: "#eff6ff",
           100: "#dbeafe",

@@ -41,6 +41,18 @@ const nextConfig = {
     // Разрешаем локальные паттерны для проксированных изображений
     unoptimized: false,
   },
+  // Dev-only, opt-in: proxy API and uploads to a remote origin (e.g. DEV_API_PROXY=https://tnc.az).
+  // When the variable is unset (production), no rewrites are registered.
+  async rewrites() {
+    const target = process.env.DEV_API_PROXY
+    if (!target) return []
+    return {
+      fallback: [
+        { source: '/api/:path*', destination: `${target}/api/:path*` },
+        { source: '/uploads/:path*', destination: `${target}/uploads/:path*` },
+      ],
+    }
+  },
   // Rewrites НЕ НУЖНЫ для клиентских запросов
   // Клиент идет напрямую на https://tnc.az/api
   // Только /api/auth/login обрабатывается Next.js API route для установки cookies

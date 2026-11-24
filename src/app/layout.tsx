@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Montserrat } from 'next/font/google'
+import { Montserrat, IBM_Plex_Sans, IBM_Plex_Mono } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
 import { LanguageProvider } from '@/contexts/LanguageContext'
@@ -10,6 +10,22 @@ const montserrat = Montserrat({
   subsets: ['latin', 'cyrillic'],
   weight: ['300', '400', '500', '600', '700', '800'],
   variable: '--font-montserrat',
+  display: 'swap',
+  preload: false,
+})
+
+const plexSans = IBM_Plex_Sans({
+  subsets: ['latin', 'latin-ext', 'cyrillic'],
+  weight: ['400', '500', '600'],
+  variable: '--font-plex',
+  display: 'swap',
+  preload: false,
+})
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ['latin', 'latin-ext', 'cyrillic'],
+  weight: ['500'],
+  variable: '--font-plex-mono',
   display: 'swap',
   preload: false,
 })
@@ -78,7 +94,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} font-sans antialiased`}>
+      <body className={`${montserrat.variable} ${plexSans.variable} ${plexMono.variable} font-sans antialiased`}>
         {GA_ID && (
           <>
             <Script

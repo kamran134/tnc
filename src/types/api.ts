@@ -200,6 +200,12 @@ export interface ServiceDto {
   imageUrl?: string;
   iconUrl?: string;
   category: string;
+  /** Category fields returned by the public /services endpoint */
+  serviceCategoryId?: number;
+  categoryCode?: string;
+  categoryName?: string;
+  categorySortOrder?: number;
+  sortOrder?: number;
   displayOrder?: number;
   featured: boolean;
 }
